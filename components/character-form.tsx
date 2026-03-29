@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 
 const CharacterFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -29,7 +30,6 @@ interface CharacterFormProps {
 
 export function CharacterForm({ bookId, existingCharacter, onSuccess }: CharacterFormProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const isEditing = !!existingCharacter
@@ -49,7 +49,6 @@ export function CharacterForm({ bookId, existingCharacter, onSuccess }: Characte
 
   function onSubmit(values: CharacterFormValues) {
     setErrorMsg(null)
-    setSuccessMsg(null)
 
     startTransition(async () => {
       const result = isEditing
@@ -64,8 +63,9 @@ export function CharacterForm({ bookId, existingCharacter, onSuccess }: Characte
 
       if ("error" in result) {
         setErrorMsg(result.error)
+        toast.error(result.error)
       } else {
-        setSuccessMsg(isEditing ? "Character updated!" : "Character added!")
+        toast.success(isEditing ? "Character updated!" : "Character added!")
         if (!isEditing) {
           reset()
         }
@@ -102,9 +102,6 @@ export function CharacterForm({ bookId, existingCharacter, onSuccess }: Characte
       </div>
 
       {errorMsg && <p className="text-sm text-destructive">{errorMsg}</p>}
-      {successMsg && (
-        <p className="text-sm text-green-600 dark:text-green-400">{successMsg}</p>
-      )}
 
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { toast } from "sonner"
 import { createReview, updateReview } from "@/lib/actions/reviews"
 import { StarRating } from "@/components/star-rating"
 import { Button } from "@/components/ui/button"
@@ -31,7 +32,6 @@ interface ReviewFormProps {
 export function ReviewForm({ bookId, existingReview }: ReviewFormProps) {
   const [rating, setRating] = useState(existingReview?.rating ?? 0)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const {
@@ -56,7 +56,6 @@ export function ReviewForm({ bookId, existingReview }: ReviewFormProps) {
     }
 
     setErrorMsg(null)
-    setSuccessMsg(null)
 
     startTransition(async () => {
       const payload = {
@@ -71,8 +70,9 @@ export function ReviewForm({ bookId, existingReview }: ReviewFormProps) {
 
       if ("error" in result) {
         setErrorMsg(result.error)
+        toast.error(result.error)
       } else {
-        setSuccessMsg(isEditing ? "Review updated!" : "Review submitted!")
+        toast.success(isEditing ? "Review updated!" : "Review submitted!")
         if (!isEditing) {
           reset()
           setRating(0)
@@ -118,10 +118,6 @@ export function ReviewForm({ bookId, existingReview }: ReviewFormProps) {
 
       {errorMsg && errorMsg !== "Please select a star rating" && (
         <p className="text-sm text-destructive">{errorMsg}</p>
-      )}
-
-      {successMsg && (
-        <p className="text-sm text-green-600 dark:text-green-400">{successMsg}</p>
       )}
 
       <Button type="submit" disabled={isPending} className="self-start">

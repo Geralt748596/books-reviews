@@ -5,6 +5,7 @@ import { suggestCharacters, addCharacter } from "@/lib/actions/characters"
 import type { CharacterSuggestion } from "@/lib/openai"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { toast } from "sonner"
 
 interface CharacterSuggestionsProps {
   bookId: string
@@ -50,6 +51,7 @@ export function CharacterSuggestions({ bookId, onCharacterAdded }: CharacterSugg
 
     if ("character" in result) {
       setAddedNames((prev) => new Set(prev).add(key))
+      toast.success("Character added!")
       onCharacterAdded?.()
     } else if ("error" in result) {
       // If character already exists, mark it as added too
@@ -57,6 +59,7 @@ export function CharacterSuggestions({ bookId, onCharacterAdded }: CharacterSugg
         setAddedNames((prev) => new Set(prev).add(key))
       } else {
         setErrorMsg(result.error)
+        toast.error(result.error)
       }
     }
   }

@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { toast } from "sonner"
 
 interface ImageGeneratorProps {
   bookId: string
@@ -41,8 +42,10 @@ export function ImageGenerator({ bookId, characters }: ImageGeneratorProps) {
 
       if ("error" in result) {
         setError(result.error)
+        toast.error(result.error)
       } else {
         setPreview(result.image)
+        toast.success("Image generated!")
         router.refresh()
       }
     })

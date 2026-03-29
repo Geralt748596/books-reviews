@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { DarkModeToggle } from "@/components/dark-mode-toggle"
 import { UserNav } from "@/components/user-nav"
+import { MainNav } from "@/components/main-nav"
 
 export default function MainLayout({
   children,
@@ -9,20 +10,13 @@ export default function MainLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto flex h-14 items-center px-4">
           <div className="flex flex-1 items-center gap-6">
             <Link href="/" className="text-lg font-bold">
               Books Reviews
             </Link>
-            <nav className="flex items-center gap-4 text-sm">
-              <Link href="/search" className="text-muted-foreground transition-colors hover:text-foreground">
-                Search
-              </Link>
-              <Link href="/gallery" className="text-muted-foreground transition-colors hover:text-foreground">
-                Gallery
-              </Link>
-            </nav>
+            <MainNav />
           </div>
           <div className="flex items-center gap-2">
             <DarkModeToggle />
