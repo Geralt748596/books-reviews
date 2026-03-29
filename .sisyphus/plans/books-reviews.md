@@ -198,7 +198,7 @@ Wave FINAL (Verification — after ALL tasks):
 
 ## TODOs
 
-- [ ] 1. Project Foundation — Prisma, shadcn/ui, Environment, Dependencies
+- [x] 1. Project Foundation — Prisma, shadcn/ui, Environment, Dependencies
 
   **What to do**:
   - Read `node_modules/next/dist/docs/01-app/01-getting-started/` to understand Next.js 16 conventions BEFORE writing any code

@@ -16,3 +16,18 @@
 - Prisma singleton via globalThis required for hot reload safety
 - OpenAI image URLs expire — always use b64_json and upload to Vercel Blob
 - gpt-image-1 for images, gpt-4o-mini for character text extraction
+
+## [2026-03-29] Task 1 Learnings: Prisma v7 Breaking Changes
+- Prisma installed is v7.6.0 (NOT v5/v6 as expected)
+- prisma init generates prisma.config.ts (new in v7) with datasource.url
+- schema.prisma datasource MUST NOT have `url` field in v7 (P1012 error if present)
+- `generator client` uses `provider = "prisma-client-js"` NOT `provider = "prisma-client"`
+- Connection URL is configured in prisma.config.ts (already has `process.env["DATABASE_URL"]`)
+- `new PrismaClient()` with no args works in v7 — URL comes from prisma.config.ts at runtime
+- `datasourceUrl` property does NOT exist on PrismaClientOptions in v7
+- lib/db.ts: use plain `new PrismaClient()` — no constructor args needed
+- shadcn init -d now defaults to "base-nova" style (not "default" or "new-york")
+- globals.css is now fully replaced by shadcn init (adds @import "shadcn/tailwind.css", @custom-variant dark, etc.)
+- components.json has `"config": ""` (blank) for Tailwind v4 — correct
+- pnpm approve-builds needed for some packages (msw) but doesn't block install
+- ALL prisma operations must use: npx prisma generate (no migrate yet — no real DB)
