@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "openai-docs": {
+      "source": "openai/skills",
+      "sourceType": "github",
+      "computedHash": "7c0cb31b80f601a4394449bf27bc865a9ff31cd0daaa1088a017fdb57b7ae306"
+    },
     "prisma-database-setup": {
       "source": "prisma/skills",
       "sourceType": "github",
