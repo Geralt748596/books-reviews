@@ -1,0 +1,9 @@
+# Environment variables example — copy to .env and fill in real values
+
+DATABASE_URL=""
+BETTER_AUTH_SECRET=""
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+OPENAI_API_KEY=""
+BLOB_READ_WRITE_TOKEN=""
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
