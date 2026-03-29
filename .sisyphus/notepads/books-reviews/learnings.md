@@ -88,7 +88,15 @@
 - **Star rating button**: Using `<button type="button">` prevents accidental form submission when stars are inside a form. Always set `type="button"` on non-submit buttons inside forms.
 - **Server component ReviewList**: Fetches data directly via server action function (not HTTP), passes data down to client ReviewCard components. Pattern: Server fetches → Client renders interactivity.
 
-## [2026-03-29] Task 10 Learnings: Image Gallery
+## [2026-03-29] Task 11 Learnings: Auth Guards + Protected Routes + UX Polish
+- **proxy.ts at project root**: Next.js 16 uses `proxy.ts` (NOT `middleware.ts`) with `export function proxy()`. Build output shows `ƒ Proxy (Middleware)` confirming it's recognized.
+- **getSessionCookie import**: `import { getSessionCookie } from "better-auth/cookies"` — used for lightweight cookie-based auth check in proxy without hitting DB.
+- **sonner 2.0.7**: `import { toast } from "sonner"` for toast calls, `import { Toaster } from "sonner"` for the provider. Add `<Toaster />` inside ThemeProvider in root layout.
+- **Removing inline success state**: When adding sonner toasts, remove the `successMsg` state entirely — toasts replace the inline success messages, keeping the component cleaner.
+- **Active nav with usePathname()**: Extract nav to `components/main-nav.tsx` as `"use client"` component using `usePathname()` from `next/navigation`. Apply `text-foreground font-medium` when active, `text-muted-foreground` otherwise. Use `pathname.startsWith(href + "/")` to also highlight parent routes.
+- **Landing page as server component**: `app/page.tsx` checks session via `auth.api.getSession({ headers: await headers() })` and either `redirect('/search')` or renders landing content. No layout needed — standalone page.
+- **Button render prop for Link**: `<Button render={<Link href="/login" />}>Sign in with Google</Button>` for base-nova shadcn button as a link in server components.
+
 - Built a gallery view showing `GeneratedImage` items from Prisma.
 - Reused `<img>` over `next/image` to simplify external blob URL loading, avoiding Vercel Blob hostname configuration in `next.config.ts`.
 - Implemented `searchParams` awaiting which is mandatory in Next.js 16.

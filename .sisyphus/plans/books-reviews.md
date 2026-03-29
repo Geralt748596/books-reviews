@@ -1287,7 +1287,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `lib/actions/gallery.ts`, `app/(main)/gallery/page.tsx`, `components/gallery-card.tsx`, `components/gallery-modal.tsx`, `app/(main)/layout.tsx` (updated nav)
   - Pre-commit: `pnpm build`
 
-- [ ] 11. Auth Guards + Protected Routes + UX Polish
+- [x] 11. Auth Guards + Protected Routes + UX Polish
 
   **What to do**:
   - Read `node_modules/next/dist/docs/` for proxy.ts conventions in Next.js 16
