@@ -2,8 +2,20 @@
   "active_plan": "/Users/qcm/Desktop/per/books-reviews/.sisyphus/plans/books-reviews.md",
   "started_at": "2026-03-29T15:33:47.777Z",
   "session_ids": [
-    "ses_2c5edda8dffeJV6fLzfWdTgF4T"
+    "ses_2c5edda8dffeJV6fLzfWdTgF4T",
+    "ses_2c5b42495ffeb8hjHBzbJSbOfT"
   ],
   "plan_name": "books-reviews",
-  "agent": "atlas"
+  "agent": "atlas",
+  "task_sessions": {
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_2c5b42495ffeb8hjHBzbJSbOfT",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "updated_at": "2026-03-29T15:57:22.432Z"
+    }
+  }
 }
