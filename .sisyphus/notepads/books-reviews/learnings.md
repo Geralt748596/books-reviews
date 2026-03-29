@@ -56,3 +56,16 @@
 - Build routes: `/search` renders as static (○), `/api/books/search` as dynamic (ƒ) — correct
 - `lib/actions/` directory created for server actions, imported in future tasks
 - Skeleton cards: use `h-full` on Card + outer Link for consistent card heights in grid
+
+- **Next.js 16 async params**: In App Router, `params` are Promises. Must use `await params` inside Server Components, e.g., `const { id } = await params`. Do not access `params.id` synchronously.
+- **Graceful degradation**: When an action like saving a book to DB can fail (e.g., due to no connection or fake env vars), wrap it in a try/catch block and ignore the error so the page renders normally.
+
+## [2026-03-29] Task 7 Learnings: Reviews CRUD
+- **Zod v4 breaking change**: `ZodError.errors` property no longer exists. `error.message` is a JSON string of issues array. Parse with `JSON.parse(error.message)` to get `[{ message, code, path }]`.
+- **Server action error pattern**: Return `{ error: string }` for failures, `{ review }` or `{ success: true }` for success. Never throw from server actions — return serializable objects only.
+- **Prisma P2002 unique violation**: Catch with `error.code === 'P2002'` for unique constraint violations (one review per user per book).
+- **Book ID vs Google Books ID**: `saveBookToDb` returns Book with `id` (cuid). The book detail page must capture its return value (`dbBook`) and use `dbBook.id` as the `bookId` for ReviewList, NOT the URL param `id` (which is the Google Books volume ID).
+- **Promise.all for parallel fetches**: `getBook(id)` and `auth.api.getSession()` are independent — fetch in parallel with `Promise.all`.
+- **ReviewCard edit mode**: Use local `useState(false)` to toggle between display mode and inline edit (renders ReviewForm with existingReview). No router needed.
+- **Star rating button**: Using `<button type="button">` prevents accidental form submission when stars are inside a form. Always set `type="button"` on non-submit buttons inside forms.
+- **Server component ReviewList**: Fetches data directly via server action function (not HTTP), passes data down to client ReviewCard components. Pattern: Server fetches → Client renders interactivity.

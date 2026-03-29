@@ -1,5 +1,8 @@
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
 import { getBook } from "@/lib/google-books"
 import { saveBookToDb } from "@/lib/actions/books"
+import { ReviewList } from "@/components/review-list"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -12,7 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function BookPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const volume = await getBook(id)
+  const [volume, session] = await Promise.all([
+    getBook(id),
+    auth.api.getSession({ headers: await headers() }),
+  ])
 
   if (!volume) {
     return (
@@ -23,9 +29,10 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
     )
   }
 
+  let dbBook: { id: string } | null = null
   try {
-    await saveBookToDb(volume)
-  } catch (error) {
+    dbBook = await saveBookToDb(volume)
+  } catch {
     // Ignore DB errors to ensure page renders
   }
 
@@ -94,9 +101,16 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
         
         <Card className="mt-6 p-6 min-h-[300px]">
           <TabsContent value="reviews" className="mt-0">
-            <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-              Reviews coming soon
-            </div>
+            {dbBook ? (
+              <ReviewList
+                bookId={dbBook.id}
+                currentUserId={session?.user?.id}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
+                Reviews unavailable
+              </div>
+            )}
           </TabsContent>
           <TabsContent value="characters" className="mt-0">
             <div className="flex h-full items-center justify-center text-muted-foreground py-12">

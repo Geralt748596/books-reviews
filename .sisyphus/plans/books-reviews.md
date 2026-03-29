@@ -713,7 +713,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `lib/google-books.ts`, `app/api/books/search/route.ts`, `app/(main)/search/page.tsx`, `lib/actions/books.ts`
   - Pre-commit: `pnpm build`
 
-- [ ] 6. Book Detail Page — Metadata, Save to DB, Tabs Structure
+- [x] 6. Book Detail Page — Metadata, Save to DB, Tabs Structure
 
   **What to do**:
   - Create `app/(main)/book/[id]/page.tsx` — dynamic book detail page:
