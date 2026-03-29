@@ -910,7 +910,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `lib/actions/reviews.ts`, `components/review-form.tsx`, `components/review-card.tsx`, `components/review-list.tsx`, `app/(main)/book/[id]/page.tsx` (updated)
   - Pre-commit: `pnpm build`
 
-- [ ] 8. Character Management — AI Extraction + Manual CRUD
+- [x] 8. Character Management — AI Extraction + Manual CRUD
 
   **What to do**:
   - Create `lib/openai.ts` — OpenAI client singleton:

@@ -70,7 +70,15 @@
 - **Server component CharacterList**: Same pattern as ReviewList — server fetches data, passes to client components.
 - **CharacterSuggestions**: Uses `useTransition` for the suggest action + local `Set` state to track which items have been added, providing optimistic UI without full re-render.
 
-## [2026-03-29] Task 7 Learnings: Reviews CRUD
+## [2026-03-29] Task 9 Learnings: OpenAI Image Generation + Vercel Blob Storage
+- **gpt-image-1 API**: Never pass `response_format` param — unsupported, causes API error. Model always returns b64_json. Access via `response.data[0].b64_json`. Revised prompt is at `response.data[0].revised_prompt` (may be undefined).
+- **TypeScript optional chain on possibly-undefined array**: `response.data` is typed as possibly undefined — must use `const data = response.data ?? []` before indexing.
+- **Vercel Blob**: `put(path, buffer, { access: "public", contentType: "image/png" })` returns `{ url }`. Import: `import { put } from "@vercel/blob"`.
+- **Type assignment vs cast**: For Prisma return types, `const x: Type[] = prismaResult` is cleaner than `prismaResult as Promise<Type[]>` — avoids TS errors on element access in JSX.
+- **Daily limit pattern**: `today.setHours(0,0,0,0)` to get start of day, then `prisma.model.count({ where: { createdAt: { gte: today } } })`.
+- **AiImagesTab as inline server component**: Defined in same file as page, fetches its own data (images + characters) with `Promise.all`. Keeps page file self-contained without needing a separate file.
+- **ImageGenerator**: Uses `useTransition` + `startTransition(async () => {...})` for server action calls. `router.refresh()` after success to trigger server component re-render.
+
 - **Zod v4 breaking change**: `ZodError.errors` property no longer exists. `error.message` is a JSON string of issues array. Parse with `JSON.parse(error.message)` to get `[{ message, code, path }]`.
 - **Server action error pattern**: Return `{ error: string }` for failures, `{ review }` or `{ success: true }` for success. Never throw from server actions — return serializable objects only.
 - **Prisma P2002 unique violation**: Catch with `error.code === 'P2002'` for unique constraint violations (one review per user per book).

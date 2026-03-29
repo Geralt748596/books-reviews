@@ -12,6 +12,48 @@ export interface CharacterSuggestion {
   description: string
 }
 
+export function buildImagePrompt(
+  bookTitle: string,
+  characterName?: string,
+  characterDescription?: string,
+  userAddition?: string
+): string {
+  let prompt: string
+  if (characterName) {
+    prompt = `An artistic illustration of ${characterName} from the book "${bookTitle}".`
+    if (characterDescription) prompt += ` ${characterDescription}.`
+    prompt += " Style: digital art, character portrait, book illustration."
+  } else {
+    prompt = `An artistic illustration representing the book "${bookTitle}". Style: digital art, book cover aesthetic.`
+  }
+  if (userAddition?.trim()) {
+    prompt += ` Additional details: ${userAddition.trim()}`
+  }
+  return prompt
+}
+
+export async function generateImage(
+  prompt: string
+): Promise<{ base64: string; revisedPrompt: string }> {
+  const response = await openai.images.generate({
+    model: "gpt-image-1",
+    prompt,
+    size: "1024x1024",
+    quality: "medium",
+  })
+
+  const data = response.data ?? []
+  const b64 = data[0]?.b64_json
+  if (!b64) {
+    throw new Error("No image data returned from OpenAI")
+  }
+
+  return {
+    base64: b64,
+    revisedPrompt: (data[0] as { revised_prompt?: string }).revised_prompt ?? prompt,
+  }
+}
+
 export async function extractCharacters(
   bookTitle: string,
   bookDescription: string

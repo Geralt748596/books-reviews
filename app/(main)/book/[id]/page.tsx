@@ -4,14 +4,71 @@ import { getBook } from "@/lib/google-books"
 import { saveBookToDb } from "@/lib/actions/books"
 import { ReviewList } from "@/components/review-list"
 import { CharacterList } from "@/components/character-list"
+import { ImageGenerator } from "@/components/image-generator"
+import { ImageCard } from "@/components/image-card"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { prisma } from "@/lib/db"
+import type { GeneratedImageWithRelations } from "@/lib/actions/images"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const volume = await getBook(id)
   return { title: volume?.volumeInfo.title ?? "Book Details" }
+}
+
+interface AiImagesTabProps {
+  bookId: string
+}
+
+async function AiImagesTab({ bookId }: AiImagesTabProps) {
+  const [rawImages, characters] = await Promise.all([
+    prisma.generatedImage.findMany({
+      where: { bookId },
+      include: {
+        user: { select: { name: true, image: true } },
+        character: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.character.findMany({
+      where: { bookId },
+      select: { id: true, name: true },
+      orderBy: { createdAt: "asc" },
+    }),
+  ])
+  const images: GeneratedImageWithRelations[] = rawImages
+
+  return (
+    <div className="flex flex-col gap-6">
+      <ImageGenerator bookId={bookId} characters={characters} />
+
+      {images.length > 0 && (
+        <>
+          <Separator />
+          <div className="flex flex-col gap-3">
+            <h4 className="font-medium text-sm">
+              Generated Images{" "}
+              <span className="text-muted-foreground font-normal">({images.length})</span>
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {images.map((image) => (
+                <ImageCard key={image.id} image={image} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {images.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-8 text-muted-foreground gap-2">
+          <p className="text-sm">No AI images yet. Generate one above!</p>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default async function BookPage({ params }: { params: Promise<{ id: string }> }) {
@@ -123,9 +180,13 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             )}
           </TabsContent>
           <TabsContent value="ai-images" className="mt-0">
-            <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-              AI Images coming soon
-            </div>
+            {dbBook ? (
+              <AiImagesTab bookId={dbBook.id} />
+            ) : (
+              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
+                AI Images unavailable
+              </div>
+            )}
           </TabsContent>
         </Card>
       </Tabs>
