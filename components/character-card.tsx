@@ -10,9 +10,10 @@ import { Card, CardContent } from "@/components/ui/card"
 interface CharacterCardProps {
   character: CharacterWithCreator
   currentUserId?: string
+  onGenerateImage?: (characterId: string) => void
 }
 
-export function CharacterCard({ character, currentUserId }: CharacterCardProps) {
+export function CharacterCard({ character, currentUserId, onGenerateImage }: CharacterCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -76,27 +77,39 @@ export function CharacterCard({ character, currentUserId }: CharacterCardProps) 
           </span>
           {errorMsg && <p className="text-xs text-destructive">{errorMsg}</p>}
         </div>
-        {isOwner && (
-          <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+          {onGenerateImage && (
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={() => setIsEditing(true)}
+              onClick={() => onGenerateImage(character.id)}
             >
-              Edit
+              🎨 Generate Image
             </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
-          </div>
-        )}
+          )}
+          {isOwner && (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </>
+          )}
+        </div>
       </CardContent>
     </Card>
   )

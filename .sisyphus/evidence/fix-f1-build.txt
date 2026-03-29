@@ -1,0 +1,42 @@
+Fix F1 Build Evidence
+=====================
+Date: 2026-03-29
+
+## Build Result
+pnpm build passed successfully with Next.js 16.2.1
+
+## Changes Made
+
+### Fix 1: components/ui/form.tsx
+- Created manually (shadcn base-nova registry has no files for form component)
+- Implements: Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, useFormField
+- Uses react-hook-form (already installed: react-hook-form@7.72.0, @hookform/resolvers@5.2.2)
+- Uses local Label component (no @radix-ui/react-label dependency)
+
+### Fix 2: Average rating + review count in book header
+- app/(main)/book/[id]/page.tsx updated
+- Fetches prisma.review.aggregate({ _avg: { rating }, _count: { id } }) after dbBook is set
+- Displays star rating, numeric average, and review count below authors in book header
+- Only shown when reviewStats._count.id > 0
+
+### Fix 3: "Generate Image" button on CharacterCard
+- components/character-card.tsx: added onGenerateImage?: (characterId: string) => void prop
+  - Renders "🎨 Generate Image" button when prop is provided
+- components/character-list-client.tsx: new "use client" component
+  - Uses useRouter + useSearchParams to navigate to ?tab=ai-images&character={id}
+  - Extracted from CharacterList to allow client-side interactivity
+- components/character-list.tsx: refactored to use CharacterListClient
+- components/image-generator.tsx: reads ?character= URL param via useSearchParams
+  - Sets characterId initial state from URL params
+  - useEffect syncs when searchParams change
+- components/book-tabs.tsx: new "use client" component
+  - Reads ?tab= URL param via useSearchParams to control active tab
+  - Accepts content slots as ReactNode props (reviewsContent, charactersContent, aiImagesContent)
+- app/(main)/book/[id]/page.tsx: uses BookTabs instead of inline Tabs
+  - Wraps BookTabs in <Suspense> (required for useSearchParams)
+
+## Build Output
+Route (app)
+- ƒ /book/[id] — Dynamic, server-rendered on demand
+- All other routes passing
+TypeScript: ✓ Finished in 2.8s

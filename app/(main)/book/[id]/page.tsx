@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 import { getBook } from "@/lib/google-books"
@@ -6,8 +7,8 @@ import { ReviewList } from "@/components/review-list"
 import { CharacterList } from "@/components/character-list"
 import { ImageGenerator } from "@/components/image-generator"
 import { ImageCard } from "@/components/image-card"
+import { BookTabs } from "@/components/book-tabs"
 import { Card } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { prisma } from "@/lib/db"
@@ -94,6 +95,14 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
     // Ignore DB errors to ensure page renders
   }
 
+  const reviewStats = dbBook
+    ? await prisma.review.aggregate({
+        where: { bookId: dbBook.id },
+        _avg: { rating: true },
+        _count: { id: true },
+      })
+    : null
+
   const info = volume.volumeInfo
   const authors = info.authors?.join(", ") || "Unknown Author"
   
@@ -101,6 +110,12 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
   if (thumbnailUrl.startsWith("http://")) {
     thumbnailUrl = thumbnailUrl.replace("http://", "https://")
   }
+
+  const unavailableContent = (
+    <div className="flex h-full items-center justify-center text-muted-foreground py-12">
+      Unavailable
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-8">
@@ -125,6 +140,17 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
               <h1 className="text-3xl font-bold leading-tight">{info.title}</h1>
               <p className="text-xl text-muted-foreground mt-1">{authors}</p>
             </div>
+
+            {reviewStats && reviewStats._count.id > 0 && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{"★".repeat(Math.round(reviewStats._avg.rating ?? 0))}</span>
+                <span>{(reviewStats._avg.rating ?? 0).toFixed(1)}</span>
+                <span>
+                  ({reviewStats._count.id}{" "}
+                  {reviewStats._count.id === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            )}
             
             <div className="flex flex-wrap gap-2 items-center">
               {info.publishedDate && (
@@ -150,46 +176,25 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
         </div>
       </Card>
 
-      <Tabs defaultValue="reviews" className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-grid">
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
-          <TabsTrigger value="characters">Characters</TabsTrigger>
-          <TabsTrigger value="ai-images">AI Images</TabsTrigger>
-        </TabsList>
-        
-        <Card className="mt-6 p-6 min-h-[300px]">
-          <TabsContent value="reviews" className="mt-0">
-            {dbBook ? (
-              <ReviewList
-                bookId={dbBook.id}
-                currentUserId={session?.user?.id}
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-                Reviews unavailable
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="characters" className="mt-0">
-            {dbBook ? (
+      <Suspense>
+        <BookTabs
+          dbBookAvailable={!!dbBook}
+          reviewsContent={
+            dbBook ? (
+              <ReviewList bookId={dbBook.id} currentUserId={session?.user?.id} />
+            ) : unavailableContent
+          }
+          charactersContent={
+            dbBook ? (
               <CharacterList bookId={dbBook.id} currentUserId={session?.user?.id} />
-            ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-                Characters unavailable
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="ai-images" className="mt-0">
-            {dbBook ? (
-              <AiImagesTab bookId={dbBook.id} />
-            ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-                AI Images unavailable
-              </div>
-            )}
-          </TabsContent>
-        </Card>
-      </Tabs>
+            ) : unavailableContent
+          }
+          aiImagesContent={
+            dbBook ? <AiImagesTab bookId={dbBook.id} /> : unavailableContent
+          }
+          unavailableContent={unavailableContent}
+        />
+      </Suspense>
     </div>
   )
 }

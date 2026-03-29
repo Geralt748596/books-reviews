@@ -1,5 +1,5 @@
 import { getBookCharacters } from "@/lib/actions/characters"
-import { CharacterCard } from "@/components/character-card"
+import { CharacterListClient } from "@/components/character-list-client"
 import { CharacterForm } from "@/components/character-form"
 import { CharacterSuggestions } from "@/components/character-suggestions"
 import { Separator } from "@/components/ui/separator"
@@ -48,22 +48,10 @@ export async function CharacterList({ bookId, currentUserId }: CharacterListProp
       )}
 
       {/* Characters list */}
-      {characters.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 text-muted-foreground gap-2">
-          <p className="text-lg">No characters yet</p>
-          <p className="text-sm">Add one or use AI suggestions!</p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {characters.map((character) => (
-            <CharacterCard
-              key={character.id}
-              character={character}
-              currentUserId={currentUserId}
-            />
-          ))}
-        </div>
-      )}
+      <CharacterListClient
+        characters={characters}
+        currentUserId={currentUserId}
+      />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useTransition, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { generateBookImage } from "@/lib/actions/images"
 import type { GeneratedImageWithRelations } from "@/lib/actions/images"
 import { Button } from "@/components/ui/button"
@@ -19,15 +19,26 @@ import { toast } from "sonner"
 interface ImageGeneratorProps {
   bookId: string
   characters: { id: string; name: string }[]
+  defaultCharacterId?: string
 }
 
-export function ImageGenerator({ bookId, characters }: ImageGeneratorProps) {
+export function ImageGenerator({ bookId, characters, defaultCharacterId }: ImageGeneratorProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const [characterId, setCharacterId] = useState<string | null>(null)
+  const [characterId, setCharacterId] = useState<string | null>(() => {
+    return searchParams.get("character") ?? defaultCharacterId ?? null
+  })
   const [userPrompt, setUserPrompt] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<GeneratedImageWithRelations | null>(null)
+
+  useEffect(() => {
+    const charFromUrl = searchParams.get("character")
+    if (charFromUrl) {
+      setCharacterId(charFromUrl)
+    }
+  }, [searchParams])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
