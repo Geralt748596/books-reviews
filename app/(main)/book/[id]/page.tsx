@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { getBook } from "@/lib/google-books"
 import { saveBookToDb } from "@/lib/actions/books"
 import { ReviewList } from "@/components/review-list"
+import { CharacterList } from "@/components/character-list"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -113,9 +114,13 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             )}
           </TabsContent>
           <TabsContent value="characters" className="mt-0">
-            <div className="flex h-full items-center justify-center text-muted-foreground py-12">
-              Characters coming soon
-            </div>
+            {dbBook ? (
+              <CharacterList bookId={dbBook.id} currentUserId={session?.user?.id} />
+            ) : (
+              <div className="flex h-full items-center justify-center text-muted-foreground py-12">
+                Characters unavailable
+              </div>
+            )}
           </TabsContent>
           <TabsContent value="ai-images" className="mt-0">
             <div className="flex h-full items-center justify-center text-muted-foreground py-12">

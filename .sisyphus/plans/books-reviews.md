@@ -797,7 +797,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `app/(main)/book/[id]/page.tsx`, `app/(main)/book/[id]/layout.tsx`
   - Pre-commit: `pnpm build`
 
-- [ ] 7. Reviews CRUD — Star Rating, Server Actions, UI Components
+- [x] 7. Reviews CRUD — Star Rating, Server Actions, UI Components
 
   **What to do**:
   - Read `node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md` for Server Action patterns in Next.js 16

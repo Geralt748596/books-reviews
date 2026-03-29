@@ -5,7 +5,8 @@
     "ses_2c5edda8dffeJV6fLzfWdTgF4T",
     "ses_2c5b42495ffeb8hjHBzbJSbOfT",
     "ses_2c5ad1ef3ffeZrr2qQcZRsvzig",
-    "ses_2c5a50d5dffevGo7RzoCntV2n6"
+    "ses_2c5a50d5dffevGo7RzoCntV2n6",
+    "ses_2c5a12c37ffeQR1iL66xk1ewji"
   ],
   "plan_name": "books-reviews",
   "agent": "atlas",
@@ -14,10 +15,10 @@
       "task_key": "final-wave:f1",
       "task_label": "F1",
       "task_title": "**Plan Compliance Audit** — `oracle`",
-      "session_id": "ses_2c5a50d5dffevGo7RzoCntV2n6",
+      "session_id": "ses_2c5a12c37ffeQR1iL66xk1ewji",
       "agent": "Sisyphus-Junior",
-      "category": "visual-engineering",
-      "updated_at": "2026-03-29T16:11:46.964Z"
+      "category": "unspecified-high",
+      "updated_at": "2026-03-29T16:17:42.448Z"
     }
   }
 }

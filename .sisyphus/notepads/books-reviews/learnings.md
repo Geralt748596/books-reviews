@@ -60,6 +60,16 @@
 - **Next.js 16 async params**: In App Router, `params` are Promises. Must use `await params` inside Server Components, e.g., `const { id } = await params`. Do not access `params.id` synchronously.
 - **Graceful degradation**: When an action like saving a book to DB can fail (e.g., due to no connection or fake env vars), wrap it in a try/catch block and ignore the error so the page renders normally.
 
+## [2026-03-29] Task 8 Learnings: Character Management
+- **OpenAI client singleton**: Same globalThis pattern as Prisma for hot reload safety in dev.
+- **JSON mode**: Use `response_format: { type: "json_object" }` AND explicitly mention JSON in the system prompt — both required.
+- **gpt-4o-mini**: Use for character text extraction (cost-efficient), NOT gpt-4.
+- **Server action return early with empty array**: When book has no description for AI extraction, return `[]` (not `{ error }`) — client handles both gracefully.
+- **Case-insensitive duplicate check**: `prisma.character.findFirst({ where: { name: { equals: name, mode: 'insensitive' } } })` for Postgres case-insensitive matching.
+- **Client component CharacterCard**: Using `"use client"` for edit toggle (useState) is simpler than splitting into server/client parts.
+- **Server component CharacterList**: Same pattern as ReviewList — server fetches data, passes to client components.
+- **CharacterSuggestions**: Uses `useTransition` for the suggest action + local `Set` state to track which items have been added, providing optimistic UI without full re-render.
+
 ## [2026-03-29] Task 7 Learnings: Reviews CRUD
 - **Zod v4 breaking change**: `ZodError.errors` property no longer exists. `error.message` is a JSON string of issues array. Parse with `JSON.parse(error.message)` to get `[{ message, code, path }]`.
 - **Server action error pattern**: Return `{ error: string }` for failures, `{ review }` or `{ success: true }` for success. Never throw from server actions — return serializable objects only.
