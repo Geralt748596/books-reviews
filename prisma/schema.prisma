@@ -21,6 +21,9 @@ model User {
 
   sessions  Session[]
   accounts  Account[]
+  reviews         Review[]
+  characters      Character[]
+  generatedImages GeneratedImage[]
 
   @@map("user")
 }
@@ -67,4 +70,76 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Book {
+  id            String   @id @default(cuid())
+  googleBooksId String   @unique
+  title         String
+  authors       String   // comma-separated list
+  description   String?
+  thumbnailUrl  String?
+  language      String?
+  publishedDate String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reviews         Review[]
+  characters      Character[]
+  generatedImages GeneratedImage[]
+
+  @@index([googleBooksId])
+  @@index([title])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5
+  title     String?
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([bookId, createdAt])
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  bookId      String
+  book        Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  generatedImages GeneratedImage[]
+
+  @@index([bookId])
+  @@index([name])
+}
+
+model GeneratedImage {
+  id        String   @id @default(cuid())
+  prompt    String
+  blobUrl   String
+  createdAt DateTime @default(now())
+
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  characterId String?
+  character   Character? @relation(fields: [characterId], references: [id], onDelete: SetNull)
+
+  @@index([bookId])
+  @@index([characterId])
+  @@index([userId])
 }

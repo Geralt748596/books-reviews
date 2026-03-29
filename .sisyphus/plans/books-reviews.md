@@ -299,7 +299,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `prisma/schema.prisma`, `lib/db.ts`, `components.json`, `components/ui/*`, `next.config.ts`, `app/globals.css`, `.env.example`, `package.json`, `pnpm-lock.yaml`
   - Pre-commit: `pnpm build`
 
-- [ ] 2. Authentication — better-auth with Google OAuth + Prisma Adapter (ОТДЕЛЬНЫЙ ПУНКТ)
+- [x] 2. Authentication — better-auth with Google OAuth + Prisma Adapter (ОТДЕЛЬНЫЙ ПУНКТ)
 
   **What to do**:
   - Read `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md` for Next.js 16 route handler conventions
