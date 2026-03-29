@@ -421,7 +421,7 @@ Wave FINAL (Verification — after ALL tasks):
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
-- [ ] 3. Prisma Schema — Book, Review, Character, GeneratedImage Models
+- [x] 3. Prisma Schema — Book, Review, Character, GeneratedImage Models
 
   **What to do**:
   - Add application models to `prisma/schema.prisma` (after better-auth models from T2):

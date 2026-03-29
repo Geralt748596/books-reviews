@@ -45,3 +45,5 @@
 - Schema must NOT have forward references to models not yet defined (T3 models must wait)
 - Prisma v5 generate works fine with v5 schema format (url in datasource)
 - pnpm approve-builds needed for @prisma/client, @prisma/engines, prisma packages
+- **Base UI Button Composition**: When using the new base-nova shadcn style that uses `@base-ui/react`, the `Button` component uses a `render` prop instead of `@radix-ui/react-slot`'s `asChild`. Example: `<Button render={<Link href="/search" />}>Search</Button>`.
+- **Client module imports in RSC**: `buttonVariants` exported from `components/ui/button.tsx` (a `"use client"` module) cannot be used in a Server Component. Wrap with a client component or use the standard `Button` with `render` prop.
