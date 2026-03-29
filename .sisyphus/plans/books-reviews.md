@@ -602,7 +602,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `app/layout.tsx`, `app/(main)/layout.tsx`, `components/theme-provider.tsx`, `components/dark-mode-toggle.tsx`, `components/user-nav.tsx`
   - Pre-commit: `pnpm build`
 
-- [ ] 5. Google Books Search — API Proxy + Search UI
+- [x] 5. Google Books Search — API Proxy + Search UI
 
   **What to do**:
   - Read `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md` for Next.js 16 route handler conventions

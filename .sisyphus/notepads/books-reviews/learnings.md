@@ -47,3 +47,12 @@
 - pnpm approve-builds needed for @prisma/client, @prisma/engines, prisma packages
 - **Base UI Button Composition**: When using the new base-nova shadcn style that uses `@base-ui/react`, the `Button` component uses a `render` prop instead of `@radix-ui/react-slot`'s `asChild`. Example: `<Button render={<Link href="/search" />}>Search</Button>`.
 - **Client module imports in RSC**: `buttonVariants` exported from `components/ui/button.tsx` (a `"use client"` module) cannot be used in a Server Component. Wrap with a client component or use the standard `Button` with `render` prop.
+
+## [2026-03-29] Task 5 Learnings: Google Books Search
+- Route handlers: use `new URL(request.url).searchParams` — no async issues, clean and simple
+- @base-ui/react Select `onValueChange` receives `string | null`, not `string` — handle null explicitly: `(v) => setLang(v ?? "en")`
+- FormattedBook type exported from route.ts and imported in page.tsx client component — works fine
+- `<img>` (not next/image) used for Google Books thumbnails — no domain config needed
+- Build routes: `/search` renders as static (○), `/api/books/search` as dynamic (ƒ) — correct
+- `lib/actions/` directory created for server actions, imported in future tasks
+- Skeleton cards: use `h-full` on Card + outer Link for consistent card heights in grid
