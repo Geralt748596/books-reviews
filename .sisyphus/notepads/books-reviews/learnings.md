@@ -87,3 +87,9 @@
 - **ReviewCard edit mode**: Use local `useState(false)` to toggle between display mode and inline edit (renders ReviewForm with existingReview). No router needed.
 - **Star rating button**: Using `<button type="button">` prevents accidental form submission when stars are inside a form. Always set `type="button"` on non-submit buttons inside forms.
 - **Server component ReviewList**: Fetches data directly via server action function (not HTTP), passes data down to client ReviewCard components. Pattern: Server fetches → Client renders interactivity.
+
+## [2026-03-29] Task 10 Learnings: Image Gallery
+- Built a gallery view showing `GeneratedImage` items from Prisma.
+- Reused `<img>` over `next/image` to simplify external blob URL loading, avoiding Vercel Blob hostname configuration in `next.config.ts`.
+- Implemented `searchParams` awaiting which is mandatory in Next.js 16.
+- Used the `render` prop for Button components when wrapping a `Link`, which is standard for shadcn's base-nova variant in server components where `buttonVariants` is not easily usable.

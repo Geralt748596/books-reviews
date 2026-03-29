@@ -499,7 +499,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `prisma/schema.prisma`, `prisma/migrations/*`
   - Pre-commit: `pnpm build`
 
-- [ ] 4. App Layout Shell — Navigation, Dark Mode, Theme Provider
+- [x] 4. App Layout Shell — Navigation, Dark Mode, Theme Provider
 
   **What to do**:
   - Read `node_modules/next/dist/docs/01-app/01-getting-started/` for layout conventions in Next.js 16
@@ -1030,7 +1030,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `lib/openai.ts`, `lib/actions/characters.ts`, `components/character-card.tsx`, `components/character-form.tsx`, `components/character-suggestions.tsx`, `app/(main)/book/[id]/page.tsx` (updated)
   - Pre-commit: `pnpm build`
 
-- [ ] 9. OpenAI Image Generation + Vercel Blob Storage
+- [x] 9. OpenAI Image Generation + Vercel Blob Storage
 
   **What to do**:
   - Add image generation function to `lib/openai.ts` (or create `lib/image-generation.ts`):
@@ -1159,7 +1159,7 @@ Wave FINAL (Verification — after ALL tasks):
   - Files: `lib/openai.ts` (updated), `lib/blob-storage.ts`, `lib/actions/images.ts`, `components/image-generator.tsx`, `app/(main)/book/[id]/page.tsx` (updated)
   - Pre-commit: `pnpm build`
 
-- [ ] 10. Image Gallery — Public Gallery with Search by Book and Character
+- [x] 10. Image Gallery — Public Gallery with Search by Book and Character
 
   **What to do**:
   - Create server actions in `lib/actions/gallery.ts`:
