@@ -1,0 +1,55 @@
+
+/Users/qcm/Desktop/per/books-reviews/app/(main)/book/[id]/page.tsx
+  126:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/qcm/Desktop/per/books-reviews/app/(main)/gallery/page.tsx
+  16:19  warning  'total' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/qcm/Desktop/per/books-reviews/components/book-tabs.tsx
+  31:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/qcm/Desktop/per/books-reviews/components/book-tabs.tsx:31:7
+  29 |     const tab = searchParams.get("tab")
+  30 |     if (tab) {
+> 31 |       setActiveTab(tab)
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |     }
+  33 |   }, [searchParams])
+  34 |  react-hooks/set-state-in-effect
+
+/Users/qcm/Desktop/per/books-reviews/components/gallery-card.tsx
+  27:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/qcm/Desktop/per/books-reviews/components/gallery-modal.tsx
+  29:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/qcm/Desktop/per/books-reviews/components/image-card.tsx
+  17:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/qcm/Desktop/per/books-reviews/components/image-generator.tsx
+   39:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/qcm/Desktop/per/books-reviews/components/image-generator.tsx:39:7
+  37 |     const charFromUrl = searchParams.get("character")
+  38 |     if (charFromUrl) {
+> 39 |       setCharacterId(charFromUrl)
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  40 |     }
+  41 |   }, [searchParams])
+  42 |  react-hooks/set-state-in-effect
+  112:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+
+✖ 8 problems (2 errors, 6 warnings)
+

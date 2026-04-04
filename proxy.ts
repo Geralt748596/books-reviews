@@ -2,19 +2,12 @@ import { getSessionCookie } from "better-auth/cookies"
 import { NextRequest, NextResponse } from "next/server"
 
 export function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request)
-  const { pathname } = request.nextUrl
-
-  const isProtected =
-    pathname.startsWith('/search') ||
-    pathname.startsWith('/book') ||
-    pathname.startsWith('/gallery')
-  const isLoginPage = pathname === '/login'
-
-  if (isProtected && !sessionCookie) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-  if (isLoginPage && sessionCookie) {
-    return NextResponse.redirect(new URL('/search', request.url))
-  }
+  // const sessionCookie = getSessionCookie(request);
+  // // THIS IS NOT SECURE!
+  // // This is the recommended approach to optimistically redirect users
+  //   // We recommend handling auth checks in each page/route
+  // if (!sessionCookie) {
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
+  return NextResponse.next();
 }

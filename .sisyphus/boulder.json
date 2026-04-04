@@ -13,7 +13,16 @@
     "ses_2c4f4ba69ffepzi3B9EFz3xIN2",
     "ses_2c4ea180dffeiTvQZ73jUjLjFo",
     "ses_2c4e9d013ffe69eH4fJLYuJezP",
-    "ses_2c4e99fc5ffeZZHebwao2AouAk"
+    "ses_2c4e99fc5ffeZZHebwao2AouAk",
+    "ses_2c4e4cb42ffemJhYE1GQEHgn6m",
+    "ses_2c4dd23bfffe0lCZlxdM9p2BXb",
+    "ses_2c4dc5121ffeWnuuAfNs50L5gi",
+    "ses_2c4dd71b4ffej3S4QCorip5JS3",
+    "ses_2c4dcc17affe2pmee2Ozpi1qcX",
+    "ses_2c4d468dfffefg48Zrzawt7jeQ",
+    "ses_2c4d24a0bffeYd56Te6PM8fhn7",
+    "ses_2c4d27d3affebeyaivSRqhyzIi",
+    "ses_2c4d0bf4fffen1E6AcI4cMoVw4"
   ],
   "plan_name": "books-reviews",
   "agent": "atlas",
@@ -22,10 +31,10 @@
       "task_key": "final-wave:f1",
       "task_label": "F1",
       "task_title": "**Plan Compliance Audit** — `oracle`",
-      "session_id": "ses_2c4f4ba69ffepzi3B9EFz3xIN2",
+      "session_id": "ses_2c4d468dfffefg48Zrzawt7jeQ",
       "agent": "Sisyphus-Junior",
-      "category": "unspecified-high",
-      "updated_at": "2026-03-29T19:26:16.785Z"
+      "category": "quick",
+      "updated_at": "2026-03-29T19:58:07.270Z"
     }
   }
 }

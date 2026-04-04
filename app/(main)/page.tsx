@@ -9,12 +9,6 @@ export default function HomePage() {
         Search for books, leave reviews, manage characters, and generate AI illustrations.
       </p>
       <div className="flex gap-4">
-        <Button render={<Link href="/search" />} size="lg">
-          Search Books
-        </Button>
-        <Button render={<Link href="/gallery" />} variant="outline" size="lg">
-          Browse Gallery
-        </Button>
       </div>
     </div>
   )

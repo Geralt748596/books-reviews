@@ -101,3 +101,7 @@
 - Reused `<img>` over `next/image` to simplify external blob URL loading, avoiding Vercel Blob hostname configuration in `next.config.ts`.
 - Implemented `searchParams` awaiting which is mandatory in Next.js 16.
 - Used the `render` prop for Button components when wrapping a `Link`, which is standard for shadcn's base-nova variant in server components where `buttonVariants` is not easily usable.
+
+## [2026-03-29] Task 12 Learnings: Image Route + Audit Style Cleanup
+- **Thin route wrapper**: `app/api/images/generate/route.ts` can call the server action directly; auth stays inside `generateBookImage`.
+- **CSS audit fix**: remove transition/animation classes only; keep hover color/shadow/ring utilities when they are not part of the violation.
