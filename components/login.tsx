@@ -1,9 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,11 +12,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Logo } from "@/components/logo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import rightImage from './assets/login-bgc.png';
-import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
+import rightImage from "./assets/login-bgc.png";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -36,8 +36,8 @@ const Login = () => {
   });
 
   const handleGoogleSignIn = () => {
-    authClient.signIn.social({ provider: "google" })
-  }
+    authClient.signIn.social({ provider: "google" });
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);

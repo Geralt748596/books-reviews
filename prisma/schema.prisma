@@ -23,8 +23,11 @@ model User {
   accounts  Account[]
   reviews         Review[]
   characters      Character[]
-  generatedImages GeneratedImage[]
-
+  generatedImages GeneratedCharacterImage[]
+  posts Post[]
+  generatedBookCover GeneratedBookCover[]
+  coverLikes         CoverLike[]
+  characterImageLikes CharacterImageLike[]
   @@map("user")
 }
 
@@ -72,6 +75,18 @@ model Verification {
   @@map("verification")
 }
 
+model BookSeries {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@map("book_series")
+
+  books Book[]
+}
+
 model Book {
   id            String   @id @default(cuid())
   googleBooksId String   @unique
@@ -86,10 +101,34 @@ model Book {
 
   reviews         Review[]
   characters      Character[]
-  generatedImages GeneratedImage[]
+  characterDescriptions CharacterDescription[]
+  posts Post[]
+  bookSeriesId String?
+  bookSeries BookSeries? @relation(fields: [bookSeriesId], references: [id], onDelete: SetNull)
+
+  generatedBookCover GeneratedBookCover[]
+  generatedCharacterImages GeneratedCharacterImage[]
 
   @@index([googleBooksId])
   @@index([title])
+}
+
+model Post {
+  id  String   @id @default(cuid())
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  characterId String?
+  character   Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([createdAt])
+
+  @@map("post")
 }
 
 model Review {
@@ -110,23 +149,83 @@ model Review {
 }
 
 model Character {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
 
-  bookId      String
-  book        Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdById String
-  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
-  generatedImages GeneratedImage[]
+  books                 Book[]
+  generatedImages       GeneratedCharacterImage[]
+  posts                 Post[]
+  characterDescriptions CharacterDescription[]
 
-  @@index([bookId])
   @@index([name])
 }
 
-model GeneratedImage {
+model CharacterDescription {
+  id String @id @default(cuid())
+  description String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  characterId String
+  bookId String
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId, bookId])
+  @@unique([bookId, characterId])
+  @@map("character_description")
+}
+
+model GeneratedBookCover {
+  id String @id @default(cuid())
+  blobUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  prompt String
+
+  bookId String
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  likes CoverLike[]
+
+  @@index([bookId])
+}
+
+model CoverLike {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId  String
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coverId String
+  cover   GeneratedBookCover @relation(fields: [coverId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, coverId])
+  @@index([coverId])
+  @@map("cover_like")
+}
+
+model CharacterImageLike {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId  String
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  characterId String
+  character   GeneratedCharacterImage @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, characterId])
+  @@index([characterId])
+  @@map("character_image_like")
+}
+
+model GeneratedCharacterImage {
   id        String   @id @default(cuid())
   prompt    String
   blobUrl   String
@@ -134,12 +233,14 @@ model GeneratedImage {
 
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bookId      String
-  book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  characterId String?
-  character   Character? @relation(fields: [characterId], references: [id], onDelete: SetNull)
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  likes CharacterImageLike[]
+  bookId String
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
-  @@index([bookId])
-  @@index([characterId])
+  @@unique([bookId, characterId])
   @@index([userId])
+  @@index([characterId])
+  @@index([bookId])
 }

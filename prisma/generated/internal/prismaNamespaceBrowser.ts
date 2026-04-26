@@ -55,10 +55,16 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  BookSeries: 'BookSeries',
   Book: 'Book',
+  Post: 'Post',
   Review: 'Review',
   Character: 'Character',
-  GeneratedImage: 'GeneratedImage'
+  CharacterDescription: 'CharacterDescription',
+  GeneratedBookCover: 'GeneratedBookCover',
+  CoverLike: 'CoverLike',
+  CharacterImageLike: 'CharacterImageLike',
+  GeneratedCharacterImage: 'GeneratedCharacterImage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -135,6 +141,16 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const BookSeriesScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookSeriesScalarFieldEnum = (typeof BookSeriesScalarFieldEnum)[keyof typeof BookSeriesScalarFieldEnum]
+
+
 export const BookScalarFieldEnum = {
   id: 'id',
   googleBooksId: 'googleBooksId',
@@ -145,10 +161,24 @@ export const BookScalarFieldEnum = {
   language: 'language',
   publishedDate: 'publishedDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  bookSeriesId: 'bookSeriesId'
 } as const
 
 export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
+
+
+export const PostScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  bookId: 'bookId',
+  characterId: 'characterId'
+} as const
+
+export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {
@@ -168,26 +198,69 @@ export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof 
 export const CharacterScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  description: 'description',
   createdAt: 'createdAt',
-  bookId: 'bookId',
   createdById: 'createdById'
 } as const
 
 export type CharacterScalarFieldEnum = (typeof CharacterScalarFieldEnum)[keyof typeof CharacterScalarFieldEnum]
 
 
-export const GeneratedImageScalarFieldEnum = {
+export const CharacterDescriptionScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  characterId: 'characterId',
+  bookId: 'bookId'
+} as const
+
+export type CharacterDescriptionScalarFieldEnum = (typeof CharacterDescriptionScalarFieldEnum)[keyof typeof CharacterDescriptionScalarFieldEnum]
+
+
+export const GeneratedBookCoverScalarFieldEnum = {
+  id: 'id',
+  blobUrl: 'blobUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  prompt: 'prompt',
+  bookId: 'bookId',
+  userId: 'userId'
+} as const
+
+export type GeneratedBookCoverScalarFieldEnum = (typeof GeneratedBookCoverScalarFieldEnum)[keyof typeof GeneratedBookCoverScalarFieldEnum]
+
+
+export const CoverLikeScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  coverId: 'coverId'
+} as const
+
+export type CoverLikeScalarFieldEnum = (typeof CoverLikeScalarFieldEnum)[keyof typeof CoverLikeScalarFieldEnum]
+
+
+export const CharacterImageLikeScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  characterId: 'characterId'
+} as const
+
+export type CharacterImageLikeScalarFieldEnum = (typeof CharacterImageLikeScalarFieldEnum)[keyof typeof CharacterImageLikeScalarFieldEnum]
+
+
+export const GeneratedCharacterImageScalarFieldEnum = {
   id: 'id',
   prompt: 'prompt',
   blobUrl: 'blobUrl',
   createdAt: 'createdAt',
   userId: 'userId',
-  bookId: 'bookId',
-  characterId: 'characterId'
+  characterId: 'characterId',
+  bookId: 'bookId'
 } as const
 
-export type GeneratedImageScalarFieldEnum = (typeof GeneratedImageScalarFieldEnum)[keyof typeof GeneratedImageScalarFieldEnum]
+export type GeneratedCharacterImageScalarFieldEnum = (typeof GeneratedCharacterImageScalarFieldEnum)[keyof typeof GeneratedCharacterImageScalarFieldEnum]
 
 
 export const SortOrder = {

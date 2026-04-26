@@ -1,0 +1,8 @@
+.next
+.agents
+.claude
+.pnpm-store
+.sisyphus
+node_modules
+out
+build

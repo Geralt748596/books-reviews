@@ -1,15 +1,195 @@
 {
   "version": 1,
   "skills": {
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc"
+    },
+    "better-auth-security-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "5717187bba9c22030c7174c74012f01c359f21e2ce87e0eb80e24244d8b8c915"
+    },
+    "create-auth-skill": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "31c027d02dbf1faa37f58191f574b9443143042fb2b684fe32df53ab0270487c"
+    },
+    "email-and-password-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "747d7f73bd9e2ec5317b8ef88dc70f97df716d00e3d02de4051feebaa48b062d"
+    },
     "openai-docs": {
       "source": "openai/skills",
       "sourceType": "github",
       "computedHash": "7c0cb31b80f601a4394449bf27bc865a9ff31cd0daaa1088a017fdb57b7ae306"
     },
+    "organization-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "79a5a85b43d10e9fe37582b3506b051a33a991817b938f349099baa5ddba21aa"
+    },
+    "prisma-cli-db-execute": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "1d3609cae47eb241b87daea8e519500869fda7b5c478b865b234e2f16b870cbc"
+    },
+    "prisma-cli-db-pull": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "60d80f9baa15eb6bc00e1a875ba66dbcfa7b515f920a0eb4bd8515605d6b9e6b"
+    },
+    "prisma-cli-db-push": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "a606092ab47e58d04efd9ea405fad65d1225fa86fd5fffb10ef42d83eff7c9fb"
+    },
+    "prisma-cli-db-seed": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "912ffba138b5b5c72036badd20985f0c47d6a3cd16ff99da0be57211538673f8"
+    },
+    "prisma-cli-debug": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "661af6e7511fc5c848880fcf274a9f3e08889107092eb3e70f712fafe3c0f9b4"
+    },
+    "prisma-cli-dev": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "191c071e4121db154c42b72185fe003bed7769be666c3881d3c0868cf0997e2e"
+    },
+    "prisma-cli-generate": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "32dd7f685b15b809e6e887f5dcefc03eb920547e29c044f702a4ae2021cbd1dc"
+    },
+    "prisma-cli-migrate-deploy": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "167cbc48cf317a64e1f45c7122fbdaf0e28a4b613537e0f4ea8ca8e525076fb2"
+    },
+    "prisma-cli-migrate-dev": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "9352b8e7bb43e46dc9a6f66faa79cbc28c4afe219feb50eca8186c50295affa5"
+    },
+    "prisma-cli-migrate-diff": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "103ca3f014ef71f9f099e621166a45aad4fb6f50074ceb2787af884ccf60b19c"
+    },
+    "prisma-cli-migrate-reset": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "e2635d57b07ebef742f49c7751c7f4452dfe65ae03d776190ac68ecc9afec22e"
+    },
+    "prisma-cli-studio": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "62651fac64c49019850c2041aa6f082a98106534542f83bde828d26cacd5c36c"
+    },
+    "prisma-cli-validate": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "0d1a4579a29c53c9cab4adb01ce64b24e57efc9a06a4f0dc38181ce492b6f382"
+    },
+    "prisma-client-api-client-methods": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "0a1935a0ab161ef5c7ef330db8af11fbdb090154d617ac3d74dfb41a57a9b027"
+    },
+    "prisma-client-api-constructor": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "eefdbcd3f55638e5c15fb4afc40dcffd5733a94a1bc1535d043d58a489aa338c"
+    },
+    "prisma-client-api-filters": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "845fa07c7b51b921bd8911dc7b01e037141d52ac3d189d253daac8a58c4f948d"
+    },
+    "prisma-client-api-model-queries": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "f6ecf25d416565bf1269abdaf6832b241e550ab5caeed9167fe3154a4be4cc83"
+    },
+    "prisma-client-api-query-options": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "5f5ee22ebd509d7f5bade498ff80fe2ec0616542799b0fcf22b4cc8a634d02a3"
+    },
+    "prisma-client-api-raw-queries": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "f47598d8729b1f2d57b8aaccffdd401f1b7d0090435cbdf29f9a253e3208bc59"
+    },
+    "prisma-client-api-relations": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "c9a2b811c5b252da5922bb316f907a260acaed8f33cd37a5a71eff276e94f061"
+    },
+    "prisma-client-api-transactions": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "27ef42dabe299881d1129860044077fd40023bebfe9e87741ea47b125d48c2e0"
+    },
     "prisma-database-setup": {
       "source": "prisma/skills",
       "sourceType": "github",
       "computedHash": "b05e88d284c4a754d3624697c2f749e21f7da3fc1f4319b6658df318e84b0dd9"
+    },
+    "prisma-database-setup-postgresql": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "ddefe8ac7c5c834018c2d851738c0dd86585ab88a8c17e11b1d5c64beaa5a8b8"
+    },
+    "prisma-database-setup-prisma-client-setup": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "9037ef78bde8c02ad57d2a40da13f63122e8d4801c392c164ad1f5039a5c18e2"
+    },
+    "prisma-database-setup-prisma-postgres": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "257e0fd0d0d7a666a84a0156ff3ea305f5fa6f72f342a6efcf30da4e6faa5784"
+    },
+    "prisma-upgrade-v7-accelerate-users": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "97ef4896b13f82936b10bef97f0461d98b78f0c21f84f94a346d3a6cd64850a8"
+    },
+    "prisma-upgrade-v7-driver-adapters": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "531141f882401505a1193e088df3dd05c4a70a55687097cd3096e4102ddbddf9"
+    },
+    "prisma-upgrade-v7-env-variables": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "26710dc68c9a79c337eacb80b73843d7c1a17af8338310937481f52001c7618e"
+    },
+    "prisma-upgrade-v7-esm-support": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "486323133217cfc5ea417559621f897639a66d9a11b79f5ec1628c157b0aa44e"
+    },
+    "prisma-upgrade-v7-prisma-config": {
+      "source": "prisma/cursor-plugin",
+      "sourceType": "github",
+      "computedHash": "a0221e5581b6efdaccc767bb9e2f290b2ca94cdf2fa2a9de53a116fc4052dd15"
+    },
+    "two-factor-authentication-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "computedHash": "7e297aaf887e11fdc03e52bdbf44974e161e8f7c393170ced7dc66cace4f6d46"
+    },
+    "vercel-react-view-transitions": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "c8952fc9127fa0564d0cb71dccb4215a5608ac933b5831104f09173a97a46f85"
     }
   }
 }

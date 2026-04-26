@@ -1,20 +1,19 @@
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
+import Footer from "@/components/footer";
+import Navbar from "@/components/navbar";
+import { PopularBooks } from "@/components/PopularBooks";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function MainLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-6">
-          {children}
-        </div>
-      </main>
-      <Footer />
+      {children}
+      <Toaster />
+      <Footer className="mt-auto w-full" />
     </div>
-  )
+  );
 }

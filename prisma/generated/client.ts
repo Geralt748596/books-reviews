@@ -62,10 +62,20 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model BookSeries
+ * 
+ */
+export type BookSeries = Prisma.BookSeriesModel
+/**
  * Model Book
  * 
  */
 export type Book = Prisma.BookModel
+/**
+ * Model Post
+ * 
+ */
+export type Post = Prisma.PostModel
 /**
  * Model Review
  * 
@@ -77,7 +87,27 @@ export type Review = Prisma.ReviewModel
  */
 export type Character = Prisma.CharacterModel
 /**
- * Model GeneratedImage
+ * Model CharacterDescription
  * 
  */
-export type GeneratedImage = Prisma.GeneratedImageModel
+export type CharacterDescription = Prisma.CharacterDescriptionModel
+/**
+ * Model GeneratedBookCover
+ * 
+ */
+export type GeneratedBookCover = Prisma.GeneratedBookCoverModel
+/**
+ * Model CoverLike
+ * 
+ */
+export type CoverLike = Prisma.CoverLikeModel
+/**
+ * Model CharacterImageLike
+ * 
+ */
+export type CharacterImageLike = Prisma.CharacterImageLikeModel
+/**
+ * Model GeneratedCharacterImage
+ * 
+ */
+export type GeneratedCharacterImage = Prisma.GeneratedCharacterImageModel

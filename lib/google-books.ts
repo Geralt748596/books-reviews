@@ -1,74 +1,80 @@
 export interface GoogleBooksVolume {
-  id: string
+  id: string;
   volumeInfo: {
-    title: string
-    authors?: string[]
-    description?: string
+    title: string;
+    authors?: string[];
+    description?: string;
     imageLinks?: {
-      thumbnail?: string
-      smallThumbnail?: string
-    }
-    language?: string
-    publishedDate?: string
-  }
+      thumbnail?: string;
+      smallThumbnail?: string;
+    };
+    language?: string;
+    publishedDate?: string;
+  };
 }
 
 export interface GoogleBooksSearchResult {
-  items?: GoogleBooksVolume[]
-  totalItems: number
+  items?: GoogleBooksVolume[];
+  totalItems: number;
 }
 
-const GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1"
+const GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1";
 
 export async function searchBooks(
   query: string,
-  lang?: string
+  lang?: string,
 ): Promise<GoogleBooksSearchResult> {
   try {
     const params = new URLSearchParams({
       q: query,
       maxResults: "20",
-    })
+    });
     if (lang) {
-      params.set("langRestrict", lang)
+      params.set("langRestrict", lang);
     }
 
-    const res = await fetch(`${GOOGLE_BOOKS_API}/volumes?${params.toString()}`)
+    const res = await fetch(`${GOOGLE_BOOKS_API}/volumes?${params.toString()}`);
 
     if (!res.ok) {
       if (process.env.NODE_ENV === "development") {
-        console.error(`Google Books API error: ${res.status} ${res.statusText}`)
+        console.error(
+          `Google Books API error: ${res.status} ${res.statusText}`,
+        );
       }
-      return { totalItems: 0 }
+      return { totalItems: 0 };
     }
 
-    const data: GoogleBooksSearchResult = await res.json()
-    return data
+    const data: GoogleBooksSearchResult = await res.json();
+    return data;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("Failed to search books:", error)
+      console.error("Failed to search books:", error);
     }
-    return { totalItems: 0 }
+    return { totalItems: 0 };
   }
 }
 
-export async function getBook(volumeId: string): Promise<GoogleBooksVolume | null> {
+export async function getBook(
+  volumeId: string,
+): Promise<GoogleBooksVolume | null> {
   try {
-    const res = await fetch(`${GOOGLE_BOOKS_API}/volumes/${volumeId}`)
+    const res = await fetch(`${GOOGLE_BOOKS_API}/volumes/${volumeId}`);
 
     if (!res.ok) {
       if (process.env.NODE_ENV === "development") {
-        console.error(`Google Books API error: ${res.status} ${res.statusText}`)
+        console.error(
+          `Google Books API error: ${res.status} ${res.statusText}`,
+        );
       }
-      return null
+      return null;
     }
 
-    const data: GoogleBooksVolume = await res.json()
-    return data
+    const data: GoogleBooksVolume = await res.json();
+    return data;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("Failed to get book:", error)
+      console.error("Failed to get book:", error);
     }
-    return null
+    return null;
   }
 }

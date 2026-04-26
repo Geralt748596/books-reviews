@@ -1,5 +1,7 @@
+import { cn } from "@/lib/utils";
 import { Wheat } from "lucide-react";
 import Link from "next/link";
+import { ComponentProps } from "react";
 
 const links = [
   {
@@ -20,9 +22,12 @@ const links = [
   },
 ];
 
-const Footer = () => {
+const Footer = ({ className, ...props }: ComponentProps<"div">) => {
   return (
-    <footer className="border-t bg-background px-6 py-2">
+    <footer
+      className={cn("border-t bg-background px-6 py-2", className)}
+      {...props}
+    >
       <div className="mx-auto w-full max-w-screen-2xl divide-y">
         <div className="flex flex-col items-center justify-between gap-4 px-2 pt-3 pb-5 sm:flex-row">
           <Link className="flex items-center gap-2" href="/">
@@ -40,8 +45,7 @@ const Footer = () => {
         </div>
         <div className="flex flex-col-reverse items-center justify-between gap-4 px-2 pt-4 pb-2 sm:flex-row">
           <p className="font-medium text-muted-foreground text-sm">
-            Copyright &copy; 2026 Bloxxee. All rights
-            reserved.
+            Copyright &copy; 2026 Bloxxee. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4">
