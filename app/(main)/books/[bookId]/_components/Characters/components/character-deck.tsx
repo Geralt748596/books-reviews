@@ -12,7 +12,9 @@ import {
 import { TypographyP } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, PanInfo } from "framer-motion";
+import { Route } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export type CharacterDeckImage = {
@@ -26,6 +28,7 @@ export type CharacterDeckImage = {
 type Props = {
   characterName: string;
   images: CharacterDeckImage[];
+  href?: Route<"/books/[bookId]/[characterId]">;
 };
 
 const STACK_OFFSETS = [
@@ -40,7 +43,7 @@ const RANK_BADGE_CLASSES = [
   "border-orange-500/40 bg-orange-500/15 text-orange-300",
 ];
 
-export function CharacterDeck({ characterName, images }: Props) {
+export function CharacterDeck({ characterName, images, href }: Props) {
   const [cards, setCards] = useState(() =>
     images.map((image, rankIndex) => ({ ...image, rankIndex })),
   );
@@ -131,7 +134,18 @@ export function CharacterDeck({ characterName, images }: Props) {
 
       <Card className="flex-1 box-border">
         <CardHeader>
-          <CardTitle>{characterName}</CardTitle>
+          <CardTitle>
+            {href ? (
+              <Link
+                href={href}
+                className="transition-colors hover:text-primary"
+              >
+                {characterName}
+              </Link>
+            ) : (
+              characterName
+            )}
+          </CardTitle>
           <CardAction>
             <CharacterLike
               key={top.id}

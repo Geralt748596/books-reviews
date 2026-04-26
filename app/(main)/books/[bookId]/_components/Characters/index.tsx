@@ -6,6 +6,7 @@ import { Book } from "@/prisma/generated/client";
 import { cacheLife } from "next/cache";
 import { cache } from "react";
 import { CharacterDeck, CharacterDeckImage } from "./components/character-deck";
+import { Route } from "next";
 
 type CharacterGroup = {
   characterId: string;
@@ -44,6 +45,9 @@ export async function Characters({ bookId }: { bookId: Book["id"] }) {
             <CharacterDeck
               characterName={group.characterName}
               images={group.images}
+              href={
+                `/books/${bookId}/${group.characterId}` as Route<"/books/[bookId]/[characterId]">
+              }
             />
           </div>
         ))}
