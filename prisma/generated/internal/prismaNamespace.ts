@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.7.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.7.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 /**
@@ -395,8 +395,10 @@ export const ModelName = {
   Character: 'Character',
   CharacterDescription: 'CharacterDescription',
   GeneratedBookCover: 'GeneratedBookCover',
+  CoverComment: 'CoverComment',
   CoverLike: 'CoverLike',
   CharacterImageLike: 'CharacterImageLike',
+  CharacterImageComment: 'CharacterImageComment',
   GeneratedCharacterImage: 'GeneratedCharacterImage'
 } as const
 
@@ -413,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "bookSeries" | "book" | "post" | "review" | "character" | "characterDescription" | "generatedBookCover" | "coverLike" | "characterImageLike" | "generatedCharacterImage"
+    modelProps: "user" | "session" | "account" | "verification" | "bookSeries" | "book" | "post" | "review" | "character" | "characterDescription" | "generatedBookCover" | "coverComment" | "coverLike" | "characterImageLike" | "characterImageComment" | "generatedCharacterImage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1231,6 +1233,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CoverComment: {
+      payload: Prisma.$CoverCommentPayload<ExtArgs>
+      fields: Prisma.CoverCommentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoverCommentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoverCommentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        findFirst: {
+          args: Prisma.CoverCommentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoverCommentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        findMany: {
+          args: Prisma.CoverCommentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>[]
+        }
+        create: {
+          args: Prisma.CoverCommentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        createMany: {
+          args: Prisma.CoverCommentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoverCommentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>[]
+        }
+        delete: {
+          args: Prisma.CoverCommentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        update: {
+          args: Prisma.CoverCommentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        deleteMany: {
+          args: Prisma.CoverCommentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoverCommentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoverCommentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>[]
+        }
+        upsert: {
+          args: Prisma.CoverCommentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverCommentPayload>
+        }
+        aggregate: {
+          args: Prisma.CoverCommentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoverComment>
+        }
+        groupBy: {
+          args: Prisma.CoverCommentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoverCommentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoverCommentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoverCommentCountAggregateOutputType> | number
+        }
+      }
+    }
     CoverLike: {
       payload: Prisma.$CoverLikePayload<ExtArgs>
       fields: Prisma.CoverLikeFieldRefs
@@ -1376,6 +1452,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CharacterImageLikeCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CharacterImageLikeCountAggregateOutputType> | number
+        }
+      }
+    }
+    CharacterImageComment: {
+      payload: Prisma.$CharacterImageCommentPayload<ExtArgs>
+      fields: Prisma.CharacterImageCommentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CharacterImageCommentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CharacterImageCommentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        findFirst: {
+          args: Prisma.CharacterImageCommentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CharacterImageCommentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        findMany: {
+          args: Prisma.CharacterImageCommentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>[]
+        }
+        create: {
+          args: Prisma.CharacterImageCommentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        createMany: {
+          args: Prisma.CharacterImageCommentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CharacterImageCommentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>[]
+        }
+        delete: {
+          args: Prisma.CharacterImageCommentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        update: {
+          args: Prisma.CharacterImageCommentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        deleteMany: {
+          args: Prisma.CharacterImageCommentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CharacterImageCommentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CharacterImageCommentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>[]
+        }
+        upsert: {
+          args: Prisma.CharacterImageCommentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CharacterImageCommentPayload>
+        }
+        aggregate: {
+          args: Prisma.CharacterImageCommentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCharacterImageComment>
+        }
+        groupBy: {
+          args: Prisma.CharacterImageCommentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CharacterImageCommentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CharacterImageCommentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CharacterImageCommentCountAggregateOutputType> | number
         }
       }
     }
@@ -1639,6 +1789,17 @@ export const GeneratedBookCoverScalarFieldEnum = {
 export type GeneratedBookCoverScalarFieldEnum = (typeof GeneratedBookCoverScalarFieldEnum)[keyof typeof GeneratedBookCoverScalarFieldEnum]
 
 
+export const CoverCommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  coverId: 'coverId'
+} as const
+
+export type CoverCommentScalarFieldEnum = (typeof CoverCommentScalarFieldEnum)[keyof typeof CoverCommentScalarFieldEnum]
+
+
 export const CoverLikeScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -1657,6 +1818,17 @@ export const CharacterImageLikeScalarFieldEnum = {
 } as const
 
 export type CharacterImageLikeScalarFieldEnum = (typeof CharacterImageLikeScalarFieldEnum)[keyof typeof CharacterImageLikeScalarFieldEnum]
+
+
+export const CharacterImageCommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  characterImageId: 'characterImageId'
+} as const
+
+export type CharacterImageCommentScalarFieldEnum = (typeof CharacterImageCommentScalarFieldEnum)[keyof typeof CharacterImageCommentScalarFieldEnum]
 
 
 export const GeneratedCharacterImageScalarFieldEnum = {
@@ -1857,6 +2029,21 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
+  /**
+   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
+   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
+   * performance for applications that execute a large number of unique queries, while a smaller
+   * cache size can reduce memory usage.
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   queryPlanCacheMaxSize: 100,
+   * })
+   * ```
+   */
+  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
@@ -1870,8 +2057,10 @@ export type GlobalOmitConfig = {
   character?: Prisma.CharacterOmit
   characterDescription?: Prisma.CharacterDescriptionOmit
   generatedBookCover?: Prisma.GeneratedBookCoverOmit
+  coverComment?: Prisma.CoverCommentOmit
   coverLike?: Prisma.CoverLikeOmit
   characterImageLike?: Prisma.CharacterImageLikeOmit
+  characterImageComment?: Prisma.CharacterImageCommentOmit
   generatedCharacterImage?: Prisma.GeneratedCharacterImageOmit
 }
 

@@ -62,8 +62,10 @@ export const ModelName = {
   Character: 'Character',
   CharacterDescription: 'CharacterDescription',
   GeneratedBookCover: 'GeneratedBookCover',
+  CoverComment: 'CoverComment',
   CoverLike: 'CoverLike',
   CharacterImageLike: 'CharacterImageLike',
+  CharacterImageComment: 'CharacterImageComment',
   GeneratedCharacterImage: 'GeneratedCharacterImage'
 } as const
 
@@ -230,6 +232,17 @@ export const GeneratedBookCoverScalarFieldEnum = {
 export type GeneratedBookCoverScalarFieldEnum = (typeof GeneratedBookCoverScalarFieldEnum)[keyof typeof GeneratedBookCoverScalarFieldEnum]
 
 
+export const CoverCommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  coverId: 'coverId'
+} as const
+
+export type CoverCommentScalarFieldEnum = (typeof CoverCommentScalarFieldEnum)[keyof typeof CoverCommentScalarFieldEnum]
+
+
 export const CoverLikeScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -248,6 +261,17 @@ export const CharacterImageLikeScalarFieldEnum = {
 } as const
 
 export type CharacterImageLikeScalarFieldEnum = (typeof CharacterImageLikeScalarFieldEnum)[keyof typeof CharacterImageLikeScalarFieldEnum]
+
+
+export const CharacterImageCommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  characterImageId: 'characterImageId'
+} as const
+
+export type CharacterImageCommentScalarFieldEnum = (typeof CharacterImageCommentScalarFieldEnum)[keyof typeof CharacterImageCommentScalarFieldEnum]
 
 
 export const GeneratedCharacterImageScalarFieldEnum = {

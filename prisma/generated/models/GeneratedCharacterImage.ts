@@ -201,6 +201,7 @@ export type GeneratedCharacterImageWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   character?: Prisma.XOR<Prisma.CharacterScalarRelationFilter, Prisma.CharacterWhereInput>
   likes?: Prisma.CharacterImageLikeListRelationFilter
+  comments?: Prisma.CharacterImageCommentListRelationFilter
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
 }
 
@@ -215,6 +216,7 @@ export type GeneratedCharacterImageOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   character?: Prisma.CharacterOrderByWithRelationInput
   likes?: Prisma.CharacterImageLikeOrderByRelationAggregateInput
+  comments?: Prisma.CharacterImageCommentOrderByRelationAggregateInput
   book?: Prisma.BookOrderByWithRelationInput
 }
 
@@ -233,6 +235,7 @@ export type GeneratedCharacterImageWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   character?: Prisma.XOR<Prisma.CharacterScalarRelationFilter, Prisma.CharacterWhereInput>
   likes?: Prisma.CharacterImageLikeListRelationFilter
+  comments?: Prisma.CharacterImageCommentListRelationFilter
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
 }, "id" | "bookId_characterId">
 
@@ -270,6 +273,7 @@ export type GeneratedCharacterImageCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutGeneratedImagesInput
   character: Prisma.CharacterCreateNestedOneWithoutGeneratedImagesInput
   likes?: Prisma.CharacterImageLikeCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentCreateNestedManyWithoutCharacterImageInput
   book: Prisma.BookCreateNestedOneWithoutGeneratedCharacterImagesInput
 }
 
@@ -282,6 +286,7 @@ export type GeneratedCharacterImageUncheckedCreateInput = {
   characterId: string
   bookId: string
   likes?: Prisma.CharacterImageLikeUncheckedCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentUncheckedCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageUpdateInput = {
@@ -292,6 +297,7 @@ export type GeneratedCharacterImageUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedImagesNestedInput
   character?: Prisma.CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput
   likes?: Prisma.CharacterImageLikeUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUpdateManyWithoutCharacterImageNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput
 }
 
@@ -304,6 +310,7 @@ export type GeneratedCharacterImageUncheckedUpdateInput = {
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CharacterImageLikeUncheckedUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUncheckedUpdateManyWithoutCharacterImageNestedInput
 }
 
 export type GeneratedCharacterImageCreateManyInput = {
@@ -523,6 +530,20 @@ export type GeneratedCharacterImageUpdateOneRequiredWithoutLikesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GeneratedCharacterImageUpdateToOneWithWhereWithoutLikesInput, Prisma.GeneratedCharacterImageUpdateWithoutLikesInput>, Prisma.GeneratedCharacterImageUncheckedUpdateWithoutLikesInput>
 }
 
+export type GeneratedCharacterImageCreateNestedOneWithoutCommentsInput = {
+  create?: Prisma.XOR<Prisma.GeneratedCharacterImageCreateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.GeneratedCharacterImageCreateOrConnectWithoutCommentsInput
+  connect?: Prisma.GeneratedCharacterImageWhereUniqueInput
+}
+
+export type GeneratedCharacterImageUpdateOneRequiredWithoutCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.GeneratedCharacterImageCreateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.GeneratedCharacterImageCreateOrConnectWithoutCommentsInput
+  upsert?: Prisma.GeneratedCharacterImageUpsertWithoutCommentsInput
+  connect?: Prisma.GeneratedCharacterImageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GeneratedCharacterImageUpdateToOneWithWhereWithoutCommentsInput, Prisma.GeneratedCharacterImageUpdateWithoutCommentsInput>, Prisma.GeneratedCharacterImageUncheckedUpdateWithoutCommentsInput>
+}
+
 export type GeneratedCharacterImageCreateWithoutUserInput = {
   id?: string
   prompt: string
@@ -530,6 +551,7 @@ export type GeneratedCharacterImageCreateWithoutUserInput = {
   createdAt?: Date | string
   character: Prisma.CharacterCreateNestedOneWithoutGeneratedImagesInput
   likes?: Prisma.CharacterImageLikeCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentCreateNestedManyWithoutCharacterImageInput
   book: Prisma.BookCreateNestedOneWithoutGeneratedCharacterImagesInput
 }
 
@@ -541,6 +563,7 @@ export type GeneratedCharacterImageUncheckedCreateWithoutUserInput = {
   characterId: string
   bookId: string
   likes?: Prisma.CharacterImageLikeUncheckedCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentUncheckedCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageCreateOrConnectWithoutUserInput = {
@@ -590,6 +613,7 @@ export type GeneratedCharacterImageCreateWithoutBookInput = {
   user: Prisma.UserCreateNestedOneWithoutGeneratedImagesInput
   character: Prisma.CharacterCreateNestedOneWithoutGeneratedImagesInput
   likes?: Prisma.CharacterImageLikeCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageUncheckedCreateWithoutBookInput = {
@@ -600,6 +624,7 @@ export type GeneratedCharacterImageUncheckedCreateWithoutBookInput = {
   userId: string
   characterId: string
   likes?: Prisma.CharacterImageLikeUncheckedCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentUncheckedCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageCreateOrConnectWithoutBookInput = {
@@ -635,6 +660,7 @@ export type GeneratedCharacterImageCreateWithoutCharacterInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGeneratedImagesInput
   likes?: Prisma.CharacterImageLikeCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentCreateNestedManyWithoutCharacterImageInput
   book: Prisma.BookCreateNestedOneWithoutGeneratedCharacterImagesInput
 }
 
@@ -646,6 +672,7 @@ export type GeneratedCharacterImageUncheckedCreateWithoutCharacterInput = {
   userId: string
   bookId: string
   likes?: Prisma.CharacterImageLikeUncheckedCreateNestedManyWithoutCharacterInput
+  comments?: Prisma.CharacterImageCommentUncheckedCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageCreateOrConnectWithoutCharacterInput = {
@@ -681,6 +708,7 @@ export type GeneratedCharacterImageCreateWithoutLikesInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGeneratedImagesInput
   character: Prisma.CharacterCreateNestedOneWithoutGeneratedImagesInput
+  comments?: Prisma.CharacterImageCommentCreateNestedManyWithoutCharacterImageInput
   book: Prisma.BookCreateNestedOneWithoutGeneratedCharacterImagesInput
 }
 
@@ -692,6 +720,7 @@ export type GeneratedCharacterImageUncheckedCreateWithoutLikesInput = {
   userId: string
   characterId: string
   bookId: string
+  comments?: Prisma.CharacterImageCommentUncheckedCreateNestedManyWithoutCharacterImageInput
 }
 
 export type GeneratedCharacterImageCreateOrConnectWithoutLikesInput = {
@@ -717,6 +746,7 @@ export type GeneratedCharacterImageUpdateWithoutLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedImagesNestedInput
   character?: Prisma.CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput
+  comments?: Prisma.CharacterImageCommentUpdateManyWithoutCharacterImageNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput
 }
 
@@ -728,6 +758,67 @@ export type GeneratedCharacterImageUncheckedUpdateWithoutLikesInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
+  comments?: Prisma.CharacterImageCommentUncheckedUpdateManyWithoutCharacterImageNestedInput
+}
+
+export type GeneratedCharacterImageCreateWithoutCommentsInput = {
+  id?: string
+  prompt: string
+  blobUrl: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutGeneratedImagesInput
+  character: Prisma.CharacterCreateNestedOneWithoutGeneratedImagesInput
+  likes?: Prisma.CharacterImageLikeCreateNestedManyWithoutCharacterInput
+  book: Prisma.BookCreateNestedOneWithoutGeneratedCharacterImagesInput
+}
+
+export type GeneratedCharacterImageUncheckedCreateWithoutCommentsInput = {
+  id?: string
+  prompt: string
+  blobUrl: string
+  createdAt?: Date | string
+  userId: string
+  characterId: string
+  bookId: string
+  likes?: Prisma.CharacterImageLikeUncheckedCreateNestedManyWithoutCharacterInput
+}
+
+export type GeneratedCharacterImageCreateOrConnectWithoutCommentsInput = {
+  where: Prisma.GeneratedCharacterImageWhereUniqueInput
+  create: Prisma.XOR<Prisma.GeneratedCharacterImageCreateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedCreateWithoutCommentsInput>
+}
+
+export type GeneratedCharacterImageUpsertWithoutCommentsInput = {
+  update: Prisma.XOR<Prisma.GeneratedCharacterImageUpdateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedUpdateWithoutCommentsInput>
+  create: Prisma.XOR<Prisma.GeneratedCharacterImageCreateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedCreateWithoutCommentsInput>
+  where?: Prisma.GeneratedCharacterImageWhereInput
+}
+
+export type GeneratedCharacterImageUpdateToOneWithWhereWithoutCommentsInput = {
+  where?: Prisma.GeneratedCharacterImageWhereInput
+  data: Prisma.XOR<Prisma.GeneratedCharacterImageUpdateWithoutCommentsInput, Prisma.GeneratedCharacterImageUncheckedUpdateWithoutCommentsInput>
+}
+
+export type GeneratedCharacterImageUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  blobUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutGeneratedImagesNestedInput
+  character?: Prisma.CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput
+  likes?: Prisma.CharacterImageLikeUpdateManyWithoutCharacterNestedInput
+  book?: Prisma.BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput
+}
+
+export type GeneratedCharacterImageUncheckedUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  blobUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  characterId?: Prisma.StringFieldUpdateOperationsInput | string
+  bookId?: Prisma.StringFieldUpdateOperationsInput | string
+  likes?: Prisma.CharacterImageLikeUncheckedUpdateManyWithoutCharacterNestedInput
 }
 
 export type GeneratedCharacterImageCreateManyUserInput = {
@@ -746,6 +837,7 @@ export type GeneratedCharacterImageUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   character?: Prisma.CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput
   likes?: Prisma.CharacterImageLikeUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUpdateManyWithoutCharacterImageNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput
 }
 
@@ -757,6 +849,7 @@ export type GeneratedCharacterImageUncheckedUpdateWithoutUserInput = {
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CharacterImageLikeUncheckedUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUncheckedUpdateManyWithoutCharacterImageNestedInput
 }
 
 export type GeneratedCharacterImageUncheckedUpdateManyWithoutUserInput = {
@@ -785,6 +878,7 @@ export type GeneratedCharacterImageUpdateWithoutBookInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedImagesNestedInput
   character?: Prisma.CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput
   likes?: Prisma.CharacterImageLikeUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUpdateManyWithoutCharacterImageNestedInput
 }
 
 export type GeneratedCharacterImageUncheckedUpdateWithoutBookInput = {
@@ -795,6 +889,7 @@ export type GeneratedCharacterImageUncheckedUpdateWithoutBookInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CharacterImageLikeUncheckedUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUncheckedUpdateManyWithoutCharacterImageNestedInput
 }
 
 export type GeneratedCharacterImageUncheckedUpdateManyWithoutBookInput = {
@@ -822,6 +917,7 @@ export type GeneratedCharacterImageUpdateWithoutCharacterInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedImagesNestedInput
   likes?: Prisma.CharacterImageLikeUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUpdateManyWithoutCharacterImageNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput
 }
 
@@ -833,6 +929,7 @@ export type GeneratedCharacterImageUncheckedUpdateWithoutCharacterInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CharacterImageLikeUncheckedUpdateManyWithoutCharacterNestedInput
+  comments?: Prisma.CharacterImageCommentUncheckedUpdateManyWithoutCharacterImageNestedInput
 }
 
 export type GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterInput = {
@@ -851,10 +948,12 @@ export type GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterInput = {
 
 export type GeneratedCharacterImageCountOutputType = {
   likes: number
+  comments: number
 }
 
 export type GeneratedCharacterImageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   likes?: boolean | GeneratedCharacterImageCountOutputTypeCountLikesArgs
+  comments?: boolean | GeneratedCharacterImageCountOutputTypeCountCommentsArgs
 }
 
 /**
@@ -874,6 +973,13 @@ export type GeneratedCharacterImageCountOutputTypeCountLikesArgs<ExtArgs extends
   where?: Prisma.CharacterImageLikeWhereInput
 }
 
+/**
+ * GeneratedCharacterImageCountOutputType without action
+ */
+export type GeneratedCharacterImageCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CharacterImageCommentWhereInput
+}
+
 
 export type GeneratedCharacterImageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -886,6 +992,7 @@ export type GeneratedCharacterImageSelect<ExtArgs extends runtime.Types.Extensio
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   character?: boolean | Prisma.CharacterDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.GeneratedCharacterImage$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.GeneratedCharacterImage$commentsArgs<ExtArgs>
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.GeneratedCharacterImageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["generatedCharacterImage"]>
@@ -931,6 +1038,7 @@ export type GeneratedCharacterImageInclude<ExtArgs extends runtime.Types.Extensi
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   character?: boolean | Prisma.CharacterDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.GeneratedCharacterImage$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.GeneratedCharacterImage$commentsArgs<ExtArgs>
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.GeneratedCharacterImageCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -951,6 +1059,7 @@ export type $GeneratedCharacterImagePayload<ExtArgs extends runtime.Types.Extens
     user: Prisma.$UserPayload<ExtArgs>
     character: Prisma.$CharacterPayload<ExtArgs>
     likes: Prisma.$CharacterImageLikePayload<ExtArgs>[]
+    comments: Prisma.$CharacterImageCommentPayload<ExtArgs>[]
     book: Prisma.$BookPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1358,6 +1467,7 @@ export interface Prisma__GeneratedCharacterImageClient<T, Null = never, ExtArgs 
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   character<T extends Prisma.CharacterDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CharacterDefaultArgs<ExtArgs>>): Prisma.Prisma__CharacterClient<runtime.Types.Result.GetResult<Prisma.$CharacterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   likes<T extends Prisma.GeneratedCharacterImage$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GeneratedCharacterImage$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CharacterImageLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  comments<T extends Prisma.GeneratedCharacterImage$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GeneratedCharacterImage$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CharacterImageCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   book<T extends Prisma.BookDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BookDefaultArgs<ExtArgs>>): Prisma.Prisma__BookClient<runtime.Types.Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1817,6 +1927,30 @@ export type GeneratedCharacterImage$likesArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.CharacterImageLikeScalarFieldEnum | Prisma.CharacterImageLikeScalarFieldEnum[]
+}
+
+/**
+ * GeneratedCharacterImage.comments
+ */
+export type GeneratedCharacterImage$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CharacterImageComment
+   */
+  select?: Prisma.CharacterImageCommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CharacterImageComment
+   */
+  omit?: Prisma.CharacterImageCommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CharacterImageCommentInclude<ExtArgs> | null
+  where?: Prisma.CharacterImageCommentWhereInput
+  orderBy?: Prisma.CharacterImageCommentOrderByWithRelationInput | Prisma.CharacterImageCommentOrderByWithRelationInput[]
+  cursor?: Prisma.CharacterImageCommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CharacterImageCommentScalarFieldEnum | Prisma.CharacterImageCommentScalarFieldEnum[]
 }
 
 /**

@@ -28,6 +28,8 @@ model User {
   generatedBookCover GeneratedBookCover[]
   coverLikes         CoverLike[]
   characterImageLikes CharacterImageLike[]
+  coverComments          CoverComment[]
+  characterImageComments CharacterImageComment[]
   @@map("user")
 }
 
@@ -193,8 +195,23 @@ model GeneratedBookCover {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   likes CoverLike[]
+  comments CoverComment[]
 
   @@index([bookId])
+}
+
+model CoverComment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  userId  String
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coverId String
+  cover   GeneratedBookCover @relation(fields: [coverId], references: [id], onDelete: Cascade)
+
+  @@index([coverId, createdAt])
+  @@map("cover_comment")
 }
 
 model CoverLike {
@@ -225,6 +242,20 @@ model CharacterImageLike {
   @@map("character_image_like")
 }
 
+model CharacterImageComment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  userId           String
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  characterImageId String
+  characterImage   GeneratedCharacterImage @relation(fields: [characterImageId], references: [id], onDelete: Cascade)
+
+  @@index([characterImageId, createdAt])
+  @@map("character_image_comment")
+}
+
 model GeneratedCharacterImage {
   id        String   @id @default(cuid())
   prompt    String
@@ -236,6 +267,7 @@ model GeneratedCharacterImage {
   characterId String
   character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
   likes CharacterImageLike[]
+  comments CharacterImageComment[]
   bookId String
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 

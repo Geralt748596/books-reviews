@@ -1,5 +1,0 @@
-export const Posts = () => {
-    return (
-        
-    )
-}

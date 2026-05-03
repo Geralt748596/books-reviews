@@ -167,7 +167,7 @@ function CharacterItem({ item }: { item: CharacterResultType }) {
       <div className="min-w-0">
         <div className="truncate font-medium">{item.name}</div>
         <div className="truncate text-xs text-muted-foreground">
-          {item.book.title}
+          {item.books[0].title}
         </div>
       </div>
     </div>

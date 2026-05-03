@@ -73,6 +73,11 @@ export type CharacterDescription = Prisma.CharacterDescriptionModel
  */
 export type GeneratedBookCover = Prisma.GeneratedBookCoverModel
 /**
+ * Model CoverComment
+ * 
+ */
+export type CoverComment = Prisma.CoverCommentModel
+/**
  * Model CoverLike
  * 
  */
@@ -82,6 +87,11 @@ export type CoverLike = Prisma.CoverLikeModel
  * 
  */
 export type CharacterImageLike = Prisma.CharacterImageLikeModel
+/**
+ * Model CharacterImageComment
+ * 
+ */
+export type CharacterImageComment = Prisma.CharacterImageCommentModel
 /**
  * Model GeneratedCharacterImage
  * 

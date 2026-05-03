@@ -201,6 +201,7 @@ export type GeneratedBookCoverWhereInput = {
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.CoverLikeListRelationFilter
+  comments?: Prisma.CoverCommentListRelationFilter
 }
 
 export type GeneratedBookCoverOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type GeneratedBookCoverOrderByWithRelationInput = {
   book?: Prisma.BookOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   likes?: Prisma.CoverLikeOrderByRelationAggregateInput
+  comments?: Prisma.CoverCommentOrderByRelationAggregateInput
 }
 
 export type GeneratedBookCoverWhereUniqueInput = Prisma.AtLeast<{
@@ -230,6 +232,7 @@ export type GeneratedBookCoverWhereUniqueInput = Prisma.AtLeast<{
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.CoverLikeListRelationFilter
+  comments?: Prisma.CoverCommentListRelationFilter
 }, "id">
 
 export type GeneratedBookCoverOrderByWithAggregationInput = {
@@ -267,6 +270,7 @@ export type GeneratedBookCoverCreateInput = {
   book: Prisma.BookCreateNestedOneWithoutGeneratedBookCoverInput
   user: Prisma.UserCreateNestedOneWithoutGeneratedBookCoverInput
   likes?: Prisma.CoverLikeCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverUncheckedCreateInput = {
@@ -278,6 +282,7 @@ export type GeneratedBookCoverUncheckedCreateInput = {
   bookId: string
   userId: string
   likes?: Prisma.CoverLikeUncheckedCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentUncheckedCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverUpdateInput = {
@@ -289,6 +294,7 @@ export type GeneratedBookCoverUpdateInput = {
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
   likes?: Prisma.CoverLikeUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateInput = {
@@ -300,6 +306,7 @@ export type GeneratedBookCoverUncheckedUpdateInput = {
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CoverLikeUncheckedUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUncheckedUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverCreateManyInput = {
@@ -459,6 +466,20 @@ export type GeneratedBookCoverUncheckedUpdateManyWithoutBookNestedInput = {
   deleteMany?: Prisma.GeneratedBookCoverScalarWhereInput | Prisma.GeneratedBookCoverScalarWhereInput[]
 }
 
+export type GeneratedBookCoverCreateNestedOneWithoutCommentsInput = {
+  create?: Prisma.XOR<Prisma.GeneratedBookCoverCreateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.GeneratedBookCoverCreateOrConnectWithoutCommentsInput
+  connect?: Prisma.GeneratedBookCoverWhereUniqueInput
+}
+
+export type GeneratedBookCoverUpdateOneRequiredWithoutCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.GeneratedBookCoverCreateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.GeneratedBookCoverCreateOrConnectWithoutCommentsInput
+  upsert?: Prisma.GeneratedBookCoverUpsertWithoutCommentsInput
+  connect?: Prisma.GeneratedBookCoverWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GeneratedBookCoverUpdateToOneWithWhereWithoutCommentsInput, Prisma.GeneratedBookCoverUpdateWithoutCommentsInput>, Prisma.GeneratedBookCoverUncheckedUpdateWithoutCommentsInput>
+}
+
 export type GeneratedBookCoverCreateNestedOneWithoutLikesInput = {
   create?: Prisma.XOR<Prisma.GeneratedBookCoverCreateWithoutLikesInput, Prisma.GeneratedBookCoverUncheckedCreateWithoutLikesInput>
   connectOrCreate?: Prisma.GeneratedBookCoverCreateOrConnectWithoutLikesInput
@@ -481,6 +502,7 @@ export type GeneratedBookCoverCreateWithoutUserInput = {
   prompt: string
   book: Prisma.BookCreateNestedOneWithoutGeneratedBookCoverInput
   likes?: Prisma.CoverLikeCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverUncheckedCreateWithoutUserInput = {
@@ -491,6 +513,7 @@ export type GeneratedBookCoverUncheckedCreateWithoutUserInput = {
   prompt: string
   bookId: string
   likes?: Prisma.CoverLikeUncheckedCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentUncheckedCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverCreateOrConnectWithoutUserInput = {
@@ -540,6 +563,7 @@ export type GeneratedBookCoverCreateWithoutBookInput = {
   prompt: string
   user: Prisma.UserCreateNestedOneWithoutGeneratedBookCoverInput
   likes?: Prisma.CoverLikeCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverUncheckedCreateWithoutBookInput = {
@@ -550,6 +574,7 @@ export type GeneratedBookCoverUncheckedCreateWithoutBookInput = {
   prompt: string
   userId: string
   likes?: Prisma.CoverLikeUncheckedCreateNestedManyWithoutCoverInput
+  comments?: Prisma.CoverCommentUncheckedCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverCreateOrConnectWithoutBookInput = {
@@ -578,6 +603,66 @@ export type GeneratedBookCoverUpdateManyWithWhereWithoutBookInput = {
   data: Prisma.XOR<Prisma.GeneratedBookCoverUpdateManyMutationInput, Prisma.GeneratedBookCoverUncheckedUpdateManyWithoutBookInput>
 }
 
+export type GeneratedBookCoverCreateWithoutCommentsInput = {
+  id?: string
+  blobUrl: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  prompt: string
+  book: Prisma.BookCreateNestedOneWithoutGeneratedBookCoverInput
+  user: Prisma.UserCreateNestedOneWithoutGeneratedBookCoverInput
+  likes?: Prisma.CoverLikeCreateNestedManyWithoutCoverInput
+}
+
+export type GeneratedBookCoverUncheckedCreateWithoutCommentsInput = {
+  id?: string
+  blobUrl: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  prompt: string
+  bookId: string
+  userId: string
+  likes?: Prisma.CoverLikeUncheckedCreateNestedManyWithoutCoverInput
+}
+
+export type GeneratedBookCoverCreateOrConnectWithoutCommentsInput = {
+  where: Prisma.GeneratedBookCoverWhereUniqueInput
+  create: Prisma.XOR<Prisma.GeneratedBookCoverCreateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedCreateWithoutCommentsInput>
+}
+
+export type GeneratedBookCoverUpsertWithoutCommentsInput = {
+  update: Prisma.XOR<Prisma.GeneratedBookCoverUpdateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedUpdateWithoutCommentsInput>
+  create: Prisma.XOR<Prisma.GeneratedBookCoverCreateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedCreateWithoutCommentsInput>
+  where?: Prisma.GeneratedBookCoverWhereInput
+}
+
+export type GeneratedBookCoverUpdateToOneWithWhereWithoutCommentsInput = {
+  where?: Prisma.GeneratedBookCoverWhereInput
+  data: Prisma.XOR<Prisma.GeneratedBookCoverUpdateWithoutCommentsInput, Prisma.GeneratedBookCoverUncheckedUpdateWithoutCommentsInput>
+}
+
+export type GeneratedBookCoverUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  blobUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  book?: Prisma.BookUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
+  likes?: Prisma.CoverLikeUpdateManyWithoutCoverNestedInput
+}
+
+export type GeneratedBookCoverUncheckedUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  blobUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  bookId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  likes?: Prisma.CoverLikeUncheckedUpdateManyWithoutCoverNestedInput
+}
+
 export type GeneratedBookCoverCreateWithoutLikesInput = {
   id?: string
   blobUrl: string
@@ -586,6 +671,7 @@ export type GeneratedBookCoverCreateWithoutLikesInput = {
   prompt: string
   book: Prisma.BookCreateNestedOneWithoutGeneratedBookCoverInput
   user: Prisma.UserCreateNestedOneWithoutGeneratedBookCoverInput
+  comments?: Prisma.CoverCommentCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverUncheckedCreateWithoutLikesInput = {
@@ -596,6 +682,7 @@ export type GeneratedBookCoverUncheckedCreateWithoutLikesInput = {
   prompt: string
   bookId: string
   userId: string
+  comments?: Prisma.CoverCommentUncheckedCreateNestedManyWithoutCoverInput
 }
 
 export type GeneratedBookCoverCreateOrConnectWithoutLikesInput = {
@@ -622,6 +709,7 @@ export type GeneratedBookCoverUpdateWithoutLikesInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
+  comments?: Prisma.CoverCommentUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateWithoutLikesInput = {
@@ -632,6 +720,7 @@ export type GeneratedBookCoverUncheckedUpdateWithoutLikesInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  comments?: Prisma.CoverCommentUncheckedUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverCreateManyUserInput = {
@@ -651,6 +740,7 @@ export type GeneratedBookCoverUpdateWithoutUserInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   book?: Prisma.BookUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
   likes?: Prisma.CoverLikeUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateWithoutUserInput = {
@@ -661,6 +751,7 @@ export type GeneratedBookCoverUncheckedUpdateWithoutUserInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CoverLikeUncheckedUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUncheckedUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateManyWithoutUserInput = {
@@ -689,6 +780,7 @@ export type GeneratedBookCoverUpdateWithoutBookInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutGeneratedBookCoverNestedInput
   likes?: Prisma.CoverLikeUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateWithoutBookInput = {
@@ -699,6 +791,7 @@ export type GeneratedBookCoverUncheckedUpdateWithoutBookInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   likes?: Prisma.CoverLikeUncheckedUpdateManyWithoutCoverNestedInput
+  comments?: Prisma.CoverCommentUncheckedUpdateManyWithoutCoverNestedInput
 }
 
 export type GeneratedBookCoverUncheckedUpdateManyWithoutBookInput = {
@@ -717,10 +810,12 @@ export type GeneratedBookCoverUncheckedUpdateManyWithoutBookInput = {
 
 export type GeneratedBookCoverCountOutputType = {
   likes: number
+  comments: number
 }
 
 export type GeneratedBookCoverCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   likes?: boolean | GeneratedBookCoverCountOutputTypeCountLikesArgs
+  comments?: boolean | GeneratedBookCoverCountOutputTypeCountCommentsArgs
 }
 
 /**
@@ -740,6 +835,13 @@ export type GeneratedBookCoverCountOutputTypeCountLikesArgs<ExtArgs extends runt
   where?: Prisma.CoverLikeWhereInput
 }
 
+/**
+ * GeneratedBookCoverCountOutputType without action
+ */
+export type GeneratedBookCoverCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoverCommentWhereInput
+}
+
 
 export type GeneratedBookCoverSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -752,6 +854,7 @@ export type GeneratedBookCoverSelect<ExtArgs extends runtime.Types.Extensions.In
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.GeneratedBookCover$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.GeneratedBookCover$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.GeneratedBookCoverCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["generatedBookCover"]>
 
@@ -794,6 +897,7 @@ export type GeneratedBookCoverInclude<ExtArgs extends runtime.Types.Extensions.I
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.GeneratedBookCover$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.GeneratedBookCover$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.GeneratedBookCoverCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GeneratedBookCoverIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -811,6 +915,7 @@ export type $GeneratedBookCoverPayload<ExtArgs extends runtime.Types.Extensions.
     book: Prisma.$BookPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
     likes: Prisma.$CoverLikePayload<ExtArgs>[]
+    comments: Prisma.$CoverCommentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1217,6 +1322,7 @@ export interface Prisma__GeneratedBookCoverClient<T, Null = never, ExtArgs exten
   book<T extends Prisma.BookDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BookDefaultArgs<ExtArgs>>): Prisma.Prisma__BookClient<runtime.Types.Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   likes<T extends Prisma.GeneratedBookCover$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GeneratedBookCover$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoverLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  comments<T extends Prisma.GeneratedBookCover$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GeneratedBookCover$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoverCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1675,6 +1781,30 @@ export type GeneratedBookCover$likesArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.CoverLikeScalarFieldEnum | Prisma.CoverLikeScalarFieldEnum[]
+}
+
+/**
+ * GeneratedBookCover.comments
+ */
+export type GeneratedBookCover$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CoverComment
+   */
+  select?: Prisma.CoverCommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CoverComment
+   */
+  omit?: Prisma.CoverCommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoverCommentInclude<ExtArgs> | null
+  where?: Prisma.CoverCommentWhereInput
+  orderBy?: Prisma.CoverCommentOrderByWithRelationInput | Prisma.CoverCommentOrderByWithRelationInput[]
+  cursor?: Prisma.CoverCommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoverCommentScalarFieldEnum | Prisma.CoverCommentScalarFieldEnum[]
 }
 
 /**
