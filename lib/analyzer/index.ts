@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { writeFile } from "node:fs/promises";
-import { resolve, basename } from "node:path";
+import { writeFile, mkdir } from "node:fs/promises";
+import { resolve, basename, dirname } from "node:path";
 import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { extractTextFromPdf } from "./pdf-extractor";
 import { analyzeBook } from "./analyzer";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const program = new Command();
 
@@ -36,9 +39,12 @@ program
         process.exit(1);
       }
 
+      const modelDir = resolve(__dirname, "generated", opts.model.replace(/[/:]/g, "-"));
+      await mkdir(modelDir, { recursive: true });
+
       const outputPath = opts.output
         ? resolve(opts.output)
-        : resolve(basename(absolutePath, ".pdf") + ".analysis.json");
+        : resolve(modelDir, basename(absolutePath, ".pdf") + ".analysis.json");
 
       console.log("=".repeat(60));
       console.log("  Book Analyzer");

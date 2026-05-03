@@ -43,3 +43,7 @@ next-env.d.ts
 .claude
 
 /app/generated/prisma
+
+# analyzer generated output
+/lib/analyzer/generated/*
+!/lib/analyzer/generated/.gitkeep
