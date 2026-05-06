@@ -26,7 +26,6 @@ export type AggregateBook = {
 
 export type BookMinAggregateOutputType = {
   id: string | null
-  googleBooksId: string | null
   title: string | null
   authors: string | null
   description: string | null
@@ -40,7 +39,6 @@ export type BookMinAggregateOutputType = {
 
 export type BookMaxAggregateOutputType = {
   id: string | null
-  googleBooksId: string | null
   title: string | null
   authors: string | null
   description: string | null
@@ -54,7 +52,6 @@ export type BookMaxAggregateOutputType = {
 
 export type BookCountAggregateOutputType = {
   id: number
-  googleBooksId: number
   title: number
   authors: number
   description: number
@@ -70,7 +67,6 @@ export type BookCountAggregateOutputType = {
 
 export type BookMinAggregateInputType = {
   id?: true
-  googleBooksId?: true
   title?: true
   authors?: true
   description?: true
@@ -84,7 +80,6 @@ export type BookMinAggregateInputType = {
 
 export type BookMaxAggregateInputType = {
   id?: true
-  googleBooksId?: true
   title?: true
   authors?: true
   description?: true
@@ -98,7 +93,6 @@ export type BookMaxAggregateInputType = {
 
 export type BookCountAggregateInputType = {
   id?: true
-  googleBooksId?: true
   title?: true
   authors?: true
   description?: true
@@ -185,7 +179,6 @@ export type BookGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type BookGroupByOutputType = {
   id: string
-  googleBooksId: string
   title: string
   authors: string
   description: string | null
@@ -220,7 +213,6 @@ export type BookWhereInput = {
   OR?: Prisma.BookWhereInput[]
   NOT?: Prisma.BookWhereInput | Prisma.BookWhereInput[]
   id?: Prisma.StringFilter<"Book"> | string
-  googleBooksId?: Prisma.StringFilter<"Book"> | string
   title?: Prisma.StringFilter<"Book"> | string
   authors?: Prisma.StringFilter<"Book"> | string
   description?: Prisma.StringNullableFilter<"Book"> | string | null
@@ -241,7 +233,6 @@ export type BookWhereInput = {
 
 export type BookOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  googleBooksId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   authors?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -262,7 +253,6 @@ export type BookOrderByWithRelationInput = {
 
 export type BookWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  googleBooksId?: string
   AND?: Prisma.BookWhereInput | Prisma.BookWhereInput[]
   OR?: Prisma.BookWhereInput[]
   NOT?: Prisma.BookWhereInput | Prisma.BookWhereInput[]
@@ -282,11 +272,10 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   bookSeries?: Prisma.XOR<Prisma.BookSeriesNullableScalarRelationFilter, Prisma.BookSeriesWhereInput> | null
   generatedBookCover?: Prisma.GeneratedBookCoverListRelationFilter
   generatedCharacterImages?: Prisma.GeneratedCharacterImageListRelationFilter
-}, "id" | "googleBooksId">
+}, "id">
 
 export type BookOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  googleBooksId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   authors?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -306,7 +295,6 @@ export type BookScalarWhereWithAggregatesInput = {
   OR?: Prisma.BookScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BookScalarWhereWithAggregatesInput | Prisma.BookScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Book"> | string
-  googleBooksId?: Prisma.StringWithAggregatesFilter<"Book"> | string
   title?: Prisma.StringWithAggregatesFilter<"Book"> | string
   authors?: Prisma.StringWithAggregatesFilter<"Book"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
@@ -320,7 +308,6 @@ export type BookScalarWhereWithAggregatesInput = {
 
 export type BookCreateInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -340,7 +327,6 @@ export type BookCreateInput = {
 
 export type BookUncheckedCreateInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -360,7 +346,6 @@ export type BookUncheckedCreateInput = {
 
 export type BookUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -380,7 +365,6 @@ export type BookUpdateInput = {
 
 export type BookUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -400,7 +384,6 @@ export type BookUncheckedUpdateInput = {
 
 export type BookCreateManyInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -414,7 +397,6 @@ export type BookCreateManyInput = {
 
 export type BookUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -427,7 +409,6 @@ export type BookUpdateManyMutationInput = {
 
 export type BookUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -451,7 +432,6 @@ export type BookOrderByRelationAggregateInput = {
 
 export type BookCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  googleBooksId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   authors?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -465,7 +445,6 @@ export type BookCountOrderByAggregateInput = {
 
 export type BookMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  googleBooksId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   authors?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -479,7 +458,6 @@ export type BookMaxOrderByAggregateInput = {
 
 export type BookMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  googleBooksId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   authors?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -648,7 +626,6 @@ export type BookUpdateOneRequiredWithoutGeneratedCharacterImagesNestedInput = {
 
 export type BookCreateWithoutBookSeriesInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -667,7 +644,6 @@ export type BookCreateWithoutBookSeriesInput = {
 
 export type BookUncheckedCreateWithoutBookSeriesInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -715,7 +691,6 @@ export type BookScalarWhereInput = {
   OR?: Prisma.BookScalarWhereInput[]
   NOT?: Prisma.BookScalarWhereInput | Prisma.BookScalarWhereInput[]
   id?: Prisma.StringFilter<"Book"> | string
-  googleBooksId?: Prisma.StringFilter<"Book"> | string
   title?: Prisma.StringFilter<"Book"> | string
   authors?: Prisma.StringFilter<"Book"> | string
   description?: Prisma.StringNullableFilter<"Book"> | string | null
@@ -729,7 +704,6 @@ export type BookScalarWhereInput = {
 
 export type BookCreateWithoutPostsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -748,7 +722,6 @@ export type BookCreateWithoutPostsInput = {
 
 export type BookUncheckedCreateWithoutPostsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -783,7 +756,6 @@ export type BookUpdateToOneWithWhereWithoutPostsInput = {
 
 export type BookUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -802,7 +774,6 @@ export type BookUpdateWithoutPostsInput = {
 
 export type BookUncheckedUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -821,7 +792,6 @@ export type BookUncheckedUpdateWithoutPostsInput = {
 
 export type BookCreateWithoutReviewsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -840,7 +810,6 @@ export type BookCreateWithoutReviewsInput = {
 
 export type BookUncheckedCreateWithoutReviewsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -875,7 +844,6 @@ export type BookUpdateToOneWithWhereWithoutReviewsInput = {
 
 export type BookUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -894,7 +862,6 @@ export type BookUpdateWithoutReviewsInput = {
 
 export type BookUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -913,7 +880,6 @@ export type BookUncheckedUpdateWithoutReviewsInput = {
 
 export type BookCreateWithoutCharactersInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -932,7 +898,6 @@ export type BookCreateWithoutCharactersInput = {
 
 export type BookUncheckedCreateWithoutCharactersInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -972,7 +937,6 @@ export type BookUpdateManyWithWhereWithoutCharactersInput = {
 
 export type BookCreateWithoutCharacterDescriptionsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -991,7 +955,6 @@ export type BookCreateWithoutCharacterDescriptionsInput = {
 
 export type BookUncheckedCreateWithoutCharacterDescriptionsInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1026,7 +989,6 @@ export type BookUpdateToOneWithWhereWithoutCharacterDescriptionsInput = {
 
 export type BookUpdateWithoutCharacterDescriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1045,7 +1007,6 @@ export type BookUpdateWithoutCharacterDescriptionsInput = {
 
 export type BookUncheckedUpdateWithoutCharacterDescriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1064,7 +1025,6 @@ export type BookUncheckedUpdateWithoutCharacterDescriptionsInput = {
 
 export type BookCreateWithoutGeneratedBookCoverInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1083,7 +1043,6 @@ export type BookCreateWithoutGeneratedBookCoverInput = {
 
 export type BookUncheckedCreateWithoutGeneratedBookCoverInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1118,7 +1077,6 @@ export type BookUpdateToOneWithWhereWithoutGeneratedBookCoverInput = {
 
 export type BookUpdateWithoutGeneratedBookCoverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1137,7 +1095,6 @@ export type BookUpdateWithoutGeneratedBookCoverInput = {
 
 export type BookUncheckedUpdateWithoutGeneratedBookCoverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1156,7 +1113,6 @@ export type BookUncheckedUpdateWithoutGeneratedBookCoverInput = {
 
 export type BookCreateWithoutGeneratedCharacterImagesInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1175,7 +1131,6 @@ export type BookCreateWithoutGeneratedCharacterImagesInput = {
 
 export type BookUncheckedCreateWithoutGeneratedCharacterImagesInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1210,7 +1165,6 @@ export type BookUpdateToOneWithWhereWithoutGeneratedCharacterImagesInput = {
 
 export type BookUpdateWithoutGeneratedCharacterImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1229,7 +1183,6 @@ export type BookUpdateWithoutGeneratedCharacterImagesInput = {
 
 export type BookUncheckedUpdateWithoutGeneratedCharacterImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1248,7 +1201,6 @@ export type BookUncheckedUpdateWithoutGeneratedCharacterImagesInput = {
 
 export type BookCreateManyBookSeriesInput = {
   id?: string
-  googleBooksId: string
   title: string
   authors: string
   description?: string | null
@@ -1261,7 +1213,6 @@ export type BookCreateManyBookSeriesInput = {
 
 export type BookUpdateWithoutBookSeriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1280,7 +1231,6 @@ export type BookUpdateWithoutBookSeriesInput = {
 
 export type BookUncheckedUpdateWithoutBookSeriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1299,7 +1249,6 @@ export type BookUncheckedUpdateWithoutBookSeriesInput = {
 
 export type BookUncheckedUpdateManyWithoutBookSeriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1312,7 +1261,6 @@ export type BookUncheckedUpdateManyWithoutBookSeriesInput = {
 
 export type BookUpdateWithoutCharactersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1331,7 +1279,6 @@ export type BookUpdateWithoutCharactersInput = {
 
 export type BookUncheckedUpdateWithoutCharactersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1350,7 +1297,6 @@ export type BookUncheckedUpdateWithoutCharactersInput = {
 
 export type BookUncheckedUpdateManyWithoutCharactersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  googleBooksId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   authors?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1440,7 +1386,6 @@ export type BookCountOutputTypeCountGeneratedCharacterImagesArgs<ExtArgs extends
 
 export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  googleBooksId?: boolean
   title?: boolean
   authors?: boolean
   description?: boolean
@@ -1462,7 +1407,6 @@ export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 
 export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  googleBooksId?: boolean
   title?: boolean
   authors?: boolean
   description?: boolean
@@ -1477,7 +1421,6 @@ export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  googleBooksId?: boolean
   title?: boolean
   authors?: boolean
   description?: boolean
@@ -1492,7 +1435,6 @@ export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type BookSelectScalar = {
   id?: boolean
-  googleBooksId?: boolean
   title?: boolean
   authors?: boolean
   description?: boolean
@@ -1504,7 +1446,7 @@ export type BookSelectScalar = {
   bookSeriesId?: boolean
 }
 
-export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "googleBooksId" | "title" | "authors" | "description" | "thumbnailUrl" | "language" | "publishedDate" | "createdAt" | "updatedAt" | "bookSeriesId", ExtArgs["result"]["book"]>
+export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "authors" | "description" | "thumbnailUrl" | "language" | "publishedDate" | "createdAt" | "updatedAt" | "bookSeriesId", ExtArgs["result"]["book"]>
 export type BookInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Book$reviewsArgs<ExtArgs>
   characters?: boolean | Prisma.Book$charactersArgs<ExtArgs>
@@ -1535,7 +1477,6 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    googleBooksId: string
     title: string
     authors: string
     description: string | null
@@ -1976,7 +1917,6 @@ export interface Prisma__BookClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface BookFieldRefs {
   readonly id: Prisma.FieldRef<"Book", 'String'>
-  readonly googleBooksId: Prisma.FieldRef<"Book", 'String'>
   readonly title: Prisma.FieldRef<"Book", 'String'>
   readonly authors: Prisma.FieldRef<"Book", 'String'>
   readonly description: Prisma.FieldRef<"Book", 'String'>

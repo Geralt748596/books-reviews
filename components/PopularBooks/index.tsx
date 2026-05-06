@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cacheLife } from "next/cache";
+import { tryCatch } from "@/lib/tryCatch";
 
 type Props = {
   className?: string;
@@ -31,7 +32,11 @@ export const PopularBooks = ({ className, ...props }: Props) => {
 async function PopularBooksContent() {
   "use cache";
   cacheLife("hours");
-  const books = await getPopularBooks();
+  const [books, error] = await tryCatch(getPopularBooks());
+
+  if (error) {
+    return <div>Something goes wrong...</div>;
+  }
 
   if (books.length === 0) {
     return <p className="text-muted-foreground">No popular books found.</p>;

@@ -105,3 +105,8 @@
 ## [2026-03-29] Task 12 Learnings: Image Route + Audit Style Cleanup
 - **Thin route wrapper**: `app/api/images/generate/route.ts` can call the server action directly; auth stays inside `generateBookImage`.
 - **CSS audit fix**: remove transition/animation classes only; keep hover color/shadow/ring utilities when they are not part of the violation.
+Task 2: rewrote saveBookToDb to accept plain params and removed GoogleBooksVolume dependency. Verified lib/actions/books.ts has no diagnostics.
+
+## [2026-05-06] Character Actions Cleanup
+- Character server actions now return a minimal `CharacterData` shape (`id`, `name`, `createdAt`) with no creator relation fields.
+- Prisma `character.create`, `character.update`, and `getBookCharacters()` should use `select`/plain fields only after removing `createdById` from the model.

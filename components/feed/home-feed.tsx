@@ -3,9 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getHomeFeedPage } from "@/lib/actions/home-feed";
 import { HOME_FEED_PAGE_SIZE } from "@/lib/feed/types";
+import { tryCatch } from "@/lib/tryCatch";
 
 export async function HomeFeed() {
-  const page = await getHomeFeedPage();
+  const [page, error] = await tryCatch(getHomeFeedPage());
+  if (error) {
+    return <div>Something goes wrong...</div>;
+  }
 
   return <FeedList initialItems={page.items} initialCursor={page.nextCursor} />;
 }

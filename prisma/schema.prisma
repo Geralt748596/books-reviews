@@ -22,7 +22,6 @@ model User {
   sessions  Session[]
   accounts  Account[]
   reviews         Review[]
-  characters      Character[]
   generatedImages GeneratedCharacterImage[]
   posts Post[]
   generatedBookCover GeneratedBookCover[]
@@ -91,7 +90,6 @@ model BookSeries {
 
 model Book {
   id            String   @id @default(cuid())
-  googleBooksId String   @unique
   title         String
   authors       String   // comma-separated list
   description   String?
@@ -111,7 +109,6 @@ model Book {
   generatedBookCover GeneratedBookCover[]
   generatedCharacterImages GeneratedCharacterImage[]
 
-  @@index([googleBooksId])
   @@index([title])
 }
 
@@ -153,10 +150,8 @@ model Review {
 model Character {
   id        String   @id @default(cuid())
   name      String
+  aliases   String[] @default([])
   createdAt DateTime @default(now())
-
-  createdById String
-  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   books                 Book[]
   generatedImages       GeneratedCharacterImage[]

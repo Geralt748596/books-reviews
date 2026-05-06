@@ -8,7 +8,7 @@ const WITCHER_SERIES_NAME = "The Witcher";
 
 const WITCHER_BOOKS = [
   {
-    googleBooksId: "kXlsKgAACAAJ",
+    id: "seed_book_last_wish",
     title: "The Last Wish",
     authors: "Andrzej Sapkowski",
     description:
@@ -19,7 +19,7 @@ const WITCHER_BOOKS = [
       "https://books.google.com/books/content?id=kXlsKgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
   },
   {
-    googleBooksId: "wtX4zgEACAAJ",
+    id: "seed_book_sword_of_destiny",
     title: "Sword of Destiny",
     authors: "Andrzej Sapkowski",
     description:
@@ -34,9 +34,9 @@ const WITCHER_BOOKS = [
 type CharacterSeed = {
   name: string;
   /** All books this character appears in. */
-  bookGoogleIds: (typeof WITCHER_BOOKS)[number]["googleBooksId"][];
+  bookIds: (typeof WITCHER_BOOKS)[number]["id"][];
   descriptions: {
-    bookGoogleId: (typeof WITCHER_BOOKS)[number]["googleBooksId"];
+    bookId: (typeof WITCHER_BOOKS)[number]["id"];
     description: string;
   }[];
 };
@@ -44,39 +44,39 @@ type CharacterSeed = {
 const WITCHER_CHARACTERS: CharacterSeed[] = [
   {
     name: "Geralt of Rivia",
-    bookGoogleIds: ["kXlsKgAACAAJ", "wtX4zgEACAAJ"],
+    bookIds: ["seed_book_last_wish", "seed_book_sword_of_destiny"],
     descriptions: [
       {
-        bookGoogleId: "kXlsKgAACAAJ",
+        bookId: "seed_book_last_wish",
         description:
           "Witcher, monster hunter for hire; silver sword for beasts, steel for men.",
       },
       {
-        bookGoogleId: "wtX4zgEACAAJ",
+        bookId: "seed_book_sword_of_destiny",
         description: "Returns to Brokilon and deeper ties with Ciri's fate.",
       },
     ],
   },
   {
     name: "Dandelion (Jaskier)",
-    bookGoogleIds: ["kXlsKgAACAAJ", "wtX4zgEACAAJ"],
+    bookIds: ["seed_book_last_wish", "seed_book_sword_of_destiny"],
     descriptions: [
       {
-        bookGoogleId: "kXlsKgAACAAJ",
+        bookId: "seed_book_last_wish",
         description: "Poet and bard; Geralt's friend and traveling companion.",
       },
       {
-        bookGoogleId: "wtX4zgEACAAJ",
+        bookId: "seed_book_sword_of_destiny",
         description: "Still narrating (and surviving) Geralt's adventures.",
       },
     ],
   },
   {
     name: "Yennefer of Vengerberg",
-    bookGoogleIds: ["kXlsKgAACAAJ"],
+    bookIds: ["seed_book_last_wish"],
     descriptions: [
       {
-        bookGoogleId: "kXlsKgAACAAJ",
+        bookId: "seed_book_last_wish",
         description:
           "Powerful sorceress from Vengerberg; tied to Geralt by the djinn's wish.",
       },
@@ -84,20 +84,20 @@ const WITCHER_CHARACTERS: CharacterSeed[] = [
   },
   {
     name: "Queen Calanthe",
-    bookGoogleIds: ["kXlsKgAACAAJ"],
+    bookIds: ["seed_book_last_wish"],
     descriptions: [
       {
-        bookGoogleId: "kXlsKgAACAAJ",
+        bookId: "seed_book_last_wish",
         description: "Lioness of Cintra; fierce ruler and Ciri's grandmother.",
       },
     ],
   },
   {
     name: "Renfri of Creyden",
-    bookGoogleIds: ["kXlsKgAACAAJ"],
+    bookIds: ["seed_book_last_wish"],
     descriptions: [
       {
-        bookGoogleId: "kXlsKgAACAAJ",
+        bookId: "seed_book_last_wish",
         description:
           "Princess turned bandit leader; Geralt faces her in Blaviken.",
       },
@@ -105,10 +105,10 @@ const WITCHER_CHARACTERS: CharacterSeed[] = [
   },
   {
     name: "Cirilla Fiona Elen Riannon (Ciri)",
-    bookGoogleIds: ["wtX4zgEACAAJ"],
+    bookIds: ["seed_book_sword_of_destiny"],
     descriptions: [
       {
-        bookGoogleId: "wtX4zgEACAAJ",
+        bookId: "seed_book_sword_of_destiny",
         description:
           "Princess of Cintra; her path crosses Geralt's in the dryads' forest.",
       },
@@ -116,20 +116,20 @@ const WITCHER_CHARACTERS: CharacterSeed[] = [
   },
   {
     name: "Eithné",
-    bookGoogleIds: ["wtX4zgEACAAJ"],
+    bookIds: ["seed_book_sword_of_destiny"],
     descriptions: [
       {
-        bookGoogleId: "wtX4zgEACAAJ",
+        bookId: "seed_book_sword_of_destiny",
         description: "Queen of the dryads of Brokilon; guardian of the forest.",
       },
     ],
   },
   {
     name: "Crach an Craite",
-    bookGoogleIds: ["wtX4zgEACAAJ"],
+    bookIds: ["seed_book_sword_of_destiny"],
     descriptions: [
       {
-        bookGoogleId: "wtX4zgEACAAJ",
+        bookId: "seed_book_sword_of_destiny",
         description:
           "Jarl of Skellige; ally to Cintra and key to the isles' politics.",
       },
@@ -138,7 +138,7 @@ const WITCHER_CHARACTERS: CharacterSeed[] = [
 ];
 
 const WAR_AND_PEACE = {
-  googleBooksId: "c4HHNAAACAAJ",
+  id: "seed_book_war_and_peace",
   title: "War and Peace",
   authors: "Leo Tolstoy",
   description:
@@ -191,11 +191,9 @@ export async function seedTestData() {
     update: { name: WITCHER_SERIES_NAME },
   });
 
-  const bookIdByGoogleId = new Map<string, string>();
-
   for (const bookSpec of WITCHER_BOOKS) {
     const book = await prisma.book.upsert({
-      where: { googleBooksId: bookSpec.googleBooksId },
+      where: { id: bookSpec.id },
       create: { ...bookSpec, bookSeriesId: witcherSeries.id },
       update: {
         title: bookSpec.title,
@@ -207,35 +205,30 @@ export async function seedTestData() {
         bookSeriesId: witcherSeries.id,
       },
     });
-    bookIdByGoogleId.set(bookSpec.googleBooksId, book.id);
+    void book;
   }
 
-  const witcherBookIds = [...bookIdByGoogleId.values()];
+  const witcherBookIds = WITCHER_BOOKS.map((book) => book.id);
 
   await prisma.characterDescription.deleteMany({
     where: {
-      character: { createdById: seedUser.id },
       bookId: { in: witcherBookIds },
     },
   });
 
   await prisma.character.deleteMany({
     where: {
-      createdById: seedUser.id,
       books: { some: { id: { in: witcherBookIds } } },
     },
   });
 
   for (const charSpec of WITCHER_CHARACTERS) {
-    const connectBooks = charSpec.bookGoogleIds.map((gid) => ({
-      id: bookIdByGoogleId.get(gid)!,
-    }));
+    const connectBooks = charSpec.bookIds.map((id) => ({ id }));
 
     const character = await prisma.character.create({
       data: {
         name: charSpec.name,
         books: { connect: connectBooks },
-        createdById: seedUser.id,
       },
     });
 
@@ -243,7 +236,7 @@ export async function seedTestData() {
       data: charSpec.descriptions.map((d) => ({
         description: d.description,
         characterId: character.id,
-        bookId: bookIdByGoogleId.get(d.bookGoogleId)!,
+        bookId: d.bookId,
       })),
     });
   }
@@ -251,8 +244,8 @@ export async function seedTestData() {
   // --- War and Peace (standalone) ---
 
   const wapBook = await prisma.book.upsert({
-    where: { googleBooksId: WAR_AND_PEACE.googleBooksId },
-    create: WAR_AND_PEACE,
+    where: { id: WAR_AND_PEACE.id },
+    create: { ...WAR_AND_PEACE },
     update: {
       title: WAR_AND_PEACE.title,
       authors: WAR_AND_PEACE.authors,
@@ -265,14 +258,12 @@ export async function seedTestData() {
 
   await prisma.characterDescription.deleteMany({
     where: {
-      character: { createdById: seedUser.id },
       bookId: wapBook.id,
     },
   });
 
   await prisma.character.deleteMany({
     where: {
-      createdById: seedUser.id,
       books: { some: { id: wapBook.id } },
     },
   });
@@ -282,7 +273,6 @@ export async function seedTestData() {
       data: {
         name: charSpec.name,
         books: { connect: { id: wapBook.id } },
-        createdById: seedUser.id,
       },
     });
 

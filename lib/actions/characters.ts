@@ -12,14 +12,10 @@ const CharacterSchema = z.object({
   description: z.string().optional(),
 });
 
-export type CharacterWithCreator = {
+export type CharacterData = {
   id: string;
   name: string;
   createdAt: Date;
-  createdById: string;
-  createdBy: {
-    name: string;
-  };
 };
 
 export async function suggestCharacters(
@@ -39,7 +35,7 @@ export async function suggestCharacters(
 export async function addCharacter(
   bookId: string,
   data: { name: string; description?: string },
-): Promise<{ character: CharacterWithCreator } | { error: string }> {
+): Promise<{ character: CharacterData } | { error: string }> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return { error: "Unauthorized" };
 
@@ -68,7 +64,6 @@ export async function addCharacter(
       data: {
         name: parsed.data.name,
         books: { connect: { id: bookId } },
-        createdById: session.user.id,
         ...(parsed.data.description
           ? {
               characterDescriptions: {
@@ -80,13 +75,16 @@ export async function addCharacter(
             }
           : {}),
       },
-      include: {
-        createdBy: { select: { name: true } },
-      },
     });
 
     revalidatePath(`/book/${bookId}`);
-    return { character };
+    return {
+      character: {
+        id: character.id,
+        name: character.name,
+        createdAt: character.createdAt,
+      },
+    };
   } catch {
     return { error: "Failed to add character" };
   }
@@ -95,7 +93,7 @@ export async function addCharacter(
 export async function updateCharacter(
   characterId: string,
   data: { name?: string; description?: string },
-): Promise<{ character: CharacterWithCreator } | { error: string }> {
+): Promise<{ character: CharacterData } | { error: string }> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return { error: "Unauthorized" };
 
@@ -103,8 +101,6 @@ export async function updateCharacter(
     where: { id: characterId },
   });
   if (!existing) return { error: "Character not found" };
-  if (existing.createdById !== session.user.id)
-    return { error: "Unauthorized" };
 
   try {
     const character = await prisma.character.update({
@@ -112,16 +108,23 @@ export async function updateCharacter(
       data: {
         ...(data.name !== undefined ? { name: data.name } : {}),
       },
-      include: {
-        createdBy: { select: { name: true } },
-        books: { select: { id: true } },
-      },
     });
 
-    for (const book of character.books) {
+    const books = await prisma.book.findMany({
+      where: { characters: { some: { id: characterId } } },
+      select: { id: true },
+    });
+
+    for (const book of books) {
       revalidatePath(`/book/${book.id}`);
     }
-    return { character };
+    return {
+      character: {
+        id: character.id,
+        name: character.name,
+        createdAt: character.createdAt,
+      },
+    };
   } catch {
     return { error: "Failed to update character" };
   }
@@ -137,8 +140,6 @@ export async function deleteCharacter(
     where: { id: characterId },
   });
   if (!existing) return { error: "Character not found" };
-  if (existing.createdById !== session.user.id)
-    return { error: "Unauthorized" };
 
   const books = await prisma.book.findMany({
     where: { characters: { some: { id: characterId } } },
@@ -158,12 +159,14 @@ export async function deleteCharacter(
 
 export async function getBookCharacters(
   bookId: string,
-): Promise<CharacterWithCreator[]> {
+): Promise<CharacterData[]> {
   return prisma.character.findMany({
     where: { books: { some: { id: bookId } } },
     orderBy: { createdAt: "asc" },
-    include: {
-      createdBy: { select: { name: true } },
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
     },
   });
 }

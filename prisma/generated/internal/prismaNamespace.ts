@@ -1712,7 +1712,6 @@ export type BookSeriesScalarFieldEnum = (typeof BookSeriesScalarFieldEnum)[keyof
 
 export const BookScalarFieldEnum = {
   id: 'id',
-  googleBooksId: 'googleBooksId',
   title: 'title',
   authors: 'authors',
   description: 'description',
@@ -1757,8 +1756,8 @@ export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof 
 export const CharacterScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  createdAt: 'createdAt',
-  createdById: 'createdById'
+  aliases: 'aliases',
+  createdAt: 'createdAt'
 } as const
 
 export type CharacterScalarFieldEnum = (typeof CharacterScalarFieldEnum)[keyof typeof CharacterScalarFieldEnum]

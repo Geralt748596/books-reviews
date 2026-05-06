@@ -1,40 +1,32 @@
 {
-  "active_plan": "/Users/qcm/Desktop/per/books-reviews/.sisyphus/plans/books-reviews.md",
-  "started_at": "2026-03-29T15:33:47.777Z",
+  "active_plan": "/Users/qcm/Desktop/per/books-reviews/.sisyphus/plans/analyzer-db-integration.md",
+  "started_at": "2026-05-06T20:59:15.549Z",
   "session_ids": [
-    "ses_2c5edda8dffeJV6fLzfWdTgF4T",
-    "ses_2c5b42495ffeb8hjHBzbJSbOfT",
-    "ses_2c5ad1ef3ffeZrr2qQcZRsvzig",
-    "ses_2c5a50d5dffevGo7RzoCntV2n6",
-    "ses_2c5a12c37ffeQR1iL66xk1ewji",
-    "ses_2c59ba57affeKNAB1qhHOt8wge",
-    "ses_2c596a171ffeBMPpLF2dt8zv4R",
-    "ses_2c4fa601affeTYLraQhcDEiPn0",
-    "ses_2c4f4ba69ffepzi3B9EFz3xIN2",
-    "ses_2c4ea180dffeiTvQZ73jUjLjFo",
-    "ses_2c4e9d013ffe69eH4fJLYuJezP",
-    "ses_2c4e99fc5ffeZZHebwao2AouAk",
-    "ses_2c4e4cb42ffemJhYE1GQEHgn6m",
-    "ses_2c4dd23bfffe0lCZlxdM9p2BXb",
-    "ses_2c4dc5121ffeWnuuAfNs50L5gi",
-    "ses_2c4dd71b4ffej3S4QCorip5JS3",
-    "ses_2c4dcc17affe2pmee2Ozpi1qcX",
-    "ses_2c4d468dfffefg48Zrzawt7jeQ",
-    "ses_2c4d24a0bffeYd56Te6PM8fhn7",
-    "ses_2c4d27d3affebeyaivSRqhyzIi",
-    "ses_2c4d0bf4fffen1E6AcI4cMoVw4"
+    "ses_20144e9ddffex854b2DntOD6d2"
   ],
-  "plan_name": "books-reviews",
+  "session_origins": {
+    "ses_20144e9ddffex854b2DntOD6d2": "direct"
+  },
+  "plan_name": "analyzer-db-integration",
   "agent": "atlas",
   "task_sessions": {
-    "final-wave:f1": {
-      "task_key": "final-wave:f1",
-      "task_label": "F1",
-      "task_title": "**Plan Compliance Audit** — `oracle`",
-      "session_id": "ses_2c4d468dfffefg48Zrzawt7jeQ",
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Prisma Schema Migration",
+      "session_id": "ses_200e9025dffeX3DhUWkUOmr9Sw",
       "agent": "Sisyphus-Junior",
       "category": "quick",
-      "updated_at": "2026-03-29T19:58:07.270Z"
+      "updated_at": "2026-05-06T21:02:04.748Z"
+    },
+    "todo:2": {
+      "task_key": "todo:2",
+      "task_label": "2",
+      "task_title": "Fix lib/actions/books.ts",
+      "session_id": "ses_200e650fdffe1nAcAyvZXvP4a8",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-05-06T21:03:50.997Z"
     }
   }
 }

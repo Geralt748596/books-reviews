@@ -6,3 +6,6 @@
 - Google Books API 1000 req/day free tier — book metadata must be cached in DB
 - OpenAI cost explosion risk — enforce 10 images/user/day limit in server action
 - toNextJsHandler from better-auth may not handle async params — may need thin wrapper
+
+## [2026-05-06] Character Actions Cleanup
+- TypeScript LSP diagnostics could not run because `typescript-language-server` is not installed in this environment.

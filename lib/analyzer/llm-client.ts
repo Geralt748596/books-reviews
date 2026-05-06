@@ -1,6 +1,10 @@
-import ollama from "ollama";
+import { Ollama } from "ollama";
 import type { ZodSchema } from "zod/v3";
 import { zodToJsonSchema } from "zod-to-json-schema";
+
+const ollama = new Ollama({
+  host: process.env.OLLAMA_HOST ?? "http://192.168.1.138:11434",
+});
 
 export interface LlmRequestOptions {
   model: string;
@@ -106,25 +110,57 @@ export async function llmStructuredRequest<T>(
 }
 
 function parseJsonResponse(content: string): unknown {
-  try {
-    return JSON.parse(content);
-  } catch {
-    // ignore, try extracting from fences
-  }
+  const candidates = [
+    content,
+    content.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/)?.[1],
+    content.match(/\{[\s\S]*\}/)?.[0],
+  ].filter(Boolean) as string[];
 
-  const fenced = content.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
-  if (fenced) {
-    return JSON.parse(fenced[1]);
-  }
-
-  const braceMatch = content.match(/\{[\s\S]*\}/);
-  if (braceMatch) {
-    return JSON.parse(braceMatch[0]);
+  for (const raw of candidates) {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      // try repairing
+    }
+    try {
+      return JSON.parse(repairJson(raw));
+    } catch {
+      // try next candidate
+    }
   }
 
   throw new SyntaxError(
     `Cannot extract JSON from response: ${content.slice(0, 100)}`,
   );
+}
+
+function repairJson(raw: string): string {
+  let s = raw;
+
+  // Fix unescaped newlines/tabs inside string values
+  s = s.replace(/"(?:[^"\\]|\\.)*"/g, (match) =>
+    match
+      .replace(/(?<!\\)\n/g, "\\n")
+      .replace(/(?<!\\)\r/g, "\\r")
+      .replace(/(?<!\\)\t/g, "\\t"),
+  );
+
+  // Remove trailing commas before ] or }
+  s = s.replace(/,\s*([}\]])/g, "$1");
+
+  // Try to close unclosed structures
+  const opens = (s.match(/[{[]/g) || []).length;
+  const closes = (s.match(/[}\]]/g) || []).length;
+  if (opens > closes) {
+    const stack: string[] = [];
+    for (const ch of s) {
+      if (ch === "{" || ch === "[") stack.push(ch === "{" ? "}" : "]");
+      else if (ch === "}" || ch === "]") stack.pop();
+    }
+    s += stack.reverse().join("");
+  }
+
+  return s;
 }
 
 function coerceArraysToStrings(obj: unknown): unknown {

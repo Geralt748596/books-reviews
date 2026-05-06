@@ -1,7 +1,6 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import type { GoogleBooksVolume } from "@/lib/google-books";
 import { BookResultType, CharacterResultType } from "@/lib/types/actions";
 import { Book } from "@/prisma/generated/client";
 import { cacheLife } from "next/cache";
@@ -97,30 +96,24 @@ export async function findBooksOrCharacters(query: string) {
   return results.slice(0, MAX_RESULTS);
 }
 
-export async function saveBookToDb(volume: GoogleBooksVolume) {
-  const info = volume.volumeInfo;
-  const authors = info.authors?.join(", ") || "Unknown";
-
-  const book = await prisma.book.upsert({
-    where: { googleBooksId: volume.id },
-    create: {
-      googleBooksId: volume.id,
-      title: info.title,
-      authors,
-      description: info.description ?? null,
-      thumbnailUrl:
-        info.imageLinks?.thumbnail ?? info.imageLinks?.smallThumbnail ?? null,
-      language: info.language ?? null,
-      publishedDate: info.publishedDate ?? null,
-    },
-    update: {
-      title: info.title,
-      authors,
-      description: info.description ?? null,
-      thumbnailUrl:
-        info.imageLinks?.thumbnail ?? info.imageLinks?.smallThumbnail ?? null,
-      language: info.language ?? null,
-      publishedDate: info.publishedDate ?? null,
+export async function saveBookToDb(params: {
+  title: string;
+  authors: string;
+  description?: string | null;
+  thumbnailUrl?: string | null;
+  language?: string | null;
+  publishedDate?: string | null;
+  bookSeriesId?: string | null;
+}) {
+  const book = await prisma.book.create({
+    data: {
+      title: params.title,
+      authors: params.authors,
+      description: params.description ?? null,
+      thumbnailUrl: params.thumbnailUrl ?? null,
+      language: params.language ?? null,
+      publishedDate: params.publishedDate ?? null,
+      bookSeriesId: params.bookSeriesId ?? null,
     },
   });
 

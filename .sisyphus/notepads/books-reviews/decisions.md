@@ -10,3 +10,6 @@
 - 10 AI image generations per user per day (enforced in server action)
 - Book metadata cached in DB on first book detail page visit (not during search)
 - No pagination in v1 (search maxResults=20, show all reviews)
+
+## [2026-05-06] Character Actions Cleanup
+- Character ownership checks tied to `createdById` were removed from server actions; auth remains required, but ownership is no longer enforced in this file.

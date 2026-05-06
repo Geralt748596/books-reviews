@@ -28,21 +28,19 @@ export type CharacterMinAggregateOutputType = {
   id: string | null
   name: string | null
   createdAt: Date | null
-  createdById: string | null
 }
 
 export type CharacterMaxAggregateOutputType = {
   id: string | null
   name: string | null
   createdAt: Date | null
-  createdById: string | null
 }
 
 export type CharacterCountAggregateOutputType = {
   id: number
   name: number
+  aliases: number
   createdAt: number
-  createdById: number
   _all: number
 }
 
@@ -51,21 +49,19 @@ export type CharacterMinAggregateInputType = {
   id?: true
   name?: true
   createdAt?: true
-  createdById?: true
 }
 
 export type CharacterMaxAggregateInputType = {
   id?: true
   name?: true
   createdAt?: true
-  createdById?: true
 }
 
 export type CharacterCountAggregateInputType = {
   id?: true
   name?: true
+  aliases?: true
   createdAt?: true
-  createdById?: true
   _all?: true
 }
 
@@ -144,8 +140,8 @@ export type CharacterGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type CharacterGroupByOutputType = {
   id: string
   name: string
+  aliases: string[]
   createdAt: Date
-  createdById: string
   _count: CharacterCountAggregateOutputType | null
   _min: CharacterMinAggregateOutputType | null
   _max: CharacterMaxAggregateOutputType | null
@@ -172,9 +168,8 @@ export type CharacterWhereInput = {
   NOT?: Prisma.CharacterWhereInput | Prisma.CharacterWhereInput[]
   id?: Prisma.StringFilter<"Character"> | string
   name?: Prisma.StringFilter<"Character"> | string
+  aliases?: Prisma.StringNullableListFilter<"Character">
   createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
-  createdById?: Prisma.StringFilter<"Character"> | string
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   books?: Prisma.BookListRelationFilter
   generatedImages?: Prisma.GeneratedCharacterImageListRelationFilter
   posts?: Prisma.PostListRelationFilter
@@ -184,9 +179,8 @@ export type CharacterWhereInput = {
 export type CharacterOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  aliases?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
-  createdBy?: Prisma.UserOrderByWithRelationInput
   books?: Prisma.BookOrderByRelationAggregateInput
   generatedImages?: Prisma.GeneratedCharacterImageOrderByRelationAggregateInput
   posts?: Prisma.PostOrderByRelationAggregateInput
@@ -199,9 +193,8 @@ export type CharacterWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CharacterWhereInput[]
   NOT?: Prisma.CharacterWhereInput | Prisma.CharacterWhereInput[]
   name?: Prisma.StringFilter<"Character"> | string
+  aliases?: Prisma.StringNullableListFilter<"Character">
   createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
-  createdById?: Prisma.StringFilter<"Character"> | string
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   books?: Prisma.BookListRelationFilter
   generatedImages?: Prisma.GeneratedCharacterImageListRelationFilter
   posts?: Prisma.PostListRelationFilter
@@ -211,8 +204,8 @@ export type CharacterWhereUniqueInput = Prisma.AtLeast<{
 export type CharacterOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  aliases?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
   _count?: Prisma.CharacterCountOrderByAggregateInput
   _max?: Prisma.CharacterMaxOrderByAggregateInput
   _min?: Prisma.CharacterMinOrderByAggregateInput
@@ -224,15 +217,15 @@ export type CharacterScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CharacterScalarWhereWithAggregatesInput | Prisma.CharacterScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Character"> | string
   name?: Prisma.StringWithAggregatesFilter<"Character"> | string
+  aliases?: Prisma.StringNullableListFilter<"Character">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Character"> | Date | string
-  createdById?: Prisma.StringWithAggregatesFilter<"Character"> | string
 }
 
 export type CharacterCreateInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCharactersInput
   books?: Prisma.BookCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostCreateNestedManyWithoutCharacterInput
@@ -242,8 +235,8 @@ export type CharacterCreateInput = {
 export type CharacterUncheckedCreateInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
   books?: Prisma.BookUncheckedCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutCharacterInput
@@ -253,8 +246,8 @@ export type CharacterUncheckedCreateInput = {
 export type CharacterUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCharactersNestedInput
   books?: Prisma.BookUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUpdateManyWithoutCharacterNestedInput
@@ -264,8 +257,8 @@ export type CharacterUpdateInput = {
 export type CharacterUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUncheckedUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutCharacterNestedInput
@@ -275,21 +268,22 @@ export type CharacterUncheckedUpdateInput = {
 export type CharacterCreateManyInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
 }
 
 export type CharacterUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CharacterUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CharacterListRelationFilter = {
@@ -307,72 +301,36 @@ export type CharacterNullableScalarRelationFilter = {
   isNot?: Prisma.CharacterWhereInput | null
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type CharacterCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  aliases?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
 }
 
 export type CharacterMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
 }
 
 export type CharacterMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
 }
 
 export type CharacterScalarRelationFilter = {
   is?: Prisma.CharacterWhereInput
   isNot?: Prisma.CharacterWhereInput
-}
-
-export type CharacterCreateNestedManyWithoutCreatedByInput = {
-  create?: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput> | Prisma.CharacterCreateWithoutCreatedByInput[] | Prisma.CharacterUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.CharacterCreateOrConnectWithoutCreatedByInput | Prisma.CharacterCreateOrConnectWithoutCreatedByInput[]
-  createMany?: Prisma.CharacterCreateManyCreatedByInputEnvelope
-  connect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-}
-
-export type CharacterUncheckedCreateNestedManyWithoutCreatedByInput = {
-  create?: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput> | Prisma.CharacterCreateWithoutCreatedByInput[] | Prisma.CharacterUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.CharacterCreateOrConnectWithoutCreatedByInput | Prisma.CharacterCreateOrConnectWithoutCreatedByInput[]
-  createMany?: Prisma.CharacterCreateManyCreatedByInputEnvelope
-  connect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-}
-
-export type CharacterUpdateManyWithoutCreatedByNestedInput = {
-  create?: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput> | Prisma.CharacterCreateWithoutCreatedByInput[] | Prisma.CharacterUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.CharacterCreateOrConnectWithoutCreatedByInput | Prisma.CharacterCreateOrConnectWithoutCreatedByInput[]
-  upsert?: Prisma.CharacterUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.CharacterUpsertWithWhereUniqueWithoutCreatedByInput[]
-  createMany?: Prisma.CharacterCreateManyCreatedByInputEnvelope
-  set?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  disconnect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  delete?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  connect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  update?: Prisma.CharacterUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.CharacterUpdateWithWhereUniqueWithoutCreatedByInput[]
-  updateMany?: Prisma.CharacterUpdateManyWithWhereWithoutCreatedByInput | Prisma.CharacterUpdateManyWithWhereWithoutCreatedByInput[]
-  deleteMany?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
-}
-
-export type CharacterUncheckedUpdateManyWithoutCreatedByNestedInput = {
-  create?: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput> | Prisma.CharacterCreateWithoutCreatedByInput[] | Prisma.CharacterUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.CharacterCreateOrConnectWithoutCreatedByInput | Prisma.CharacterCreateOrConnectWithoutCreatedByInput[]
-  upsert?: Prisma.CharacterUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.CharacterUpsertWithWhereUniqueWithoutCreatedByInput[]
-  createMany?: Prisma.CharacterCreateManyCreatedByInputEnvelope
-  set?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  disconnect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  delete?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  connect?: Prisma.CharacterWhereUniqueInput | Prisma.CharacterWhereUniqueInput[]
-  update?: Prisma.CharacterUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.CharacterUpdateWithWhereUniqueWithoutCreatedByInput[]
-  updateMany?: Prisma.CharacterUpdateManyWithWhereWithoutCreatedByInput | Prisma.CharacterUpdateManyWithWhereWithoutCreatedByInput[]
-  deleteMany?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
 }
 
 export type CharacterCreateNestedManyWithoutBooksInput = {
@@ -429,6 +387,15 @@ export type CharacterUpdateOneWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CharacterUpdateToOneWithWhereWithoutPostsInput, Prisma.CharacterUpdateWithoutPostsInput>, Prisma.CharacterUncheckedUpdateWithoutPostsInput>
 }
 
+export type CharacterCreatealiasesInput = {
+  set: string[]
+}
+
+export type CharacterUpdatealiasesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type CharacterCreateNestedOneWithoutCharacterDescriptionsInput = {
   create?: Prisma.XOR<Prisma.CharacterCreateWithoutCharacterDescriptionsInput, Prisma.CharacterUncheckedCreateWithoutCharacterDescriptionsInput>
   connectOrCreate?: Prisma.CharacterCreateOrConnectWithoutCharacterDescriptionsInput
@@ -457,67 +424,11 @@ export type CharacterUpdateOneRequiredWithoutGeneratedImagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CharacterUpdateToOneWithWhereWithoutGeneratedImagesInput, Prisma.CharacterUpdateWithoutGeneratedImagesInput>, Prisma.CharacterUncheckedUpdateWithoutGeneratedImagesInput>
 }
 
-export type CharacterCreateWithoutCreatedByInput = {
-  id?: string
-  name: string
-  createdAt?: Date | string
-  books?: Prisma.BookCreateNestedManyWithoutCharactersInput
-  generatedImages?: Prisma.GeneratedCharacterImageCreateNestedManyWithoutCharacterInput
-  posts?: Prisma.PostCreateNestedManyWithoutCharacterInput
-  characterDescriptions?: Prisma.CharacterDescriptionCreateNestedManyWithoutCharacterInput
-}
-
-export type CharacterUncheckedCreateWithoutCreatedByInput = {
-  id?: string
-  name: string
-  createdAt?: Date | string
-  books?: Prisma.BookUncheckedCreateNestedManyWithoutCharactersInput
-  generatedImages?: Prisma.GeneratedCharacterImageUncheckedCreateNestedManyWithoutCharacterInput
-  posts?: Prisma.PostUncheckedCreateNestedManyWithoutCharacterInput
-  characterDescriptions?: Prisma.CharacterDescriptionUncheckedCreateNestedManyWithoutCharacterInput
-}
-
-export type CharacterCreateOrConnectWithoutCreatedByInput = {
-  where: Prisma.CharacterWhereUniqueInput
-  create: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput>
-}
-
-export type CharacterCreateManyCreatedByInputEnvelope = {
-  data: Prisma.CharacterCreateManyCreatedByInput | Prisma.CharacterCreateManyCreatedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type CharacterUpsertWithWhereUniqueWithoutCreatedByInput = {
-  where: Prisma.CharacterWhereUniqueInput
-  update: Prisma.XOR<Prisma.CharacterUpdateWithoutCreatedByInput, Prisma.CharacterUncheckedUpdateWithoutCreatedByInput>
-  create: Prisma.XOR<Prisma.CharacterCreateWithoutCreatedByInput, Prisma.CharacterUncheckedCreateWithoutCreatedByInput>
-}
-
-export type CharacterUpdateWithWhereUniqueWithoutCreatedByInput = {
-  where: Prisma.CharacterWhereUniqueInput
-  data: Prisma.XOR<Prisma.CharacterUpdateWithoutCreatedByInput, Prisma.CharacterUncheckedUpdateWithoutCreatedByInput>
-}
-
-export type CharacterUpdateManyWithWhereWithoutCreatedByInput = {
-  where: Prisma.CharacterScalarWhereInput
-  data: Prisma.XOR<Prisma.CharacterUpdateManyMutationInput, Prisma.CharacterUncheckedUpdateManyWithoutCreatedByInput>
-}
-
-export type CharacterScalarWhereInput = {
-  AND?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
-  OR?: Prisma.CharacterScalarWhereInput[]
-  NOT?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
-  id?: Prisma.StringFilter<"Character"> | string
-  name?: Prisma.StringFilter<"Character"> | string
-  createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
-  createdById?: Prisma.StringFilter<"Character"> | string
-}
-
 export type CharacterCreateWithoutBooksInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionCreateNestedManyWithoutCharacterInput
@@ -526,8 +437,8 @@ export type CharacterCreateWithoutBooksInput = {
 export type CharacterUncheckedCreateWithoutBooksInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedCreateNestedManyWithoutCharacterInput
@@ -554,11 +465,21 @@ export type CharacterUpdateManyWithWhereWithoutBooksInput = {
   data: Prisma.XOR<Prisma.CharacterUpdateManyMutationInput, Prisma.CharacterUncheckedUpdateManyWithoutBooksInput>
 }
 
+export type CharacterScalarWhereInput = {
+  AND?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
+  OR?: Prisma.CharacterScalarWhereInput[]
+  NOT?: Prisma.CharacterScalarWhereInput | Prisma.CharacterScalarWhereInput[]
+  id?: Prisma.StringFilter<"Character"> | string
+  name?: Prisma.StringFilter<"Character"> | string
+  aliases?: Prisma.StringNullableListFilter<"Character">
+  createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
+}
+
 export type CharacterCreateWithoutPostsInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCharactersInput
   books?: Prisma.BookCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionCreateNestedManyWithoutCharacterInput
@@ -567,8 +488,8 @@ export type CharacterCreateWithoutPostsInput = {
 export type CharacterUncheckedCreateWithoutPostsInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
   books?: Prisma.BookUncheckedCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedCreateNestedManyWithoutCharacterInput
@@ -593,8 +514,8 @@ export type CharacterUpdateToOneWithWhereWithoutPostsInput = {
 export type CharacterUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCharactersNestedInput
   books?: Prisma.BookUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUpdateManyWithoutCharacterNestedInput
@@ -603,8 +524,8 @@ export type CharacterUpdateWithoutPostsInput = {
 export type CharacterUncheckedUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUncheckedUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedUpdateManyWithoutCharacterNestedInput
@@ -613,8 +534,8 @@ export type CharacterUncheckedUpdateWithoutPostsInput = {
 export type CharacterCreateWithoutCharacterDescriptionsInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCharactersInput
   books?: Prisma.BookCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostCreateNestedManyWithoutCharacterInput
@@ -623,8 +544,8 @@ export type CharacterCreateWithoutCharacterDescriptionsInput = {
 export type CharacterUncheckedCreateWithoutCharacterDescriptionsInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
   books?: Prisma.BookUncheckedCreateNestedManyWithoutCharactersInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedCreateNestedManyWithoutCharacterInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutCharacterInput
@@ -649,8 +570,8 @@ export type CharacterUpdateToOneWithWhereWithoutCharacterDescriptionsInput = {
 export type CharacterUpdateWithoutCharacterDescriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCharactersNestedInput
   books?: Prisma.BookUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUpdateManyWithoutCharacterNestedInput
@@ -659,8 +580,8 @@ export type CharacterUpdateWithoutCharacterDescriptionsInput = {
 export type CharacterUncheckedUpdateWithoutCharacterDescriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUncheckedUpdateManyWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutCharacterNestedInput
@@ -669,8 +590,8 @@ export type CharacterUncheckedUpdateWithoutCharacterDescriptionsInput = {
 export type CharacterCreateWithoutGeneratedImagesInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCharactersInput
   books?: Prisma.BookCreateNestedManyWithoutCharactersInput
   posts?: Prisma.PostCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionCreateNestedManyWithoutCharacterInput
@@ -679,8 +600,8 @@ export type CharacterCreateWithoutGeneratedImagesInput = {
 export type CharacterUncheckedCreateWithoutGeneratedImagesInput = {
   id?: string
   name: string
+  aliases?: Prisma.CharacterCreatealiasesInput | string[]
   createdAt?: Date | string
-  createdById: string
   books?: Prisma.BookUncheckedCreateNestedManyWithoutCharactersInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutCharacterInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedCreateNestedManyWithoutCharacterInput
@@ -705,8 +626,8 @@ export type CharacterUpdateToOneWithWhereWithoutGeneratedImagesInput = {
 export type CharacterUpdateWithoutGeneratedImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCharactersNestedInput
   books?: Prisma.BookUpdateManyWithoutCharactersNestedInput
   posts?: Prisma.PostUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUpdateManyWithoutCharacterNestedInput
@@ -715,50 +636,18 @@ export type CharacterUpdateWithoutGeneratedImagesInput = {
 export type CharacterUncheckedUpdateWithoutGeneratedImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUncheckedUpdateManyWithoutCharactersNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedUpdateManyWithoutCharacterNestedInput
-}
-
-export type CharacterCreateManyCreatedByInput = {
-  id?: string
-  name: string
-  createdAt?: Date | string
-}
-
-export type CharacterUpdateWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  books?: Prisma.BookUpdateManyWithoutCharactersNestedInput
-  generatedImages?: Prisma.GeneratedCharacterImageUpdateManyWithoutCharacterNestedInput
-  posts?: Prisma.PostUpdateManyWithoutCharacterNestedInput
-  characterDescriptions?: Prisma.CharacterDescriptionUpdateManyWithoutCharacterNestedInput
-}
-
-export type CharacterUncheckedUpdateWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  books?: Prisma.BookUncheckedUpdateManyWithoutCharactersNestedInput
-  generatedImages?: Prisma.GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterNestedInput
-  posts?: Prisma.PostUncheckedUpdateManyWithoutCharacterNestedInput
-  characterDescriptions?: Prisma.CharacterDescriptionUncheckedUpdateManyWithoutCharacterNestedInput
-}
-
-export type CharacterUncheckedUpdateManyWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CharacterUpdateWithoutBooksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCharactersNestedInput
   generatedImages?: Prisma.GeneratedCharacterImageUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUpdateManyWithoutCharacterNestedInput
@@ -767,8 +656,8 @@ export type CharacterUpdateWithoutBooksInput = {
 export type CharacterUncheckedUpdateWithoutBooksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   generatedImages?: Prisma.GeneratedCharacterImageUncheckedUpdateManyWithoutCharacterNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutCharacterNestedInput
   characterDescriptions?: Prisma.CharacterDescriptionUncheckedUpdateManyWithoutCharacterNestedInput
@@ -777,8 +666,8 @@ export type CharacterUncheckedUpdateWithoutBooksInput = {
 export type CharacterUncheckedUpdateManyWithoutBooksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  aliases?: Prisma.CharacterUpdatealiasesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -842,9 +731,8 @@ export type CharacterCountOutputTypeCountCharacterDescriptionsArgs<ExtArgs exten
 export type CharacterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  aliases?: boolean
   createdAt?: boolean
-  createdById?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   books?: boolean | Prisma.Character$booksArgs<ExtArgs>
   generatedImages?: boolean | Prisma.Character$generatedImagesArgs<ExtArgs>
   posts?: boolean | Prisma.Character$postsArgs<ExtArgs>
@@ -855,46 +743,38 @@ export type CharacterSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type CharacterSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  aliases?: boolean
   createdAt?: boolean
-  createdById?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["character"]>
 
 export type CharacterSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  aliases?: boolean
   createdAt?: boolean
-  createdById?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["character"]>
 
 export type CharacterSelectScalar = {
   id?: boolean
   name?: boolean
+  aliases?: boolean
   createdAt?: boolean
-  createdById?: boolean
 }
 
-export type CharacterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById", ExtArgs["result"]["character"]>
+export type CharacterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "aliases" | "createdAt", ExtArgs["result"]["character"]>
 export type CharacterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   books?: boolean | Prisma.Character$booksArgs<ExtArgs>
   generatedImages?: boolean | Prisma.Character$generatedImagesArgs<ExtArgs>
   posts?: boolean | Prisma.Character$postsArgs<ExtArgs>
   characterDescriptions?: boolean | Prisma.Character$characterDescriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.CharacterCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type CharacterIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type CharacterIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
+export type CharacterIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type CharacterIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $CharacterPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Character"
   objects: {
-    createdBy: Prisma.$UserPayload<ExtArgs>
     books: Prisma.$BookPayload<ExtArgs>[]
     generatedImages: Prisma.$GeneratedCharacterImagePayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
@@ -903,8 +783,8 @@ export type $CharacterPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    aliases: string[]
     createdAt: Date
-    createdById: string
   }, ExtArgs["result"]["character"]>
   composites: {}
 }
@@ -1299,7 +1179,6 @@ readonly fields: CharacterFieldRefs;
  */
 export interface Prisma__CharacterClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   books<T extends Prisma.Character$booksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Character$booksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   generatedImages<T extends Prisma.Character$generatedImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Character$generatedImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GeneratedCharacterImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.Character$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Character$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1335,8 +1214,8 @@ export interface Prisma__CharacterClient<T, Null = never, ExtArgs extends runtim
 export interface CharacterFieldRefs {
   readonly id: Prisma.FieldRef<"Character", 'String'>
   readonly name: Prisma.FieldRef<"Character", 'String'>
+  readonly aliases: Prisma.FieldRef<"Character", 'String[]'>
   readonly createdAt: Prisma.FieldRef<"Character", 'DateTime'>
-  readonly createdById: Prisma.FieldRef<"Character", 'String'>
 }
     
 
@@ -1591,10 +1470,6 @@ export type CharacterCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    */
   data: Prisma.CharacterCreateManyInput | Prisma.CharacterCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CharacterIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1665,10 +1540,6 @@ export type CharacterUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many Characters to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CharacterIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

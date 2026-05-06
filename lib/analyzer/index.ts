@@ -24,7 +24,7 @@ program
   .description("Анализировать PDF книги")
   .argument("<pdf>", "Путь к PDF файлу")
   .option("-o, --output <path>", "Путь для сохранения результата (JSON)")
-  .option("-m, --model <name>", "Модель Ollama", "qwen3.5:9b")
+  .option("-m, --model <name>", "Модель Ollama", "qwen3.5:latest")
   .action(async (pdfPath: string, opts: { output?: string; model: string }) => {
     try {
       const absolutePath = resolve(pdfPath);
@@ -39,7 +39,11 @@ program
         process.exit(1);
       }
 
-      const modelDir = resolve(__dirname, "generated", opts.model.replace(/[/:]/g, "-"));
+      const modelDir = resolve(
+        __dirname,
+        "generated",
+        opts.model.replace(/[/:]/g, "-"),
+      );
       await mkdir(modelDir, { recursive: true });
 
       const outputPath = opts.output
