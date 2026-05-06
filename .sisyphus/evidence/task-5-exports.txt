@@ -1,0 +1,2 @@
+export const BookMetadataSchema = z.object({
+export function bookMetadataPrompt(

@@ -3,12 +3,14 @@ import { resolve, dirname } from "node:path";
 import ora from "ora";
 import { llmStructuredRequest } from "./llm-client";
 import {
+  bookMetadataPrompt,
   chunkAnalysisPrompt,
   classifyPrompt,
   summarizeCharacterPrompt,
   type CharacterContext,
 } from "./prompts";
 import {
+  BookMetadataSchema,
   ChunkAnalysisSchema,
   ClassificationSchema,
   CharacterSummarySchema,
@@ -32,6 +34,7 @@ export interface AnalyzeParams {
   text: string;
   model: string;
   outputPath: string;
+  title?: string;
 }
 
 export async function analyzeBook(
@@ -48,6 +51,34 @@ export async function analyzeBook(
 
   const chunks = splitIntoChunks(text);
   console.log(`Разбито на ${chunks.length} фрагмент(ов)\n`);
+
+  // --- Извлечение метаданных книги из первого чанка ---
+  let extractedTitle = params.title ?? "";
+  let extractedAuthors = "";
+
+  if (chunks.length > 0) {
+    const metaSpinner = ora(
+      "Извлечение названия и авторов из первого фрагмента...",
+    ).start();
+    try {
+      const metaPrompt = bookMetadataPrompt(chunks[0].text, language);
+      const meta = await llmStructuredRequest<{
+        title: string;
+        authors: string;
+      }>({
+        model,
+        prompt: metaPrompt,
+        schema: BookMetadataSchema,
+      });
+      if (!extractedTitle && meta.title) extractedTitle = meta.title;
+      extractedAuthors = meta.authors ?? "";
+      metaSpinner.succeed(
+        `Метаданные: "${extractedTitle}" by ${extractedAuthors}`,
+      );
+    } catch {
+      metaSpinner.warn("Не удалось извлечь метаданные книги");
+    }
+  }
 
   // --- Проход 1: анализ каждого чанка ---
   const allCharacters: ChunkCharacter[] = [];
@@ -205,7 +236,14 @@ export async function analyzeBook(
     }
   }
 
-  const result = assembleResult(classification, merged, summaries, language);
+  const result = assembleResult(
+    classification,
+    merged,
+    summaries,
+    language,
+    extractedTitle,
+    extractedAuthors,
+  );
 
   const totalChars =
     result.characters.main.length +
@@ -480,6 +518,8 @@ function assembleResult(
   merged: MergedCharacter[],
   summaries: Map<string, CharacterSummary>,
   language: "russian" | "english" | "other",
+  extractedTitle: string,
+  extractedAuthors: string,
 ): BookAnalysis {
   const charLookup = new Map<string, MergedCharacter>();
   for (const m of merged) {
@@ -520,7 +560,8 @@ function assembleResult(
   }
 
   return {
-    title: classification.title,
+    title: extractedTitle || classification.title,
+    authors: extractedAuthors,
     characters: {
       main: classification.main.map(buildCharacter),
       secondary: classification.secondary.map(buildCharacter),

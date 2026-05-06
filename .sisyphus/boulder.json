@@ -27,6 +27,24 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-05-06T21:03:50.997Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "LLM Prompt for Title + Author Extraction",
+      "session_id": "ses_200e37d39ffe62z0tA1E5uix6g",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-05-06T21:07:45.447Z"
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "Update analyzer.ts — Extract Title/Author in Pass 1",
+      "session_id": "ses_200e0d262ffe5nE9Vb5eXWnZnY",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-05-06T21:10:21.238Z"
     }
   }
 }

@@ -266,3 +266,24 @@ ${JSON.stringify(descriptionFragments, null, 2)}
 
 Return JSON with exactly 3 string fields: "appearance", "personality", "description".`;
 }
+
+export function bookMetadataPrompt(
+  firstChunkText: string,
+  language: string,
+): string {
+  void language;
+
+  return `You are a literary analyst. Extract the book title and author(s) from the following text (first pages of a book).
+
+Look for:
+- Title page
+- Cover page text
+- Header/footer with title
+- Author attribution lines
+- Copyright page
+
+Return ONLY what you find in the text. If you cannot find title or authors, return empty strings.
+
+Text:
+${firstChunkText}`;
+}

@@ -341,7 +341,7 @@ Wave FINAL (Verification):
 
   **Commit**: YES (groups with 2, 3)
 
-- [ ] 5. LLM Prompt for Title + Author Extraction
+- [x] 5. LLM Prompt for Title + Author Extraction
 
   **What to do**:
   - Add new schema `BookMetadataSchema` in `lib/analyzer/schemas.ts`: `{ title: string, authors: string }`
@@ -384,7 +384,7 @@ Wave FINAL (Verification):
   - Message: `feat(analyzer): add LLM prompt for book title and author extraction`
   - Files: `lib/analyzer/schemas.ts`, `lib/analyzer/prompts.ts`
 
-- [ ] 6. Ollama Web Search for publishedDate
+- [x] 6. Ollama Web Search for publishedDate
 
   **What to do**:
   - Create function `searchPublishedDate(title: string, authors: string, model: string): Promise<string | null>` in `lib/analyzer/llm-client.ts` or new file
@@ -428,7 +428,7 @@ Wave FINAL (Verification):
   - Message: `feat(analyzer): add Ollama web search for publishedDate`
   - Files: `lib/analyzer/llm-client.ts` or new file
 
-- [ ] 7. Update analyzer.ts — Extract Title/Author in Pass 1
+- [x] 7. Update analyzer.ts — Extract Title/Author in Pass 1
 
   **What to do**:
   - Before the main chunk loop, take the first chunk and call `llmStructuredRequest` with `BookMetadataSchema` + `bookMetadataPrompt`

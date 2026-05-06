@@ -121,6 +121,7 @@ export const CharacterSchema = z.object({
 
 export const BookAnalysisSchema = z.object({
   title: z.string(),
+  authors: z.string().default(""),
   characters: z.object({
     main: z.array(CharacterSchema),
     secondary: z.array(CharacterSchema),
@@ -130,4 +131,11 @@ export const BookAnalysisSchema = z.object({
     overview: z.string(),
     keyEvents: z.array(z.string()),
   }),
+});
+
+export const BookMetadataSchema = z.object({
+  title: z.string().describe("The book's title"),
+  authors: z
+    .string()
+    .describe("The book's author(s), comma-separated if multiple"),
 });

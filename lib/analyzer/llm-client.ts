@@ -109,6 +109,35 @@ export async function llmStructuredRequest<T>(
   throw new Error("Unreachable");
 }
 
+export async function searchPublishedDate(
+  title: string,
+  authors: string,
+  model: string,
+): Promise<string | null> {
+  try {
+    const response = await ollama.chat({
+      model,
+      messages: [
+        {
+          role: "user",
+          content: `When was "${title}" by ${authors} first published? Return ONLY the year (4 digits). If unknown, return "unknown".`,
+        },
+      ],
+      think: false,
+      options: { temperature: 0.1 },
+    });
+
+    const content = response.message.content.trim();
+    const yearMatch = content.match(/\b(1[0-9]{3}|20[0-9]{2})\b/);
+    if (yearMatch) {
+      return yearMatch[1];
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function parseJsonResponse(content: string): unknown {
   const candidates = [
     content,
