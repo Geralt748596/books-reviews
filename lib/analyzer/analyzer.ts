@@ -56,7 +56,7 @@ export async function analyzeBook(
   let extractedTitle = params.title ?? "";
   let extractedAuthors = "";
 
-  if (chunks.length > 0) {
+  if (chunks.length > 0 && !params.title) {
     const metaSpinner = ora(
       "Извлечение названия и авторов из первого фрагмента...",
     ).start();

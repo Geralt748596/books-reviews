@@ -98,17 +98,10 @@ program
           ? opts.publishedDate
           : await searchPublishedDate(result.title, result.authors, opts.model);
 
-        const analysisLanguage =
-          (
-            result as typeof result & {
-              language?: string | null;
-            }
-          ).language ?? null;
-
         const { bookId } = await persistAnalysis(result, {
           bookSeriesId: opts.bookSeriesId,
           publishedDate,
-          language: analysisLanguage,
+          language: null,
         });
 
         console.log(`Book saved to DB: ${bookId}`);
