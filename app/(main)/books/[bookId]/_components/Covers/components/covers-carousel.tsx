@@ -84,7 +84,7 @@ export function CoversCarousel({ covers }: Props) {
               src={card.blobUrl}
               alt="Book Cover"
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="auto, 30vw"
               className="object-cover pointer-events-none"
               loading={index === 0 ? "eager" : "lazy"}
             />

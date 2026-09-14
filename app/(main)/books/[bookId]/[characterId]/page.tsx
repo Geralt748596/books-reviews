@@ -240,7 +240,7 @@ async function OtherBooksWithCharacter({
                           src={book.thumbnailUrl}
                           alt={book.title}
                           fill
-                          sizes="80px"
+                          sizes="auto, 30vw"
                           className="object-cover"
                         />
                       ) : (

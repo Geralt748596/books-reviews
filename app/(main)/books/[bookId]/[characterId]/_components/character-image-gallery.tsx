@@ -134,7 +134,7 @@ export function CharacterImageGallery({
                     index < CHARACTER_GALLERY_PAGE_SIZE ? "eager" : "lazy"
                   }
                   className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 25vw, 14vw"
+                  sizes="auto, 30vw"
                 />
               </CardContent>
               <CardFooter className="gap-2 bg-background/60 py-4 backdrop-blur-md border-t border-border/50">

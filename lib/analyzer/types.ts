@@ -7,6 +7,7 @@ import {
   CharacterSummarySchema,
   BookAnalysisSchema,
   ClassificationSchema,
+  AliasResolutionSchema,
 } from "./schemas";
 
 export type ChunkCharacter = z.infer<typeof ChunkCharacterSchema>;
@@ -16,6 +17,7 @@ export type Character = z.infer<typeof CharacterSchema>;
 export type BookAnalysis = z.infer<typeof BookAnalysisSchema>;
 export type Classification = z.infer<typeof ClassificationSchema>;
 export type CharacterSummary = z.infer<typeof CharacterSummarySchema>;
+export type AliasResolution = z.infer<typeof AliasResolutionSchema>;
 
 export interface AnalyzerOptions {
   pdfPath: string;

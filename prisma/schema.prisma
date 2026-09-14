@@ -11,24 +11,30 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String   @id
   name          String
-  email         String    @unique
+  email         String   @unique
   emailVerified Boolean
   image         String?
+  role          String?  @default("user")
   createdAt     DateTime
   updatedAt     DateTime
 
-  sessions  Session[]
-  accounts  Account[]
-  reviews         Review[]
-  generatedImages GeneratedCharacterImage[]
-  posts Post[]
-  generatedBookCover GeneratedBookCover[]
-  coverLikes         CoverLike[]
-  characterImageLikes CharacterImageLike[]
+  sessions               Session[]
+  accounts               Account[]
+  reviews                Review[]
+  generatedImages        GeneratedCharacterImage[]
+  posts                  Post[]
+  generatedBookCover     GeneratedBookCover[]
+  coverLikes             CoverLike[]
+  characterImageLikes    CharacterImageLike[]
   coverComments          CoverComment[]
   characterImageComments CharacterImageComment[]
+
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
   @@map("user")
 }
 
@@ -43,7 +49,10 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  impersonatedBy String?
+
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
@@ -63,6 +72,7 @@ model Account {
   updatedAt             DateTime
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
@@ -74,65 +84,67 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+  @@index([identifier])
 }
 
 model BookSeries {
-  id String @id @default(cuid())
-  name String
+  id        String   @id @default(cuid())
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  books Book[]
+
   @@index([name])
   @@map("book_series")
-
-  books Book[]
 }
 
 model Book {
   id            String   @id @default(cuid())
   title         String
-  authors       String   // comma-separated list
+  authors       String // comma-separated list
   description   String?
   thumbnailUrl  String?
   language      String?
   publishedDate String?
+  keyEvents     String[] @default([]) // ключевые события сюжета по порядку
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  reviews         Review[]
-  characters      Character[]
+  reviews               Review[]
+  characters            Character[]
   characterDescriptions CharacterDescription[]
-  posts Post[]
-  bookSeriesId String?
-  bookSeries BookSeries? @relation(fields: [bookSeriesId], references: [id], onDelete: SetNull)
+  posts                 Post[]
+  bookSeriesId          String?
+  bookSeries            BookSeries?            @relation(fields: [bookSeriesId], references: [id], onDelete: SetNull)
 
-  generatedBookCover GeneratedBookCover[]
+  generatedBookCover       GeneratedBookCover[]
   generatedCharacterImages GeneratedCharacterImage[]
 
   @@index([title])
 }
 
 model Post {
-  id  String   @id @default(cuid())
-  content String
+  id        String   @id @default(cuid())
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bookId String
-  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
   characterId String?
   character   Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([createdAt])
-
   @@map("post")
 }
 
 model Review {
   id        String   @id @default(cuid())
-  rating    Int      // 1-5
+  rating    Int // 1-5
   title     String?
   content   String
   createdAt DateTime @default(now())
@@ -161,35 +173,46 @@ model Character {
   @@index([name])
 }
 
+enum CharacterTier {
+  MAIN
+  SECONDARY
+  MINOR
+}
+
 model CharacterDescription {
-  id String @id @default(cuid())
+  id          String        @id @default(cuid())
   description String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  appearance  String? // внешность по тексту книги
+  personality String? // характер и манера поведения
+  role        String? // функция персонажа в сюжете
+  tier        CharacterTier @default(MINOR)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   characterId String
-  bookId String
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
   character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   @@index([characterId, bookId])
+  @@index([bookId, tier])
   @@unique([bookId, characterId])
   @@map("character_description")
 }
 
 model GeneratedBookCover {
-  id String @id @default(cuid())
-  blobUrl String
+  id        String   @id @default(cuid())
+  blobUrl   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  prompt String
+  prompt    String
 
   bookId String
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  likes CoverLike[]
+  likes    CoverLike[]
   comments CoverComment[]
 
   @@index([bookId])
@@ -227,8 +250,8 @@ model CharacterImageLike {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  userId  String
-  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   characterId String
   character   GeneratedCharacterImage @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
@@ -258,13 +281,13 @@ model GeneratedCharacterImage {
   createdAt DateTime @default(now())
 
   userId      String
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  likes CharacterImageLike[]
-  comments CharacterImageComment[]
-  bookId String
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  character   Character               @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  likes       CharacterImageLike[]
+  comments    CharacterImageComment[]
+  bookId      String
+  book        Book                    @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([bookId, characterId])
   @@index([userId])

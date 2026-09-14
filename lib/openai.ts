@@ -41,16 +41,27 @@ export function buildCoverPrompt(
 }
 
 export function buildCharacterImagePrompt(
-  description: string,
+  character: {
+    name: string;
+    appearance?: string | null;
+    description?: string | null;
+  },
   userPrompt?: string,
 ) {
-  // const parts: string[] = [
-  //   `Design a visually striking image for "${description}". The image should be generated for a portrait of a book character, try to make the image in the style of a portrait with a front view`,
-  // ];
-
   const parts: string[] = [
     "Generate basic portrait minimalistic image with minimal details",
+    `of the book character ${character.name}.`,
   ];
+
+  // Внешность из текста книги важнее биографии: именно она определяет портрет
+  const appearance = character.appearance?.trim();
+  if (appearance) {
+    parts.push(`Appearance from the book: ${appearance.slice(0, 600)}`);
+  } else if (character.description?.trim()) {
+    parts.push(
+      `About the character: ${character.description.trim().slice(0, 300)}`,
+    );
+  }
 
   if (userPrompt?.trim()) {
     parts.push(`User direction: ${userPrompt.trim()}`);

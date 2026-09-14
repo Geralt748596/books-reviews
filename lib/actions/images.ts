@@ -16,12 +16,15 @@ import {
 
 export async function generateBookCover(
   bookId: string,
-  options: { userPrompt?: string },
+  options: { userPrompt?: string; userId?: string } = {},
 ): Promise<{ image: GeneratedBookCover } | { error: string }> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return { error: "Unauthorized" };
+  let userId = options.userId;
 
-  const userId = session.user.id;
+  if (!userId) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return { error: "Unauthorized" };
+    userId = session.user.id;
+  }
 
   // const today = new Date();
   // today.setHours(0, 0, 0, 0);
@@ -83,13 +86,16 @@ export async function generateBookCover(
 export async function generateCharacterImage(
   bookId: string,
   characterId: string,
-  options: { userPrompt?: string },
+  options: { userPrompt?: string; userId?: string } = {},
 ): Promise<{ image: GeneratedCharacterImage } | { error: string }> {
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) return { error: "Unauthorized" };
+    let userId = options.userId;
 
-    const userId = session.user.id;
+    if (!userId) {
+      const session = await auth.api.getSession({ headers: await headers() });
+      if (!session) return { error: "Unauthorized" };
+      userId = session.user.id;
+    }
 
     // const today = new Date();
     // today.setHours(0, 0, 0, 0);
@@ -105,12 +111,17 @@ export async function generateCharacterImage(
           characterId,
         },
       },
+      include: { character: { select: { name: true } } },
     });
 
     if (!description) return { error: "Character description not found" };
 
     const prompt = buildCharacterImagePrompt(
-      description.description,
+      {
+        name: description.character.name,
+        appearance: description.appearance,
+        description: description.description,
+      },
       options.userPrompt,
     );
 

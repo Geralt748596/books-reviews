@@ -123,11 +123,25 @@ async function getBookCharactersImages(bookId: Book["id"]) {
   "use cache";
   cacheLife("seconds");
 
+  // Главные персонажи первыми: порядок задаёт tier из описания для этой книги
   const characters = await prisma.character.findMany({
     where: { books: { some: { id: bookId } } },
-    select: { id: true },
+    select: {
+      id: true,
+      characterDescriptions: {
+        where: { bookId },
+        select: { tier: true },
+        take: 1,
+      },
+    },
     orderBy: { id: "asc" },
   });
+  const tierRank = { MAIN: 0, SECONDARY: 1, MINOR: 2 } as const;
+  characters.sort(
+    (a, b) =>
+      tierRank[a.characterDescriptions[0]?.tier ?? "MINOR"] -
+      tierRank[b.characterDescriptions[0]?.tier ?? "MINOR"],
+  );
 
   const imagesPerCharacter = await Promise.all(
     characters.map((c) =>

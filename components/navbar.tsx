@@ -47,9 +47,14 @@ async function ProfileOrLogin() {
 
   if (!session) {
     return (
-      <Button className="hidden rounded-full sm:inline-flex" variant="outline">
-        Sign In
-      </Button>
+      <Link href="/login" transitionTypes={["nav-back"]}>
+        <Button
+          className="hidden rounded-full sm:inline-flex"
+          variant="outline"
+        >
+          Sign In
+        </Button>
+      </Link>
     );
   }
 

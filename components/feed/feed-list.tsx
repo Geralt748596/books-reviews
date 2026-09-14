@@ -40,7 +40,7 @@ export function FeedList({ initialItems, initialCursor }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3">
+    <div className="grid grid-cols-1 @2xl:grid-cols-2 gap-3">
       <div className="contents">
         {items.map((item) => (
           <FeedCard key={`${item.type}-${item.id}`} item={item} />

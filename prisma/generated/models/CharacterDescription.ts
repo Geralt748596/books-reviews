@@ -27,6 +27,10 @@ export type AggregateCharacterDescription = {
 export type CharacterDescriptionMinAggregateOutputType = {
   id: string | null
   description: string | null
+  appearance: string | null
+  personality: string | null
+  role: string | null
+  tier: $Enums.CharacterTier | null
   createdAt: Date | null
   updatedAt: Date | null
   characterId: string | null
@@ -36,6 +40,10 @@ export type CharacterDescriptionMinAggregateOutputType = {
 export type CharacterDescriptionMaxAggregateOutputType = {
   id: string | null
   description: string | null
+  appearance: string | null
+  personality: string | null
+  role: string | null
+  tier: $Enums.CharacterTier | null
   createdAt: Date | null
   updatedAt: Date | null
   characterId: string | null
@@ -45,6 +53,10 @@ export type CharacterDescriptionMaxAggregateOutputType = {
 export type CharacterDescriptionCountAggregateOutputType = {
   id: number
   description: number
+  appearance: number
+  personality: number
+  role: number
+  tier: number
   createdAt: number
   updatedAt: number
   characterId: number
@@ -56,6 +68,10 @@ export type CharacterDescriptionCountAggregateOutputType = {
 export type CharacterDescriptionMinAggregateInputType = {
   id?: true
   description?: true
+  appearance?: true
+  personality?: true
+  role?: true
+  tier?: true
   createdAt?: true
   updatedAt?: true
   characterId?: true
@@ -65,6 +81,10 @@ export type CharacterDescriptionMinAggregateInputType = {
 export type CharacterDescriptionMaxAggregateInputType = {
   id?: true
   description?: true
+  appearance?: true
+  personality?: true
+  role?: true
+  tier?: true
   createdAt?: true
   updatedAt?: true
   characterId?: true
@@ -74,6 +94,10 @@ export type CharacterDescriptionMaxAggregateInputType = {
 export type CharacterDescriptionCountAggregateInputType = {
   id?: true
   description?: true
+  appearance?: true
+  personality?: true
+  role?: true
+  tier?: true
   createdAt?: true
   updatedAt?: true
   characterId?: true
@@ -156,6 +180,10 @@ export type CharacterDescriptionGroupByArgs<ExtArgs extends runtime.Types.Extens
 export type CharacterDescriptionGroupByOutputType = {
   id: string
   description: string
+  appearance: string | null
+  personality: string | null
+  role: string | null
+  tier: $Enums.CharacterTier
   createdAt: Date
   updatedAt: Date
   characterId: string
@@ -186,6 +214,10 @@ export type CharacterDescriptionWhereInput = {
   NOT?: Prisma.CharacterDescriptionWhereInput | Prisma.CharacterDescriptionWhereInput[]
   id?: Prisma.StringFilter<"CharacterDescription"> | string
   description?: Prisma.StringFilter<"CharacterDescription"> | string
+  appearance?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  personality?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  role?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  tier?: Prisma.EnumCharacterTierFilter<"CharacterDescription"> | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   characterId?: Prisma.StringFilter<"CharacterDescription"> | string
@@ -197,6 +229,10 @@ export type CharacterDescriptionWhereInput = {
 export type CharacterDescriptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
+  personality?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrderInput | Prisma.SortOrder
+  tier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
@@ -212,6 +248,10 @@ export type CharacterDescriptionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CharacterDescriptionWhereInput[]
   NOT?: Prisma.CharacterDescriptionWhereInput | Prisma.CharacterDescriptionWhereInput[]
   description?: Prisma.StringFilter<"CharacterDescription"> | string
+  appearance?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  personality?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  role?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  tier?: Prisma.EnumCharacterTierFilter<"CharacterDescription"> | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   characterId?: Prisma.StringFilter<"CharacterDescription"> | string
@@ -223,6 +263,10 @@ export type CharacterDescriptionWhereUniqueInput = Prisma.AtLeast<{
 export type CharacterDescriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
+  personality?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrderInput | Prisma.SortOrder
+  tier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
@@ -238,6 +282,10 @@ export type CharacterDescriptionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CharacterDescriptionScalarWhereWithAggregatesInput | Prisma.CharacterDescriptionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"CharacterDescription"> | string
   description?: Prisma.StringWithAggregatesFilter<"CharacterDescription"> | string
+  appearance?: Prisma.StringNullableWithAggregatesFilter<"CharacterDescription"> | string | null
+  personality?: Prisma.StringNullableWithAggregatesFilter<"CharacterDescription"> | string | null
+  role?: Prisma.StringNullableWithAggregatesFilter<"CharacterDescription"> | string | null
+  tier?: Prisma.EnumCharacterTierWithAggregatesFilter<"CharacterDescription"> | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CharacterDescription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CharacterDescription"> | Date | string
   characterId?: Prisma.StringWithAggregatesFilter<"CharacterDescription"> | string
@@ -247,6 +295,10 @@ export type CharacterDescriptionScalarWhereWithAggregatesInput = {
 export type CharacterDescriptionCreateInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   book: Prisma.BookCreateNestedOneWithoutCharacterDescriptionsInput
@@ -256,6 +308,10 @@ export type CharacterDescriptionCreateInput = {
 export type CharacterDescriptionUncheckedCreateInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   characterId: string
@@ -265,6 +321,10 @@ export type CharacterDescriptionUncheckedCreateInput = {
 export type CharacterDescriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   book?: Prisma.BookUpdateOneRequiredWithoutCharacterDescriptionsNestedInput
@@ -274,6 +334,10 @@ export type CharacterDescriptionUpdateInput = {
 export type CharacterDescriptionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -283,6 +347,10 @@ export type CharacterDescriptionUncheckedUpdateInput = {
 export type CharacterDescriptionCreateManyInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   characterId: string
@@ -292,6 +360,10 @@ export type CharacterDescriptionCreateManyInput = {
 export type CharacterDescriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -299,6 +371,10 @@ export type CharacterDescriptionUpdateManyMutationInput = {
 export type CharacterDescriptionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -323,6 +399,10 @@ export type CharacterDescriptionBookIdCharacterIdCompoundUniqueInput = {
 export type CharacterDescriptionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  appearance?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
@@ -332,6 +412,10 @@ export type CharacterDescriptionCountOrderByAggregateInput = {
 export type CharacterDescriptionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  appearance?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
@@ -341,6 +425,10 @@ export type CharacterDescriptionMaxOrderByAggregateInput = {
 export type CharacterDescriptionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  appearance?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
@@ -431,9 +519,17 @@ export type CharacterDescriptionUncheckedUpdateManyWithoutCharacterNestedInput =
   deleteMany?: Prisma.CharacterDescriptionScalarWhereInput | Prisma.CharacterDescriptionScalarWhereInput[]
 }
 
+export type EnumCharacterTierFieldUpdateOperationsInput = {
+  set?: $Enums.CharacterTier
+}
+
 export type CharacterDescriptionCreateWithoutBookInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   character: Prisma.CharacterCreateNestedOneWithoutCharacterDescriptionsInput
@@ -442,6 +538,10 @@ export type CharacterDescriptionCreateWithoutBookInput = {
 export type CharacterDescriptionUncheckedCreateWithoutBookInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   characterId: string
@@ -479,6 +579,10 @@ export type CharacterDescriptionScalarWhereInput = {
   NOT?: Prisma.CharacterDescriptionScalarWhereInput | Prisma.CharacterDescriptionScalarWhereInput[]
   id?: Prisma.StringFilter<"CharacterDescription"> | string
   description?: Prisma.StringFilter<"CharacterDescription"> | string
+  appearance?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  personality?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  role?: Prisma.StringNullableFilter<"CharacterDescription"> | string | null
+  tier?: Prisma.EnumCharacterTierFilter<"CharacterDescription"> | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CharacterDescription"> | Date | string
   characterId?: Prisma.StringFilter<"CharacterDescription"> | string
@@ -488,6 +592,10 @@ export type CharacterDescriptionScalarWhereInput = {
 export type CharacterDescriptionCreateWithoutCharacterInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   book: Prisma.BookCreateNestedOneWithoutCharacterDescriptionsInput
@@ -496,6 +604,10 @@ export type CharacterDescriptionCreateWithoutCharacterInput = {
 export type CharacterDescriptionUncheckedCreateWithoutCharacterInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   bookId: string
@@ -530,6 +642,10 @@ export type CharacterDescriptionUpdateManyWithWhereWithoutCharacterInput = {
 export type CharacterDescriptionCreateManyBookInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   characterId: string
@@ -538,6 +654,10 @@ export type CharacterDescriptionCreateManyBookInput = {
 export type CharacterDescriptionUpdateWithoutBookInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   character?: Prisma.CharacterUpdateOneRequiredWithoutCharacterDescriptionsNestedInput
@@ -546,6 +666,10 @@ export type CharacterDescriptionUpdateWithoutBookInput = {
 export type CharacterDescriptionUncheckedUpdateWithoutBookInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -554,6 +678,10 @@ export type CharacterDescriptionUncheckedUpdateWithoutBookInput = {
 export type CharacterDescriptionUncheckedUpdateManyWithoutBookInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characterId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -562,6 +690,10 @@ export type CharacterDescriptionUncheckedUpdateManyWithoutBookInput = {
 export type CharacterDescriptionCreateManyCharacterInput = {
   id?: string
   description: string
+  appearance?: string | null
+  personality?: string | null
+  role?: string | null
+  tier?: $Enums.CharacterTier
   createdAt?: Date | string
   updatedAt?: Date | string
   bookId: string
@@ -570,6 +702,10 @@ export type CharacterDescriptionCreateManyCharacterInput = {
 export type CharacterDescriptionUpdateWithoutCharacterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   book?: Prisma.BookUpdateOneRequiredWithoutCharacterDescriptionsNestedInput
@@ -578,6 +714,10 @@ export type CharacterDescriptionUpdateWithoutCharacterInput = {
 export type CharacterDescriptionUncheckedUpdateWithoutCharacterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -586,6 +726,10 @@ export type CharacterDescriptionUncheckedUpdateWithoutCharacterInput = {
 export type CharacterDescriptionUncheckedUpdateManyWithoutCharacterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  appearance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tier?: Prisma.EnumCharacterTierFieldUpdateOperationsInput | $Enums.CharacterTier
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -596,6 +740,10 @@ export type CharacterDescriptionUncheckedUpdateManyWithoutCharacterInput = {
 export type CharacterDescriptionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   description?: boolean
+  appearance?: boolean
+  personality?: boolean
+  role?: boolean
+  tier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   characterId?: boolean
@@ -607,6 +755,10 @@ export type CharacterDescriptionSelect<ExtArgs extends runtime.Types.Extensions.
 export type CharacterDescriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   description?: boolean
+  appearance?: boolean
+  personality?: boolean
+  role?: boolean
+  tier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   characterId?: boolean
@@ -618,6 +770,10 @@ export type CharacterDescriptionSelectCreateManyAndReturn<ExtArgs extends runtim
 export type CharacterDescriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   description?: boolean
+  appearance?: boolean
+  personality?: boolean
+  role?: boolean
+  tier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   characterId?: boolean
@@ -629,13 +785,17 @@ export type CharacterDescriptionSelectUpdateManyAndReturn<ExtArgs extends runtim
 export type CharacterDescriptionSelectScalar = {
   id?: boolean
   description?: boolean
+  appearance?: boolean
+  personality?: boolean
+  role?: boolean
+  tier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   characterId?: boolean
   bookId?: boolean
 }
 
-export type CharacterDescriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "description" | "createdAt" | "updatedAt" | "characterId" | "bookId", ExtArgs["result"]["characterDescription"]>
+export type CharacterDescriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "description" | "appearance" | "personality" | "role" | "tier" | "createdAt" | "updatedAt" | "characterId" | "bookId", ExtArgs["result"]["characterDescription"]>
 export type CharacterDescriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   character?: boolean | Prisma.CharacterDefaultArgs<ExtArgs>
@@ -658,6 +818,10 @@ export type $CharacterDescriptionPayload<ExtArgs extends runtime.Types.Extension
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     description: string
+    appearance: string | null
+    personality: string | null
+    role: string | null
+    tier: $Enums.CharacterTier
     createdAt: Date
     updatedAt: Date
     characterId: string
@@ -1089,6 +1253,10 @@ export interface Prisma__CharacterDescriptionClient<T, Null = never, ExtArgs ext
 export interface CharacterDescriptionFieldRefs {
   readonly id: Prisma.FieldRef<"CharacterDescription", 'String'>
   readonly description: Prisma.FieldRef<"CharacterDescription", 'String'>
+  readonly appearance: Prisma.FieldRef<"CharacterDescription", 'String'>
+  readonly personality: Prisma.FieldRef<"CharacterDescription", 'String'>
+  readonly role: Prisma.FieldRef<"CharacterDescription", 'String'>
+  readonly tier: Prisma.FieldRef<"CharacterDescription", 'CharacterTier'>
   readonly createdAt: Prisma.FieldRef<"CharacterDescription", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CharacterDescription", 'DateTime'>
   readonly characterId: Prisma.FieldRef<"CharacterDescription", 'String'>

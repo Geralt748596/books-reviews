@@ -3,10 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["ollama", "pdf-parse", "ora"],
   experimental: {
-    viewTransition: true,
+    // viewTransition: true,
   },
   typedRoutes: true,
   cacheComponents: true,
+  partialPrefetching: true,
   images: {
     remotePatterns: [
       {

@@ -1,21 +1,27 @@
 import { writeFile } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import ora from "ora";
-import { llmStructuredRequest } from "./llm-client";
+import { resolve } from "node:path";
+import { createExecutor, type Executor } from "./executor";
+import { getChunkOptionsForModel, getConcurrencyForModel } from "./llm-client";
+import { looksLikeProperName } from "./names";
 import {
+  aliasResolutionPrompt,
   bookMetadataPrompt,
   chunkAnalysisPrompt,
   classifyPrompt,
   summarizeCharacterPrompt,
+  type AliasCandidate,
   type CharacterContext,
+  type KnownCharacter,
 } from "./prompts";
 import {
+  AliasResolutionSchema,
   BookMetadataSchema,
   ChunkAnalysisSchema,
   ClassificationSchema,
   CharacterSummarySchema,
 } from "./schemas";
 import type {
+  AliasResolution,
   ChunkAnalysis,
   ChunkCharacter,
   ChunkEvent,
@@ -28,20 +34,46 @@ import {
   splitIntoChunks,
   estimateTokens,
   detectLanguage,
+  type TextChunk,
 } from "./text-chunker";
+
+type Language = "russian" | "english" | "other";
 
 export interface AnalyzeParams {
   text: string;
   model: string;
   outputPath: string;
   title?: string;
+  /** Отправлять запросы через Claude Message Batches API (скидка 50%). */
+  batch?: boolean;
+  /** Игнорировать промежуточные результаты предыдущего запуска. */
+  fresh?: boolean;
+  /** Переопределить размер фрагмента в токенах. */
+  chunkTokens?: number;
 }
+
+/** Каталог с промежуточными результатами конкретной книги. */
+export function workDirFor(outputPath: string): string {
+  return resolve(outputPath).replace(/\.analysis\.json$/i, "") + ".work";
+}
+
+// Лимиты вывода по стадиям (токены)
+const OUTPUT_LIMITS = {
+  metadata: 1_024,
+  chunk: 32_000,
+  aliases: 16_000,
+  classify: 32_000,
+  summary: 8_000,
+};
+
+// Сколько известных персонажей передавать в промпт следующего фрагмента
+const MAX_KNOWN_CHARACTERS = 150;
 
 export async function analyzeBook(
   params: AnalyzeParams,
 ): Promise<BookAnalysis> {
   const { text, model, outputPath } = params;
-  const debugDir = dirname(resolve(outputPath));
+  const workDir = workDirFor(outputPath);
 
   const language = detectLanguage(text);
   const totalTokens = estimateTokens(text);
@@ -49,192 +81,80 @@ export async function analyzeBook(
     `\nТекст книги: ~${totalTokens.toLocaleString()} токенов, ${text.length.toLocaleString()} символов, язык: ${language}`,
   );
 
-  const chunks = splitIntoChunks(text);
-  console.log(`Разбито на ${chunks.length} фрагмент(ов)\n`);
+  const chunkOptions = params.chunkTokens
+    ? {
+        maxTokens: params.chunkTokens,
+        overlapTokens: Math.round(params.chunkTokens * 0.1),
+      }
+    : getChunkOptionsForModel(model);
 
-  // --- Извлечение метаданных книги из первого чанка ---
-  let extractedTitle = params.title ?? "";
-  let extractedAuthors = "";
+  const executor = createExecutor({
+    model,
+    variant: `chunk-${chunkOptions.maxTokens}`,
+    workDir,
+    fresh: params.fresh,
+    batch: params.batch ?? false,
+  });
 
-  if (chunks.length > 0 && !params.title) {
-    const metaSpinner = ora(
-      "Извлечение названия и авторов из первого фрагмента...",
-    ).start();
-    try {
-      const metaPrompt = bookMetadataPrompt(chunks[0].text, language);
-      const meta = await llmStructuredRequest<{
-        title: string;
-        authors: string;
-      }>({
-        model,
-        prompt: metaPrompt,
-        schema: BookMetadataSchema,
-      });
-      if (!extractedTitle && meta.title) extractedTitle = meta.title;
-      extractedAuthors = meta.authors ?? "";
-      metaSpinner.succeed(
-        `Метаданные: "${extractedTitle}" by ${extractedAuthors}`,
-      );
-    } catch {
-      metaSpinner.warn("Не удалось извлечь метаданные книги");
-    }
+  const chunks = splitIntoChunks(text, chunkOptions);
+  console.log(
+    `Разбито на ${chunks.length} фрагмент(ов) по ~${chunkOptions.maxTokens.toLocaleString()} токенов, режим: ${executor.mode}`,
+  );
+  console.log(`Промежуточные результаты: ${workDir}\n`);
+
+  if (chunks.length === 0) {
+    throw new Error("Из PDF не удалось извлечь текст");
   }
 
-  // --- Проход 1: анализ каждого чанка ---
-  const allCharacters: ChunkCharacter[] = [];
-  const allEvents: ChunkEvent[] = [];
+  // --- Проход 1: метаданные + анализ каждого фрагмента ---
+  const pass1 = await runPass1(executor, chunks, language, params.title);
 
-  for (const chunk of chunks) {
-    const spinner = ora(
-      `Проход 1: анализ фрагмента ${chunk.index + 1}/${chunks.length} (~${chunk.estimatedTokens.toLocaleString()} токенов)`,
-    ).start();
-
-    try {
-      const prompt = chunkAnalysisPrompt(
-        chunk.index,
-        chunks.length,
-        chunk.text,
-        language,
-      );
-      const result = await llmStructuredRequest<ChunkAnalysis>({
-        model,
-        prompt,
-        schema: ChunkAnalysisSchema,
-      });
-
-      const cleanedCharacters = result.characters
-        .map(normalizeChunkCharacter)
-        .filter(isRealCharacter);
-
-      allCharacters.push(...cleanedCharacters);
-      allEvents.push(...result.events);
-
-      spinner.succeed(
-        `Фрагмент ${chunk.index + 1}/${chunks.length}: ` +
-          `${cleanedCharacters.length}/${result.characters.length} персонаж(ей), ${result.events.length} событий`,
-      );
-    } catch (error) {
-      spinner.fail(`Фрагмент ${chunk.index + 1}/${chunks.length}: ошибка`);
-      throw error;
-    }
-  }
+  const extractedTitle = params.title ?? pass1.title;
+  const extractedAuthors = pass1.authors;
+  const allCharacters = pass1.characters;
+  const allEvents = pass1.events;
 
   console.log(
     `\nПроход 1 завершён: ${allCharacters.length} упоминаний персонажей, ${allEvents.length} событий`,
   );
 
   await writeFile(
-    resolve(debugDir, "intermediate-pass1.json"),
+    resolve(workDir, "intermediate-pass1.json"),
     JSON.stringify({ characters: allCharacters, events: allEvents }, null, 2),
     "utf-8",
   );
 
-  // --- Программное объединение персонажей ---
-  const merged = mergeCharacters(allCharacters);
-  console.log(`  Объединено в ${merged.length} уникальных персонажей\n`);
+  // --- Объединение персонажей: строковая логика + LLM-сопоставление алиасов ---
+  let merged = mergeCharacters(allCharacters, allEvents);
+  console.log(
+    `  Строковое объединение: ${merged.length} кандидатов в персонажи`,
+  );
+
+  merged = await resolveAliases(executor, merged, allEvents, language);
+  console.log(`  Итого уникальных персонажей: ${merged.length}\n`);
 
   await writeFile(
-    resolve(debugDir, "intermediate-merged.json"),
+    resolve(workDir, "intermediate-merged.json"),
     JSON.stringify(merged, null, 2),
     "utf-8",
   );
 
   // --- Проход 2: классификация и сюжет ---
-  const classifySpinner = ora(
-    "Проход 2: классификация персонажей и генерация сюжета...",
-  ).start();
-
-  let classification: Classification;
-  try {
-    const characterContexts = buildCharacterContexts(merged, allEvents);
-    const prompt = classifyPrompt(characterContexts, language);
-
-    const promptTokens = estimateTokens(prompt);
-    console.log(
-      `  Данные для прохода 2: ~${promptTokens.toLocaleString()} токенов`,
-    );
-
-    classification = await llmStructuredRequest<Classification>({
-      model,
-      prompt,
-      schema: ClassificationSchema,
-    });
-
-    const totalChars =
-      classification.main.length +
-      classification.secondary.length +
-      classification.minor.length;
-
-    classifySpinner.succeed(
-      `Классификация: ${totalChars} персонаж(ей) ` +
-        `(${classification.main.length} главных, ` +
-        `${classification.secondary.length} второстепенных, ` +
-        `${classification.minor.length} эпизодических)`,
-    );
-  } catch (error) {
-    classifySpinner.fail("Проход 2: ошибка");
-    throw error;
-  }
-
-  // --- Проход 2.5: LLM-саммаризация для важных персонажей ---
-  const importantNames = new Set([
-    ...classification.main.map((n) => n.toLowerCase()),
-    ...classification.secondary.map((n) => n.toLowerCase()),
-  ]);
-
-  const summaries = new Map<string, CharacterSummary>();
-  const charsToSummarize = merged.filter((m) =>
-    importantNames.has(m.name.toLowerCase()),
-  );
-  console.log(
-    `\nПроход 2.5: саммаризация ${charsToSummarize.length} важных персонажей`,
+  const classification = await runClassify(
+    executor,
+    merged,
+    allEvents,
+    language,
   );
 
-  for (let i = 0; i < charsToSummarize.length; i++) {
-    const m = charsToSummarize[i];
-    const spinner = ora(
-      `  Саммаризация ${i + 1}/${charsToSummarize.length}: ${m.name}`,
-    ).start();
-
-    const rawAppearances = m.appearanceFragments;
-    const rawPersonalities = m.personalityFragments;
-    const rawDescriptions = m.descriptionFragments;
-
-    if (
-      rawAppearances.length === 0 &&
-      rawPersonalities.length === 0 &&
-      rawDescriptions.length === 0
-    ) {
-      spinner.info(`  ${m.name}: нет данных для саммаризации`);
-      continue;
-    }
-
-    try {
-      const prompt = summarizeCharacterPrompt(
-        m.name,
-        rawAppearances,
-        rawPersonalities,
-        rawDescriptions,
-        language,
-      );
-      const summary = await llmStructuredRequest<CharacterSummary>({
-        model,
-        prompt,
-        schema: CharacterSummarySchema,
-      });
-
-      const cleaned: CharacterSummary = {
-        appearance: cleanSummaryText(summary.appearance, language),
-        personality: cleanSummaryText(summary.personality, language),
-        description: cleanSummaryText(summary.description, language),
-      };
-
-      summaries.set(m.name.toLowerCase(), cleaned);
-      spinner.succeed(`  ${m.name}: готово`);
-    } catch (error) {
-      spinner.fail(`  ${m.name}: ошибка саммаризации`);
-    }
-  }
+  // --- Проход 2.5: саммаризация важных персонажей ---
+  const summaries = await runSummaries(
+    executor,
+    model,
+    merged,
+    classification,
+    language,
+  );
 
   const result = assembleResult(
     classification,
@@ -255,6 +175,427 @@ export async function analyzeBook(
   );
 
   return result;
+}
+
+// =============================================================================
+// Проход 1
+// =============================================================================
+
+interface Pass1Result {
+  title: string;
+  authors: string;
+  characters: ChunkCharacter[];
+  events: ChunkEvent[];
+}
+
+const META_ID = "meta";
+const chunkId = (index: number) => `chunk-${index}`;
+
+async function runPass1(
+  executor: Executor,
+  chunks: TextChunk[],
+  language: Language,
+  knownTitle: string | undefined,
+): Promise<Pass1Result> {
+  const ids = [
+    ...(knownTitle ? [] : [META_ID]),
+    ...chunks.map((c) => chunkId(c.index)),
+  ];
+
+  console.log(`Проход 1: ${chunks.length} фрагмент(ов)`);
+
+  const outcome = await executor.run<unknown>("pass1", ids, (id, ctx) => {
+    if (id === META_ID) {
+      return {
+        id,
+        prompt: bookMetadataPrompt(chunks[0].text.slice(0, 60_000), language),
+        schema: BookMetadataSchema,
+        reasoning: false,
+        maxOutputTokens: OUTPUT_LIMITS.metadata,
+        label: "Извлечение названия и авторов из первого фрагмента",
+      };
+    }
+
+    const index = Number(id.slice("chunk-".length));
+    const chunk = chunks[index];
+
+    // В последовательном режиме модель получает список уже найденных персонажей
+    // и использует те же имена. В batch-режиме ctx.previous пуст, а алиасы
+    // сводятся отдельной фазой после прохода 1.
+    const known = collectKnownCharacters(ctx.previous, index);
+
+    return {
+      id,
+      prompt: chunkAnalysisPrompt(
+        chunk.index,
+        chunks.length,
+        chunk.text,
+        language,
+        known,
+      ),
+      schema: ChunkAnalysisSchema,
+      reasoning: false,
+      maxOutputTokens: OUTPUT_LIMITS.chunk,
+      label: `Фрагмент ${chunk.index + 1}/${chunks.length} (~${chunk.estimatedTokens.toLocaleString()} токенов${known.length ? `, известно ${known.length} перс.` : ""})`,
+    };
+  });
+
+  // Ошибки фрагментов фатальны: без них анализ неполный
+  const chunkErrors = Array.from(outcome.errors.entries()).filter(
+    ([id]) => id !== META_ID,
+  );
+  if (chunkErrors.length > 0) {
+    const [id, err] = chunkErrors[0];
+    throw new Error(
+      `Не удалось проанализировать ${chunkErrors.length} фрагмент(ов). ${id}: ${err.message}`,
+    );
+  }
+
+  let title = "";
+  let authors = "";
+  if (!knownTitle) {
+    const meta = outcome.results.get(META_ID) as
+      { title: string; authors: string } | undefined;
+    if (meta) {
+      title = meta.title ?? "";
+      authors = meta.authors ?? "";
+      console.log(`  Метаданные: "${title}" by ${authors}`);
+    } else {
+      console.log("  ⚠ Не удалось извлечь метаданные книги");
+    }
+  }
+
+  const characters: ChunkCharacter[] = [];
+  const events: ChunkEvent[] = [];
+
+  for (const chunk of chunks) {
+    const analysis = outcome.results.get(chunkId(chunk.index)) as ChunkAnalysis;
+    const cleaned = analysis.characters
+      .map(normalizeChunkCharacter)
+      .filter(isRealCharacter);
+    characters.push(...cleaned);
+    events.push(...analysis.events);
+  }
+
+  return { title, authors, characters, events };
+}
+
+function collectKnownCharacters(
+  previous: Map<string, unknown>,
+  currentIndex: number,
+): KnownCharacter[] {
+  const seen: ChunkCharacter[] = [];
+  for (let i = 0; i < currentIndex; i++) {
+    const analysis = previous.get(chunkId(i)) as ChunkAnalysis | undefined;
+    if (!analysis) continue;
+    seen.push(
+      ...analysis.characters
+        .map(normalizeChunkCharacter)
+        .filter(isRealCharacter),
+    );
+  }
+  if (seen.length === 0) return [];
+
+  return mergeCharacters(seen)
+    .sort((a, b) => b.mentionCount - a.mentionCount)
+    .slice(0, MAX_KNOWN_CHARACTERS)
+    .map((m) => ({ name: m.name, aliases: m.aliases }));
+}
+
+// =============================================================================
+// Проход 1.5: LLM-сопоставление алиасов
+// =============================================================================
+
+async function resolveAliases(
+  executor: Executor,
+  merged: MergedCharacter[],
+  allEvents: ChunkEvent[],
+  language: Language,
+): Promise<MergedCharacter[]> {
+  if (merged.length < 2) return merged;
+
+  const candidates: AliasCandidate[] = merged.map((m) => ({
+    name: m.name,
+    aliases: m.aliases,
+    mentionCount: m.mentionCount,
+    sample: (m.descriptionFragments[0] ?? "").slice(0, 200),
+  }));
+
+  const outcome = await executor.run<AliasResolution>(
+    "aliases",
+    ["aliases"],
+    (id) => ({
+      id,
+      prompt: aliasResolutionPrompt(candidates, language),
+      schema: AliasResolutionSchema,
+      reasoning: true,
+      maxOutputTokens: OUTPUT_LIMITS.aliases,
+      label: `Сопоставление алиасов (${candidates.length} кандидатов)`,
+    }),
+  );
+
+  const resolution = outcome.results.get("aliases");
+  if (!resolution) {
+    console.log(
+      "  ⚠ LLM-сопоставление алиасов не удалось, остаётся строковое объединение",
+    );
+    return merged;
+  }
+
+  const before = merged.length;
+  const result = applyAliasGroups(merged, resolution.groups, allEvents);
+  console.log(
+    `  LLM-сопоставление алиасов: ${before} → ${result.length} персонажей`,
+  );
+  return result;
+}
+
+/** Пары имён, которые вместе участвуют в одном событии — это разные люди. */
+function buildCoOccurrence(allEvents: ChunkEvent[]): Set<string> {
+  const pairs = new Set<string>();
+  for (const ev of allEvents) {
+    const names = Array.from(
+      new Set(ev.charactersInvolved.map((n) => n.trim().toLowerCase())),
+    );
+    for (let i = 0; i < names.length; i++) {
+      for (let j = i + 1; j < names.length; j++) {
+        pairs.add([names[i], names[j]].sort().join("\u0000"));
+      }
+    }
+  }
+  return pairs;
+}
+
+function applyAliasGroups(
+  merged: MergedCharacter[],
+  groups: AliasResolution["groups"],
+  allEvents: ChunkEvent[],
+): MergedCharacter[] {
+  const byKey = new Map(merged.map((m) => [m.name.toLowerCase(), m]));
+  const groupOf = new Map<string, MergedCharacter>();
+  const coOccur = buildCoOccurrence(allEvents);
+
+  for (const group of groups) {
+    const memberKeys = Array.from(
+      new Set(group.members.map((n) => n.trim().toLowerCase())),
+    ).filter((k) => byKey.has(k) && !groupOf.has(k));
+    if (memberKeys.length < 2) continue;
+
+    if (group.confidence !== "high") {
+      console.log(
+        `  · пропуск группы [${memberKeys.join(" | ")}]: уверенность ${group.confidence}`,
+      );
+      continue;
+    }
+
+    // Защита от ложных слияний: участники одной сцены не могут быть одним человеком
+    const conflict = memberKeys.find((a, i) =>
+      memberKeys
+        .slice(i + 1)
+        .some((b) => coOccur.has([a, b].sort().join("\u0000"))),
+    );
+    if (conflict) {
+      console.log(
+        `  · отклонена группа [${memberKeys.join(" | ")}]: имена встречаются вместе в одном событии`,
+      );
+      continue;
+    }
+
+    const canonicalKey = group.canonicalName.trim().toLowerCase();
+    const baseKey = memberKeys.includes(canonicalKey)
+      ? canonicalKey
+      : memberKeys[0];
+    const base = byKey.get(baseKey)!;
+
+    const aliases = new Set(base.aliases);
+    const appearanceFragments = [...base.appearanceFragments];
+    const personalityFragments = [...base.personalityFragments];
+    const descriptionFragments = [...base.descriptionFragments];
+    let mentionCount = base.mentionCount;
+
+    for (const key of memberKeys) {
+      if (key === baseKey) continue;
+      const other = byKey.get(key)!;
+      aliases.add(other.name);
+      other.aliases.forEach((a) => aliases.add(a));
+      appearanceFragments.push(...other.appearanceFragments);
+      personalityFragments.push(...other.personalityFragments);
+      descriptionFragments.push(...other.descriptionFragments);
+      mentionCount += other.mentionCount;
+    }
+    aliases.delete(base.name);
+
+    const combined: MergedCharacter = {
+      name: base.name,
+      aliases: Array.from(aliases),
+      appearance: joinFragments(appearanceFragments),
+      personality: joinFragments(personalityFragments),
+      appearanceFragments,
+      personalityFragments,
+      descriptionFragments,
+      mentionCount,
+    };
+    for (const key of memberKeys) groupOf.set(key, combined);
+  }
+
+  // Сохраняем исходный порядок: группа выводится на месте первого участника
+  const emitted = new Set<MergedCharacter>();
+  const result: MergedCharacter[] = [];
+  for (const m of merged) {
+    const target = groupOf.get(m.name.toLowerCase()) ?? m;
+    if (emitted.has(target)) continue;
+    emitted.add(target);
+    result.push(target);
+  }
+  return result;
+}
+
+// =============================================================================
+// Проход 2: классификация
+// =============================================================================
+
+async function runClassify(
+  executor: Executor,
+  merged: MergedCharacter[],
+  allEvents: ChunkEvent[],
+  language: Language,
+): Promise<Classification> {
+  const timeline = dedupeEvents(allEvents);
+  const characterContexts = buildCharacterContexts(merged, timeline);
+  const prompt = classifyPrompt(
+    characterContexts,
+    timeline.map((ev) => ev.summary),
+    language,
+  );
+  console.log(
+    `Проход 2: классификация, ~${estimateTokens(prompt).toLocaleString()} токенов входа`,
+  );
+
+  const outcome = await executor.run<Classification>(
+    "classify",
+    ["classify"],
+    (id) => ({
+      id,
+      prompt,
+      schema: ClassificationSchema,
+      reasoning: true,
+      maxOutputTokens: OUTPUT_LIMITS.classify,
+      label: "Классификация персонажей и генерация сюжета",
+    }),
+  );
+
+  const classification = outcome.results.get("classify");
+  if (!classification) {
+    throw new Error(
+      `Проход 2 не удался: ${outcome.errors.get("classify")?.message ?? "нет результата"}`,
+    );
+  }
+
+  // Персонажи, которых модель не включила ни в один список, идут в minor,
+  // иначе они молча пропадут из результата.
+  const listed = new Set(
+    [
+      ...classification.main,
+      ...classification.secondary,
+      ...classification.minor,
+    ].map((n) => n.toLowerCase()),
+  );
+  const dropped = merged.filter((m) => !listed.has(m.name.toLowerCase()));
+  if (dropped.length > 0) {
+    console.log(
+      `  ⚠ ${dropped.length} персонаж(ей) не попали в классификацию, добавлены в minor: ${dropped
+        .slice(0, 5)
+        .map((m) => m.name)
+        .join(", ")}${dropped.length > 5 ? "…" : ""}`,
+    );
+    classification.minor.push(...dropped.map((m) => m.name));
+  }
+
+  const total =
+    classification.main.length +
+    classification.secondary.length +
+    classification.minor.length;
+  console.log(
+    `  Классификация: ${total} персонаж(ей) ` +
+      `(${classification.main.length} главных, ` +
+      `${classification.secondary.length} второстепенных, ` +
+      `${classification.minor.length} эпизодических)\n`,
+  );
+
+  return classification;
+}
+
+// =============================================================================
+// Проход 2.5: саммаризация
+// =============================================================================
+
+async function runSummaries(
+  executor: Executor,
+  model: string,
+  merged: MergedCharacter[],
+  classification: Classification,
+  language: Language,
+): Promise<Map<string, CharacterSummary>> {
+  const importantNames = new Set([
+    ...classification.main.map((n) => n.toLowerCase()),
+    ...classification.secondary.map((n) => n.toLowerCase()),
+  ]);
+
+  const targets = merged
+    .map((m, index) => ({ m, index }))
+    .filter(
+      ({ m }) =>
+        importantNames.has(m.name.toLowerCase()) &&
+        (m.appearanceFragments.length > 0 ||
+          m.personalityFragments.length > 0 ||
+          m.descriptionFragments.length > 0),
+    );
+
+  console.log(`Проход 2.5: саммаризация ${targets.length} важных персонажей`);
+  const summaries = new Map<string, CharacterSummary>();
+  if (targets.length === 0) return summaries;
+
+  const byId = new Map(targets.map((t) => [`summary-${t.index}`, t.m]));
+
+  const outcome = await executor.run<CharacterSummary>(
+    "summaries",
+    Array.from(byId.keys()),
+    (id) => {
+      const m = byId.get(id)!;
+      return {
+        id,
+        prompt: summarizeCharacterPrompt(
+          m.name,
+          m.appearanceFragments,
+          m.personalityFragments,
+          m.descriptionFragments,
+          language,
+        ),
+        schema: CharacterSummarySchema,
+        reasoning: true,
+        maxOutputTokens: OUTPUT_LIMITS.summary,
+        label: `Саммаризация: ${m.name}`,
+      };
+    },
+    { concurrency: getConcurrencyForModel(model) },
+  );
+
+  for (const [id, summary] of outcome.results) {
+    const m = byId.get(id)!;
+    summaries.set(m.name.toLowerCase(), {
+      appearance: cleanSummaryText(summary.appearance, language),
+      personality: cleanSummaryText(summary.personality, language),
+      description: cleanSummaryText(summary.description, language),
+    });
+  }
+
+  if (outcome.errors.size > 0) {
+    console.log(
+      `  ⚠ Не удалось саммаризировать ${outcome.errors.size} персонаж(ей), для них используются сырые фрагменты`,
+    );
+  }
+
+  return summaries;
 }
 
 // =============================================================================
@@ -333,28 +674,68 @@ interface MergedCharacter {
 interface CharacterAccumulator {
   name: string;
   aliases: Set<string>;
+  /** Алиасы (в нижнем регистре), по которым можно сопоставлять записи. */
+  matchAliases: Set<string>;
   appearanceFragments: string[];
   personalityFragments: string[];
   descriptionFragments: string[];
   mentionCount: number;
 }
 
-function mergeCharacters(characters: ChunkCharacter[]): MergedCharacter[] {
+/**
+ * Алиасы, по которым безопасно склеивать записи: похожи на имя собственное и
+ * заявлены ровно одним персонажем. Спорные случаи оставляем LLM-фазе.
+ */
+function buildMatchableAliases(characters: ChunkCharacter[]): Set<string> {
+  const claimants = new Map<string, Set<string>>();
+  for (const c of characters) {
+    for (const alias of c.aliases) {
+      if (!looksLikeProperName(alias)) continue;
+      const key = alias.trim().toLowerCase();
+      if (key === c.name.toLowerCase()) continue;
+      if (!claimants.has(key)) claimants.set(key, new Set());
+      claimants.get(key)!.add(c.name.toLowerCase());
+    }
+  }
+  const result = new Set<string>();
+  for (const [alias, names] of claimants) {
+    if (names.size === 1) result.add(alias);
+  }
+  return result;
+}
+
+function mergeCharacters(
+  characters: ChunkCharacter[],
+  allEvents: ChunkEvent[] = [],
+): MergedCharacter[] {
   const accumulators: CharacterAccumulator[] = [];
+  const matchable = buildMatchableAliases(characters);
+  const coOccur = buildCoOccurrence(allEvents);
+  const pairKey = (a: string, b: string) => [a, b].sort().join("\u0000");
 
   function findAccumulator(
     name: string,
     aliases: string[],
   ): CharacterAccumulator | undefined {
     const nameLower = name.toLowerCase();
-    const aliasesLower = aliases.map((a) => a.toLowerCase());
+    const aliasesLower = aliases
+      .map((a) => a.trim().toLowerCase())
+      .filter((a) => matchable.has(a));
+
+    const exact = accumulators.find(
+      (acc) => acc.name.toLowerCase() === nameLower,
+    );
+    if (exact) return exact;
 
     return accumulators.find((acc) => {
-      if (acc.name.toLowerCase() === nameLower) return true;
-      if (acc.aliases.has(nameLower)) return true;
+      const accName = acc.name.toLowerCase();
+      // Участники одной сцены — разные люди
+      if (coOccur.has(pairKey(accName, nameLower))) return false;
+
+      if (acc.matchAliases.has(nameLower)) return true;
       for (const alias of aliasesLower) {
-        if (acc.name.toLowerCase() === alias) return true;
-        if (acc.aliases.has(alias)) return true;
+        if (accName === alias) return true;
+        if (acc.matchAliases.has(alias)) return true;
       }
       return false;
     });
@@ -367,6 +748,7 @@ function mergeCharacters(characters: ChunkCharacter[]): MergedCharacter[] {
       acc = {
         name: char.name,
         aliases: new Set(),
+        matchAliases: new Set(),
         appearanceFragments: [],
         personalityFragments: [],
         descriptionFragments: [],
@@ -376,9 +758,15 @@ function mergeCharacters(characters: ChunkCharacter[]): MergedCharacter[] {
     }
 
     char.aliases.forEach((a) => {
-      const lower = a.toLowerCase();
-      if (lower !== acc!.name.toLowerCase()) acc!.aliases.add(a);
+      const lower = a.trim().toLowerCase();
+      if (lower === acc!.name.toLowerCase()) return;
+      acc!.aliases.add(a);
+      if (matchable.has(lower)) acc!.matchAliases.add(lower);
     });
+    if (char.name.toLowerCase() !== acc.name.toLowerCase()) {
+      acc.aliases.add(char.name);
+      acc.matchAliases.add(char.name.toLowerCase());
+    }
 
     if (isUsefulFragment(char.appearance)) {
       acc.appearanceFragments.push(char.appearance.trim());
@@ -465,17 +853,14 @@ function joinFragments(fragments: string[]): string {
   return unique.join(" ");
 }
 
-function cleanSummaryText(
-  text: string,
-  language: "russian" | "english" | "other",
-): string {
+function cleanSummaryText(text: string, language: Language): string {
   if (!text) return fallbackEmpty(language);
   const stripped = stripJunkSentences(text).trim();
   if (stripped.length < 10) return fallbackEmpty(language);
   return stripped;
 }
 
-function fallbackEmpty(language: "russian" | "english" | "other"): string {
+function fallbackEmpty(language: Language): string {
   return language === "english"
     ? "Not described in the text"
     : "Информация в тексте отсутствует";
@@ -485,26 +870,50 @@ function fallbackEmpty(language: "russian" | "english" | "other"): string {
 // Подготовка контекста для Pass 2 (classify)
 // =============================================================================
 
+// Сколько описаний одного персонажа передавать в промпт классификации
+const MAX_DESCRIPTIONS_PER_CHARACTER = 15;
+
+/** Убирает дословные дубли событий, возникающие из-за перекрытия фрагментов. */
+function dedupeEvents(allEvents: ChunkEvent[]): ChunkEvent[] {
+  const seen = new Set<string>();
+  const result: ChunkEvent[] = [];
+  for (const ev of allEvents) {
+    const key = ev.summary.trim().toLowerCase().replace(/\s+/g, " ");
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    result.push(ev);
+  }
+  return result;
+}
+
 function buildCharacterContexts(
   merged: MergedCharacter[],
-  allEvents: ChunkEvent[],
+  timeline: ChunkEvent[],
 ): CharacterContext[] {
   return merged.map((m) => {
     const aliasSet = new Set([
       m.name.toLowerCase(),
       ...m.aliases.map((a) => a.toLowerCase()),
     ]);
-    const events = allEvents
-      .filter((ev) =>
-        ev.charactersInvolved.some((p) => aliasSet.has(p.toLowerCase())),
-      )
-      .map((ev) => ev.summary);
+    const eventIndices: number[] = [];
+    timeline.forEach((ev, index) => {
+      if (ev.charactersInvolved.some((p) => aliasSet.has(p.toLowerCase()))) {
+        eventIndices.push(index);
+      }
+    });
+
+    const descriptions = m.descriptionFragments.slice(
+      0,
+      MAX_DESCRIPTIONS_PER_CHARACTER,
+    );
 
     return {
       name: m.name,
       aliases: m.aliases,
-      descriptions: m.descriptionFragments,
-      events,
+      mentionCount: m.mentionCount,
+      descriptions,
+      descriptionsOmitted: m.descriptionFragments.length - descriptions.length,
+      eventIndices,
     };
   });
 }
@@ -517,7 +926,7 @@ function assembleResult(
   classification: Classification,
   merged: MergedCharacter[],
   summaries: Map<string, CharacterSummary>,
-  language: "russian" | "english" | "other",
+  language: Language,
   extractedTitle: string,
   extractedAuthors: string,
 ): BookAnalysis {
@@ -547,7 +956,10 @@ function assembleResult(
       s?.appearance ?? (m?.appearance ? m.appearance : "") ?? "";
     const personality =
       s?.personality ?? (m?.personality ? m.personality : "") ?? "";
-    const description = s?.description ?? d?.description ?? "";
+    const description =
+      s?.description ||
+      d?.description ||
+      (m ? joinFragments(m.descriptionFragments) : "");
 
     return {
       name: m?.name ?? name,
@@ -562,6 +974,7 @@ function assembleResult(
   return {
     title: extractedTitle || classification.title,
     authors: extractedAuthors,
+    language,
     characters: {
       main: classification.main.map(buildCharacter),
       secondary: classification.secondary.map(buildCharacter),

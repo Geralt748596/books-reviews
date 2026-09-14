@@ -1,1 +1,0 @@
-lsp_diagnostics: no errors for lib/actions/books.ts

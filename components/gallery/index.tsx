@@ -92,7 +92,7 @@ export function Gallery({ items, title, type, bookId }: Props) {
                   fill
                   loading="eager"
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="auto, 30vw"
                 />
               </CardContent>
               <CardFooter className="gap-2 bg-background/60 backdrop-blur-md border-t border-border/50 py-4">

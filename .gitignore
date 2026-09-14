@@ -44,6 +44,9 @@ next-env.d.ts
 
 /app/generated/prisma
 
+# prisma generated client
+/prisma/generated
+
 # analyzer generated output
 /lib/analyzer/generated/*
 !/lib/analyzer/generated/.gitkeep

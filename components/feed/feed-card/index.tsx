@@ -43,7 +43,7 @@ export function FeedCard({ item }: Props) {
             src={item.blobUrl}
             alt={heading}
             fill
-            sizes="(max-width: 768px) 112px, 128px"
+            sizes="auto, 30vw"
             className="object-cover"
           />
         </DialogTrigger>

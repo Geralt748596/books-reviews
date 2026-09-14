@@ -47,6 +47,29 @@ export const ChunkAnalysisSchema = z.object({
     .describe("Ключевые события сюжета в этом фрагменте"),
 });
 
+// --- Проход 1.5: сопоставление алиасов между фрагментами ---
+
+export const AliasGroupSchema = z.object({
+  canonicalName: z
+    .string()
+    .describe("Основное имя персонажа (одно из members)"),
+  members: z
+    .array(z.string())
+    .default([])
+    .describe("Все имена из входного списка, относящиеся к этому персонажу"),
+  confidence: z
+    .enum(["high", "medium", "low"])
+    .default("medium")
+    .describe(
+      "Уверенность, что все members — один персонаж; объединяются только high",
+    ),
+  evidence: z.string().default("").describe("На чём основано объединение"),
+});
+
+export const AliasResolutionSchema = z.object({
+  groups: z.array(AliasGroupSchema).default([]),
+});
+
 // --- Проход 2: только классификация и сюжет (appearance/personality добавляются программно) ---
 
 export const ClassifiedCharacterSchema = z.object({
@@ -122,6 +145,7 @@ export const CharacterSchema = z.object({
 export const BookAnalysisSchema = z.object({
   title: z.string(),
   authors: z.string().default(""),
+  language: z.string().default(""),
   characters: z.object({
     main: z.array(CharacterSchema),
     secondary: z.array(CharacterSchema),

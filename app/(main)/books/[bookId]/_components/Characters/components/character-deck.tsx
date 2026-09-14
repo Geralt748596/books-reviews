@@ -122,7 +122,7 @@ export function CharacterDeck({ characterName, images, href }: Props) {
                 src={card.blobUrl}
                 alt={characterName}
                 fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                sizes="auto, 30vw"
                 className="object-cover pointer-events-none select-none"
                 loading={isTop ? "eager" : "lazy"}
                 draggable={false}
