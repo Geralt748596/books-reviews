@@ -1,58 +1,80 @@
 export const HOME_FEED_PAGE_SIZE = 12;
 
-export type FeedItemType = "cover" | "character";
+/** Вид элемента ленты. `id` элемента — это id строки FeedItem, id источника лежит в payload. */
+export type FeedItemKind = "cover" | "character_image" | "book_added" | "post";
 
+/** Цели комментариев и лайков: только у обложек и картинок персонажей. */
+export type CommentTargetType = "cover" | "character";
+
+/** Keyset-курсор по строке FeedItem: (createdAt desc, id desc). */
 export type FeedCursor = {
-  type: FeedItemType;
-  id: string;
   createdAt: string;
+  id: string;
 };
 
-type FeedUser = {
+export type FeedUser = {
   id: string;
   name: string;
   image: string | null;
 };
 
-type FeedBook = {
+export type FeedBook = {
   id: string;
   title: string;
   authors: string;
   thumbnailUrl: string | null;
 };
 
-type FeedComment = {
+export type FeedComment = {
   user: { name: string; image: string | null };
   content: string;
 };
 
-type FeedBaseItem = {
+type FeedBase = {
   id: string;
-  type: FeedItemType;
-  prompt: string;
-  blobUrl: string;
+  kind: FeedItemKind;
   createdAt: string;
-  user: FeedUser;
+  /** null для системных событий (книга добавлена). */
+  actor: FeedUser | null;
   book: FeedBook;
+};
+
+export type ImagePayload = {
+  id: string;
+  blobUrl: string;
   likesCount: number;
   isLiked: boolean;
   commentsCount: number;
   lastComment: FeedComment | null;
 };
 
-export type CoverFeedItem = FeedBaseItem & {
-  type: "cover";
+export type CoverFeedItem = FeedBase & {
+  kind: "cover";
+  cover: ImagePayload;
 };
 
-export type CharacterFeedItem = FeedBaseItem & {
-  type: "character";
-  character: {
+export type CharacterImageFeedItem = FeedBase & {
+  kind: "character_image";
+  image: ImagePayload & { character: { id: string; name: string } };
+};
+
+export type BookAddedFeedItem = FeedBase & {
+  kind: "book_added";
+  excerpt: string | null;
+};
+
+export type PostFeedItem = FeedBase & {
+  kind: "post";
+  post: {
     id: string;
-    name: string;
+    /** HTML, санитизированный при записи в createPost. */
+    contentHtml: string;
+    character: { id: string; name: string } | null;
   };
 };
 
-export type FeedItem = CoverFeedItem | CharacterFeedItem;
+export type FeedItem =
+  CoverFeedItem | CharacterImageFeedItem | BookAddedFeedItem | PostFeedItem;
 
 export type FeedPage = {
   items: FeedItem[];

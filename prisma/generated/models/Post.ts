@@ -201,6 +201,7 @@ export type PostWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
   character?: Prisma.XOR<Prisma.CharacterNullableScalarRelationFilter, Prisma.CharacterWhereInput> | null
+  feedItem?: Prisma.XOR<Prisma.FeedItemNullableScalarRelationFilter, Prisma.FeedItemWhereInput> | null
 }
 
 export type PostOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type PostOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   book?: Prisma.BookOrderByWithRelationInput
   character?: Prisma.CharacterOrderByWithRelationInput
+  feedItem?: Prisma.FeedItemOrderByWithRelationInput
 }
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -230,6 +232,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
   character?: Prisma.XOR<Prisma.CharacterNullableScalarRelationFilter, Prisma.CharacterWhereInput> | null
+  feedItem?: Prisma.XOR<Prisma.FeedItemNullableScalarRelationFilter, Prisma.FeedItemWhereInput> | null
 }, "id">
 
 export type PostOrderByWithAggregationInput = {
@@ -266,6 +269,7 @@ export type PostCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   book: Prisma.BookCreateNestedOneWithoutPostsInput
   character?: Prisma.CharacterCreateNestedOneWithoutPostsInput
+  feedItem?: Prisma.FeedItemCreateNestedOneWithoutPostInput
 }
 
 export type PostUncheckedCreateInput = {
@@ -276,6 +280,7 @@ export type PostUncheckedCreateInput = {
   userId: string
   bookId: string
   characterId?: string | null
+  feedItem?: Prisma.FeedItemUncheckedCreateNestedOneWithoutPostInput
 }
 
 export type PostUpdateInput = {
@@ -286,6 +291,7 @@ export type PostUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutPostsNestedInput
   character?: Prisma.CharacterUpdateOneWithoutPostsNestedInput
+  feedItem?: Prisma.FeedItemUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateInput = {
@@ -296,6 +302,7 @@ export type PostUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   characterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedItem?: Prisma.FeedItemUncheckedUpdateOneWithoutPostNestedInput
 }
 
 export type PostCreateManyInput = {
@@ -363,6 +370,11 @@ export type PostMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
   characterId?: Prisma.SortOrder
+}
+
+export type PostNullableScalarRelationFilter = {
+  is?: Prisma.PostWhereInput | null
+  isNot?: Prisma.PostWhereInput | null
 }
 
 export type PostCreateNestedManyWithoutUserInput = {
@@ -491,6 +503,22 @@ export type PostUncheckedUpdateManyWithoutCharacterNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
+export type PostCreateNestedOneWithoutFeedItemInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeedItemInput, Prisma.PostUncheckedCreateWithoutFeedItemInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeedItemInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostUpdateOneWithoutFeedItemNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeedItemInput, Prisma.PostUncheckedCreateWithoutFeedItemInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeedItemInput
+  upsert?: Prisma.PostUpsertWithoutFeedItemInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutFeedItemInput, Prisma.PostUpdateWithoutFeedItemInput>, Prisma.PostUncheckedUpdateWithoutFeedItemInput>
+}
+
 export type PostCreateWithoutUserInput = {
   id?: string
   content: string
@@ -498,6 +526,7 @@ export type PostCreateWithoutUserInput = {
   updatedAt?: Date | string
   book: Prisma.BookCreateNestedOneWithoutPostsInput
   character?: Prisma.CharacterCreateNestedOneWithoutPostsInput
+  feedItem?: Prisma.FeedItemCreateNestedOneWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutUserInput = {
@@ -507,6 +536,7 @@ export type PostUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   bookId: string
   characterId?: string | null
+  feedItem?: Prisma.FeedItemUncheckedCreateNestedOneWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutUserInput = {
@@ -555,6 +585,7 @@ export type PostCreateWithoutBookInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   character?: Prisma.CharacterCreateNestedOneWithoutPostsInput
+  feedItem?: Prisma.FeedItemCreateNestedOneWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutBookInput = {
@@ -564,6 +595,7 @@ export type PostUncheckedCreateWithoutBookInput = {
   updatedAt?: Date | string
   userId: string
   characterId?: string | null
+  feedItem?: Prisma.FeedItemUncheckedCreateNestedOneWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutBookInput = {
@@ -599,6 +631,7 @@ export type PostCreateWithoutCharacterInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   book: Prisma.BookCreateNestedOneWithoutPostsInput
+  feedItem?: Prisma.FeedItemCreateNestedOneWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutCharacterInput = {
@@ -608,6 +641,7 @@ export type PostUncheckedCreateWithoutCharacterInput = {
   updatedAt?: Date | string
   userId: string
   bookId: string
+  feedItem?: Prisma.FeedItemUncheckedCreateNestedOneWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutCharacterInput = {
@@ -636,6 +670,62 @@ export type PostUpdateManyWithWhereWithoutCharacterInput = {
   data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutCharacterInput>
 }
 
+export type PostCreateWithoutFeedItemInput = {
+  id?: string
+  content: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPostsInput
+  book: Prisma.BookCreateNestedOneWithoutPostsInput
+  character?: Prisma.CharacterCreateNestedOneWithoutPostsInput
+}
+
+export type PostUncheckedCreateWithoutFeedItemInput = {
+  id?: string
+  content: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+  bookId: string
+  characterId?: string | null
+}
+
+export type PostCreateOrConnectWithoutFeedItemInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutFeedItemInput, Prisma.PostUncheckedCreateWithoutFeedItemInput>
+}
+
+export type PostUpsertWithoutFeedItemInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutFeedItemInput, Prisma.PostUncheckedUpdateWithoutFeedItemInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutFeedItemInput, Prisma.PostUncheckedCreateWithoutFeedItemInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutFeedItemInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutFeedItemInput, Prisma.PostUncheckedUpdateWithoutFeedItemInput>
+}
+
+export type PostUpdateWithoutFeedItemInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  book?: Prisma.BookUpdateOneRequiredWithoutPostsNestedInput
+  character?: Prisma.CharacterUpdateOneWithoutPostsNestedInput
+}
+
+export type PostUncheckedUpdateWithoutFeedItemInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  bookId?: Prisma.StringFieldUpdateOperationsInput | string
+  characterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type PostCreateManyUserInput = {
   id?: string
   content: string
@@ -652,6 +742,7 @@ export type PostUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   book?: Prisma.BookUpdateOneRequiredWithoutPostsNestedInput
   character?: Prisma.CharacterUpdateOneWithoutPostsNestedInput
+  feedItem?: Prisma.FeedItemUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutUserInput = {
@@ -661,6 +752,7 @@ export type PostUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
   characterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedItem?: Prisma.FeedItemUncheckedUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutUserInput = {
@@ -688,6 +780,7 @@ export type PostUpdateWithoutBookInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   character?: Prisma.CharacterUpdateOneWithoutPostsNestedInput
+  feedItem?: Prisma.FeedItemUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutBookInput = {
@@ -697,6 +790,7 @@ export type PostUncheckedUpdateWithoutBookInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   characterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedItem?: Prisma.FeedItemUncheckedUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutBookInput = {
@@ -724,6 +818,7 @@ export type PostUpdateWithoutCharacterInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   book?: Prisma.BookUpdateOneRequiredWithoutPostsNestedInput
+  feedItem?: Prisma.FeedItemUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCharacterInput = {
@@ -733,6 +828,7 @@ export type PostUncheckedUpdateWithoutCharacterInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
+  feedItem?: Prisma.FeedItemUncheckedUpdateOneWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutCharacterInput = {
@@ -757,6 +853,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   character?: boolean | Prisma.Post$characterArgs<ExtArgs>
+  feedItem?: boolean | Prisma.Post$feedItemArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -800,6 +897,7 @@ export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
   character?: boolean | Prisma.Post$characterArgs<ExtArgs>
+  feedItem?: boolean | Prisma.Post$feedItemArgs<ExtArgs>
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -818,6 +916,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     user: Prisma.$UserPayload<ExtArgs>
     book: Prisma.$BookPayload<ExtArgs>
     character: Prisma.$CharacterPayload<ExtArgs> | null
+    feedItem: Prisma.$FeedItemPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1224,6 +1323,7 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   book<T extends Prisma.BookDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BookDefaultArgs<ExtArgs>>): Prisma.Prisma__BookClient<runtime.Types.Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   character<T extends Prisma.Post$characterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$characterArgs<ExtArgs>>): Prisma.Prisma__CharacterClient<runtime.Types.Result.GetResult<Prisma.$CharacterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  feedItem<T extends Prisma.Post$feedItemArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$feedItemArgs<ExtArgs>>): Prisma.Prisma__FeedItemClient<runtime.Types.Result.GetResult<Prisma.$FeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1677,6 +1777,25 @@ export type Post$characterArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   include?: Prisma.CharacterInclude<ExtArgs> | null
   where?: Prisma.CharacterWhereInput
+}
+
+/**
+ * Post.feedItem
+ */
+export type Post$feedItemArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FeedItem
+   */
+  select?: Prisma.FeedItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FeedItem
+   */
+  omit?: Prisma.FeedItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedItemInclude<ExtArgs> | null
+  where?: Prisma.FeedItemWhereInput
 }
 
 /**

@@ -1,21 +1,28 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import ora from "ora";
 import type { ZodSchema } from "zod/v3";
 import {
-  abortController,
   buildClaudeParams,
   detectProvider,
   extractClaudeText,
   getAnthropicClient,
   llmStructuredRequest,
-  log,
   parseStructuredContent,
   recordUsage,
   sleep,
 } from "./llm-client";
+import {
+  error as logError,
+  getAbortSignal,
+  isInteractive,
+  log,
+  print,
+  success,
+} from "./run-context";
 
 // =============================================================================
 // Общий интерфейс исполнителя фаз
@@ -122,7 +129,7 @@ class PhaseCache {
       ) {
         this.data = parsed.results;
       } else if (parsed.results) {
-        console.log(
+        print(
           `  ↩ ${this.phase}: кэш от другого запуска (${parsed.model}, ${parsed.variant}) пропущен`,
         );
       }
@@ -131,19 +138,29 @@ class PhaseCache {
     }
   }
 
-  get<T>(id: string, schema: ZodSchema): T | undefined {
+  /**
+   * Запись действительна, если её промпт совпадает с текущим: так смена входа
+   * стадии (например, после лучшей склейки алиасов) не подхватывает старый ответ.
+   * Записи старого формата без хэша принимаются как есть.
+   */
+  get<T>(id: string, schema: ZodSchema, promptHash: string): T | undefined {
     if (!(id in this.data)) return undefined;
-    const check = schema.safeParse(this.data[id]);
+    const entry = this.data[id];
+    const wrapped = isCacheEntry(entry);
+    if (wrapped && entry.hash !== promptHash) return undefined;
+    const check = schema.safeParse(wrapped ? entry.value : entry);
     return check.success ? (check.data as T) : undefined;
   }
 
-  async set(id: string, value: unknown): Promise<void> {
-    this.data[id] = value;
+  async set(id: string, value: unknown, promptHash: string): Promise<void> {
+    this.data[id] = { hash: promptHash, value } satisfies CacheEntry;
     await this.flush();
   }
 
-  async setMany(entries: Iterable<[string, unknown]>): Promise<void> {
-    for (const [id, value] of entries) this.data[id] = value;
+  async setMany(entries: Iterable<[string, unknown, string]>): Promise<void> {
+    for (const [id, value, promptHash] of entries) {
+      this.data[id] = { hash: promptHash, value } satisfies CacheEntry;
+    }
     await this.flush();
   }
 
@@ -159,6 +176,25 @@ class PhaseCache {
   }
 }
 
+interface CacheEntry {
+  hash: string;
+  value: unknown;
+}
+
+function isCacheEntry(entry: unknown): entry is CacheEntry {
+  return (
+    typeof entry === "object" &&
+    entry !== null &&
+    "hash" in entry &&
+    "value" in entry &&
+    typeof (entry as CacheEntry).hash === "string"
+  );
+}
+
+export function promptHash(prompt: string): string {
+  return createHash("sha1").update(prompt).digest("hex");
+}
+
 async function loadCached<T>(
   cache: PhaseCache,
   ids: string[],
@@ -170,7 +206,7 @@ async function loadCached<T>(
 
   for (const id of ids) {
     const req = build(id, emptyCtx);
-    const hit = cache.get<T>(id, req.schema);
+    const hit = cache.get<T>(id, req.schema, promptHash(req.prompt));
     if (hit !== undefined) results.set(id, hit);
     else pending.push(id);
   }
@@ -205,7 +241,7 @@ class SequentialExecutor implements Executor {
     const errors = new Map<string, Error>();
 
     if (results.size > 0) {
-      console.log(
+      print(
         `  ↩ ${phase}: ${results.size} из ${ids.length} взято из кэша (${this.opts.workDir})`,
       );
     }
@@ -226,9 +262,7 @@ class SequentialExecutor implements Executor {
       return { results, errors };
     }
 
-    console.log(
-      `  ${phase}: ${pending.length} запросов, параллельно ${concurrency}`,
-    );
+    print(`  ${phase}: ${pending.length} запросов, параллельно ${concurrency}`);
     const queue = [...pending];
     const workers = Array.from({ length: concurrency }, async () => {
       for (;;) {
@@ -260,7 +294,7 @@ class SequentialExecutor implements Executor {
     useSpinner: boolean,
   ): Promise<void> {
     const label = req.label ?? `${phase}: ${id}`;
-    const spinner = useSpinner ? ora(label).start() : null;
+    const spinner = useSpinner && isInteractive() ? ora(label).start() : null;
     try {
       const value = await llmStructuredRequest<T>({
         model: this.opts.model,
@@ -270,12 +304,12 @@ class SequentialExecutor implements Executor {
         maxOutputTokens: req.maxOutputTokens,
       });
       results.set(id, value);
-      await cache.set(id, value);
+      await cache.set(id, value, promptHash(req.prompt));
       if (spinner) spinner.succeed(label);
-      else console.log(`  ✔ ${label}`);
+      else success(label);
     } catch (error) {
       if (spinner) spinner.fail(`${label}: ошибка`);
-      else console.log(`  ✖ ${label}: ошибка`);
+      else logError(`${label}: ошибка`);
       errors.set(id, error instanceof Error ? error : new Error(String(error)));
     }
   }
@@ -316,7 +350,7 @@ class BatchExecutor implements Executor {
     const errors = new Map<string, Error>();
 
     if (results.size > 0) {
-      console.log(
+      print(
         `  ↩ ${phase}: ${results.size} из ${ids.length} взято из кэша (${this.opts.workDir})`,
       );
     }
@@ -340,7 +374,7 @@ class BatchExecutor implements Executor {
 
     // Разбор результатов; порядок произвольный, сопоставляем по custom_id
     const failed: string[] = [];
-    const done: Array<[string, unknown]> = [];
+    const done: Array<[string, unknown, string]> = [];
 
     for await (const item of await client.messages.batches.results(batchId)) {
       const req = requests.get(item.custom_id);
@@ -361,7 +395,7 @@ class BatchExecutor implements Executor {
         const text = extractClaudeText(item.result.message);
         const value = parseStructuredContent<T>(text, req.schema);
         results.set(item.custom_id, value);
-        done.push([item.custom_id, value]);
+        done.push([item.custom_id, value, promptHash(req.prompt)]);
       } catch (error) {
         log(
           `${phase}/${item.custom_id}: невалидный ответ — ${error instanceof Error ? error.message : error}`,
@@ -373,14 +407,14 @@ class BatchExecutor implements Executor {
     await cache.setMany(done);
     await rm(statePath, { force: true });
 
-    console.log(
+    print(
       `  Batch ${batchId}: ${batch.request_counts.succeeded} ок, ` +
         `${batch.request_counts.errored} ошибок, ${batch.request_counts.expired} истекло`,
     );
 
     // Неудачные запросы повторяем напрямую, без batch
     if (failed.length > 0) {
-      console.log(
+      print(
         `  Повтор ${failed.length} запрос(ов) напрямую (без скидки batch)...`,
       );
       const direct = new SequentialExecutor(this.opts);
@@ -412,7 +446,7 @@ class BatchExecutor implements Executor {
           state.ids.length === pendingIds.length &&
           [...state.ids].sort().every((id, i) => id === pendingIds[i]);
         if (sameIds) {
-          console.log(
+          print(
             `  ↩ ${phase}: продолжаю ожидание batch ${state.batchId} (создан ${state.createdAt})`,
           );
           return state.batchId;
@@ -438,13 +472,13 @@ class BatchExecutor implements Executor {
       const content = r.params.messages[0]?.content;
       return sum + (typeof content === "string" ? content.length : 0);
     }, 0);
-    console.log(
+    print(
       `  Отправка batch "${phase}": ${batchRequests.length} запрос(ов), ~${Math.ceil(promptChars / 3).toLocaleString()} токенов входа`,
     );
 
     const batch = await client.messages.batches.create(
       { requests: batchRequests },
-      { signal: abortController.signal },
+      { signal: getAbortSignal() },
     );
 
     const state: BatchStateFile = {
@@ -454,7 +488,7 @@ class BatchExecutor implements Executor {
       createdAt: new Date().toISOString(),
     };
     await writeFile(statePath, JSON.stringify(state, null, 2), "utf-8");
-    console.log(`  Batch создан: ${batch.id}`);
+    print(`  Batch создан: ${batch.id}`);
 
     return batch.id;
   }
@@ -464,23 +498,27 @@ class BatchExecutor implements Executor {
     batchId: string,
     phase: string,
   ): Promise<Anthropic.Messages.Batches.MessageBatch> {
-    const spinner = ora(`Ожидание batch "${phase}" (${batchId})...`).start();
+    const waitingText = `Ожидание batch "${phase}" (${batchId})...`;
+    const spinner = isInteractive() ? ora(waitingText).start() : null;
+    if (!spinner) print(waitingText);
     const startedAt = Date.now();
 
-    for (;;) {
+    for (let poll = 0; ; poll++) {
       const batch = await client.messages.batches.retrieve(batchId, undefined, {
-        signal: abortController.signal,
+        signal: getAbortSignal(),
       });
       const c = batch.request_counts;
       const elapsedMin = Math.floor((Date.now() - startedAt) / 60_000);
-      spinner.text =
+      const statusText =
         `Batch "${phase}": ${c.succeeded} ок, ${c.processing} в работе, ` +
         `${c.errored} ошибок · ${elapsedMin} мин`;
+      if (spinner) spinner.text = statusText;
+      else if (poll > 0 && poll % 4 === 0) print(statusText); // раз в ~2 минуты
 
       if (batch.processing_status === "ended") {
-        spinner.succeed(
-          `Batch "${phase}" завершён за ${elapsedMin} мин (${c.succeeded} ок, ${c.errored} ошибок, ${c.expired} истекло)`,
-        );
+        const doneText = `Batch "${phase}" завершён за ${elapsedMin} мин (${c.succeeded} ок, ${c.errored} ошибок, ${c.expired} истекло)`;
+        if (spinner) spinner.succeed(doneText);
+        else success(doneText);
         return batch;
       }
       await sleep(POLL_INTERVAL_MS);

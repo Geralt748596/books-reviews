@@ -17,10 +17,19 @@ export interface PublishOptions {
 const adminUserId =
   process.env.ANALYZER_ADMIN_USER_ID ?? "cWs2jB6cuCIAkeEryxrMlCvej2S1DtDd";
 
+export interface PublishResult {
+  bookId: string;
+  updated: boolean;
+  charactersCreated: number;
+  charactersReused: number;
+  publishedDate: string | null;
+  dryRun: boolean;
+}
+
 export async function publishBook(
   analysisPath: string,
   opts: PublishOptions = {},
-): Promise<{ bookId: string }> {
+): Promise<PublishResult> {
   const progress = (message: string) => opts.onProgress?.(message);
 
   if (!existsSync(analysisPath)) {
@@ -57,6 +66,14 @@ export async function publishBook(
     dryRun: opts.dryRun,
   });
   const { bookId } = persisted;
+  const summary: PublishResult = {
+    bookId,
+    updated: persisted.updated,
+    charactersCreated: persisted.charactersCreated,
+    charactersReused: persisted.charactersReused,
+    publishedDate: publishedDate ?? null,
+    dryRun: Boolean(opts.dryRun),
+  };
 
   progress(
     `\n📚 Книга ${persisted.updated ? "обновлена" : "сохранена"} в БД: ${bookId} ` +
@@ -68,13 +85,13 @@ export async function publishBook(
     progress(`\n✅ Published: ${result.title}`);
     progress(`   JSON: ${analysisPath}`);
     progress(`   Published date: ${publishedDate ?? "unknown"}`);
-    return { bookId };
+    return summary;
   }
 
   progress("\n🎨 Генерация изображений...");
 
-  const { generateBookCover, generateCharacterImage } =
-    await import("@/lib/actions/images");
+  const { createBookCover, createCharacterImage } =
+    await import("@/lib/images/service");
   const prisma = (await import("../db")).default;
 
   // Обложку и картинки не пересоздаём при повторной публикации
@@ -86,9 +103,7 @@ export async function publishBook(
     progress("   Обложка уже есть, пропуск");
   } else {
     progress("Generating book cover...");
-    const coverResult = await generateBookCover(bookId, {
-      userId: adminUserId,
-    });
+    const coverResult = await createBookCover(bookId, adminUserId);
     progress(
       `   Обложка: ${"image" in coverResult ? "✅" : "❌ " + coverResult.error}`,
     );
@@ -116,9 +131,11 @@ export async function publishBook(
       progress(`   ${entry.character.name}: картинка уже есть, пропуск`);
       continue;
     }
-    const charResult = await generateCharacterImage(bookId, entry.characterId, {
-      userId: adminUserId,
-    });
+    const charResult = await createCharacterImage(
+      bookId,
+      entry.characterId,
+      adminUserId,
+    );
     progress(
       `   ${entry.character.name}: ${"image" in charResult ? "✅" : "❌ " + charResult.error}`,
     );
@@ -128,5 +145,5 @@ export async function publishBook(
   progress(`   JSON: ${analysisPath}`);
   progress(`   Published date: ${publishedDate ?? "unknown"}`);
 
-  return { bookId };
+  return summary;
 }

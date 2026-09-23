@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, PlusIcon } from "lucide-react";
 import { GenerateImageForm } from "./components/generate-image-form";
 import { UploadImageForm } from "./components/upload-image-form";
 import { Book } from "@/prisma/generated/browser";
@@ -32,9 +32,8 @@ export function GenerateCharacterDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className={className} {...props}>
-            <ImageIcon className="mr-2 h-4 w-4" />
-            Generate Character Image
+          <Button className={className} size="icon" {...props}>
+            <ImageIcon className="size-6" />
           </Button>
         }
       />

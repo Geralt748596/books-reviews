@@ -3,5 +3,5 @@ export default function BooksLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="container mx-auto">{children}</div>;
+  return <div className="@container">{children}</div>;
 }

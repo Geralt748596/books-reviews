@@ -1,12 +1,16 @@
 import { FeedList } from "@/components/feed/feed-list";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getHomeFeedPage } from "@/lib/actions/home-feed";
+import { getSession } from "@/lib/actions/session";
+import { getHomeFeedPage } from "@/lib/feed/queries";
 import { HOME_FEED_PAGE_SIZE } from "@/lib/feed/types";
 import { tryCatch } from "@/lib/tryCatch";
 
 export async function HomeFeed() {
-  const [page, error] = await tryCatch(getHomeFeedPage());
+  const session = await getSession();
+  const [page, error] = await tryCatch(
+    getHomeFeedPage(undefined, session?.user.id ?? null),
+  );
   if (error) {
     return <div>Something goes wrong...</div>;
   }
@@ -16,7 +20,7 @@ export async function HomeFeed() {
 
 export function HomeFeedSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+    <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @lg:grid-cols-3">
       {Array.from({ length: HOME_FEED_PAGE_SIZE / 2 }).map((_, index) => (
         <Card className="flex-row gap-3 overflow-hidden p-3" key={index}>
           <Skeleton className="-m-3 mr-0 w-28 shrink-0 self-stretch rounded-none sm:w-32" />

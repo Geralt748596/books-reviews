@@ -8,7 +8,11 @@ import { EyeIcon } from "lucide-react";
 import { BookCovers, BookCoversSkeleton } from "./_components/Covers";
 import { AddCovers } from "./_components/Covers/components/add-covers";
 import Link from "next/link";
-import { GenerateCharacterDialog } from "@/components/generate-character";
+import {
+  CommentComposer,
+  CommentComposerSkeleton,
+} from "@/components/comment-composer";
+import { BookDescription } from "./_components/book-description";
 import { Characters, CharactersSkeleton } from "./_components/Characters";
 
 export default function BooksPage({ params }: PageProps<"/books/[bookId]">) {
@@ -31,7 +35,7 @@ async function BookContent({
       {/* Hero Section: Book Detail */}
       <section className="grid grid-cols-12 grid-rows-[auto_auto_auto] md:grid-rows-[auto_auto] gap-y-4 gap-x-6 items-start">
         {/* Asymmetrical The Book Cover */}
-        <div className="w-full row-start-2 row-span-1 md:row-start-1 md:row-span-2 col-start-1 col-span-12 md:col-span-5 flex justify-center md:justify-end self-center-safe">
+        <div className="w-full row-start-2 row-span-1 md:row-start-1 md:row-span-2 col-start-1 col-span-12 md:col-span-5 flex justify-center md:justify-end sticky top-0 bottom-0">
           <Suspense fallback={<BookCoversSkeleton />}>
             <BookCovers bookId={bookId} />
           </Suspense>
@@ -79,20 +83,22 @@ async function BookContent({
           <h3 className="text-xs font-bold tracking-[0.1em] text-primary uppercase mb-4">
             Summary
           </h3>
-          <p className="text-muted-foreground leading-relaxed font-sans text-lg italic">
-            {book.description || "No description available for this book."}
-          </p>
+          <BookDescription
+            text={book.description || "No description available for this book."}
+          />
         </div>
       </section>
 
       {/* Character Carousel: Restyled for Premium Critique */}
-      <section className="mb-24 border-t border-border/50 pt-16">
-        <GenerateCharacterDialog bookId={bookId} />
-
+      <section className="border-t border-border/50 pt-16">
         <Suspense fallback={<CharactersSkeleton />}>
           <Characters bookId={bookId} />
         </Suspense>
       </section>
+
+      <Suspense fallback={<CommentComposerSkeleton />}>
+        <CommentComposer bookId={bookId} />
+      </Suspense>
     </div>
   );
 }

@@ -2,14 +2,14 @@
 
 import "dotenv/config";
 import { Command } from "commander";
-import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { resolve, basename, dirname, relative } from "node:path";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { select } from "@inquirer/prompts";
-import { extractTextFromPdf } from "./pdf-extractor";
-import { analyzeBook } from "./analyzer";
-import { getUsageReport } from "./llm-client";
+import type { UsageTotals } from "./llm-client";
+import { consoleContext, runWithContext } from "./run-context";
+import { defaultOutputPath, runAnalysis } from "./run";
 import type { BookAnalysis } from "./types";
 import { publishBook } from "./publish";
 
@@ -22,6 +22,7 @@ function printAnalyzeSummary(
   result: BookAnalysis,
   outputPath: string,
   elapsed: string,
+  usage: UsageTotals[],
 ) {
   const totalChars =
     result.characters.main.length +
@@ -39,12 +40,11 @@ function printAnalyzeSummary(
   console.log(`  Событий:          ${result.plotSummary.keyEvents.length}`);
   console.log(`  Время:            ${elapsed}с`);
   console.log(`  Сохранено:        ${outputPath}`);
-  printUsage();
+  printUsage(usage);
   console.log("=".repeat(60));
 }
 
-function printUsage() {
-  const report = getUsageReport();
+function printUsage(report: UsageTotals[]) {
   if (report.length === 0) return;
 
   console.log("-".repeat(60));
@@ -145,30 +145,9 @@ program
     ) => {
       try {
         const absolutePath = resolve(pdfPath);
-
-        if (!existsSync(absolutePath)) {
-          console.error(`Файл не найден: ${absolutePath}`);
-          process.exit(1);
-        }
-
-        if (!absolutePath.toLowerCase().endsWith(".pdf")) {
-          console.error("Файл должен быть в формате PDF");
-          process.exit(1);
-        }
-
-        const modelDir = resolve(
-          __dirname,
-          "generated",
-          opts.model.replace(/[/:]/g, "-"),
-        );
-        await mkdir(modelDir, { recursive: true });
-
         const outputPath = opts.output
           ? resolve(opts.output)
-          : resolve(
-              modelDir,
-              basename(absolutePath, ".pdf") + ".analysis.json",
-            );
+          : defaultOutputPath(absolutePath, opts.model, opts.chunkTokens);
 
         console.log("=".repeat(60));
         console.log("  Book Analyzer");
@@ -178,40 +157,34 @@ program
         console.log(`  Вывод:  ${outputPath}`);
         console.log("=".repeat(60));
 
-        const startTime = Date.now();
+        // Ctrl+C отменяет текущие запросы к LLM через сигнал контекста
+        const controller = new AbortController();
+        process.once("SIGINT", () => {
+          console.log("\n⛔ Прерывание — отменяю запросы к LLM...");
+          controller.abort();
+          setTimeout(() => process.exit(130), 500);
+        });
 
-        let result: BookAnalysis;
+        const run = await runWithContext(
+          consoleContext(controller.signal),
+          () =>
+            runAnalysis({
+              pdfPath: absolutePath,
+              model: opts.model,
+              chunkTokens: opts.chunkTokens,
+              title: opts.title,
+              batch: opts.batch,
+              fresh: opts.fresh,
+              outputPath,
+            }),
+        );
 
-        if (existsSync(outputPath)) {
-          console.log(`\n✅ Найден готовый анализ: ${outputPath}`);
-          result = JSON.parse(
-            await readFile(outputPath, "utf-8"),
-          ) as BookAnalysis;
-        } else {
-          console.log("\n📄 Извлечение текста из PDF...");
-          const { text, totalPages } = await extractTextFromPdf(absolutePath);
-          console.log(`   Извлечено ${totalPages} страниц(ы)`);
-
-          if (opts.chunkTokens !== undefined && !(opts.chunkTokens > 1000)) {
-            console.error("--chunk-tokens должен быть числом больше 1000");
-            process.exit(1);
-          }
-
-          result = await analyzeBook({
-            text,
-            model: opts.model,
-            outputPath,
-            title: opts.title,
-            batch: opts.batch,
-            fresh: opts.fresh,
-            chunkTokens: opts.chunkTokens,
-          });
-
-          await writeFile(outputPath, JSON.stringify(result, null, 2), "utf-8");
-        }
-
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        printAnalyzeSummary(result, outputPath, elapsed);
+        printAnalyzeSummary(
+          run.result,
+          run.outputPath,
+          (run.elapsedMs / 1000).toFixed(1),
+          run.usage,
+        );
       } catch (error) {
         console.error(
           "\nОшибка:",

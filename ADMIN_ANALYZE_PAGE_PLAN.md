@@ -1,6 +1,6 @@
 # План: страница анализа книги в админке
 
-Дата: 2026-09-14. Статус: план, код не написан.
+Дата: 2026-09-14. Статус: все этапы 0–5 выполнены (2026-09-14 … 2026-09-18). Остался ручной прогон в браузере по чеклисту раздела 6.
 
 ## 1. Цель
 
@@ -70,7 +70,9 @@ CLI-команда `analyze` и API вызывают одно и то же. Пу
 
 ## 4. Этапы
 
-### Этап 0. Подготовка ядра анализатора
+### Этап 0. Подготовка ядра анализатора ✅ выполнен
+
+Сделано: `lib/analyzer/run-context.ts`, `lib/analyzer/run.ts`, тесты в `lib/analyzer/__tests__/run-context.test.ts` (`pnpm test:analyzer`), CLI переведён на общий раннер, SIGINT перенесён в `index.ts`, весь вывод анализатора идёт через контекст. Проверено: CLI из кэша даёт прежний результат, в веб-режиме захвачено 19 строк и 0 утечек в консоль.
 
 Файлы: `lib/analyzer/run-context.ts` (новый), `lib/analyzer/run.ts` (новый), правки в `llm-client.ts`, `analyzer.ts`, `executor.ts`, `index.ts`.
 
@@ -84,7 +86,9 @@ CLI-команда `analyze` и API вызывают одно и то же. Пу
 
 Критерий готовности: `pnpm analyze` работает как раньше; юнит-тест на `run-context` показывает, что `log()` внутри `runWithContext` попадает в `emit`, а снаружи в консоль.
 
-### Этап 1. Реестр фоновых задач
+### Этап 1. Реестр фоновых задач ✅ выполнен
+
+Сделано: `lib/analyzer/jobs.ts` с очередью в одну задачу, кольцевым буфером событий, повтором по `seq` для `Last-Event-ID`, отменой через сигнал контекста и хранением на `globalThis`; 6 тестов в `lib/analyzer/__tests__/jobs.test.ts`. Отличие от плана: события пронумерованы единым `seq` (логи и статусы вместе), поэтому клиенту достаточно одного номера для повтора; `getEvents` сообщает `truncated`, если запрошенный хвост уже вытеснен.
 
 Файл: `lib/analyzer/jobs.ts` (новый).
 
@@ -110,7 +114,9 @@ interface AnalyzeJob {
 
 Критерий готовности: юнит-тест на кольцевой буфер, отмену и повтор логов новому подписчику.
 
-### Этап 2. API
+### Этап 2. API ✅ выполнен
+
+Сделано: `lib/admin-auth.ts` (`requireAdmin`, `badRequest`), `lib/analyzer/api-schemas.ts` (zod-схемы, безопасные пути, 6 тестов), `lib/analyzer/models.ts` (каталог и проверка доступности провайдеров), маршруты `pdfs`, `series` (GET/POST), `analyze/estimate`, `analyze/models`, `analyze/jobs` (GET/POST), `analyze/jobs/[id]`, `analyze/jobs/[id]/events` (SSE с `Last-Event-ID`, keepalive, событие `gap` при вытесненном буфере), `analyze/jobs/[id]/cancel`; `publish` принимает серию, дату, `skipImages`, `dryRun` и возвращает статистику. Существующие маршруты `jsons`, `jsons/[file]`, `upload` переведены на `requireAdmin`; `upload` режет путь до имени файла. Отличие от плана: событие SSE одно (`message`) с полем `type`, служебное `gap` отдельным `event:`; старый `GET /api/admin/analyze` пока оставлен до этапа 5.
 
 Все маршруты под `app/api/admin/`. Проверка админа выносится в `lib/admin-auth.ts` как `requireAdmin(request)`, существующие маршруты переводятся на неё. Тела запросов валидируются zod, пути к файлам проверяются функцией «внутри `lib/analyzer/books/`» по аналогии с `isWithinGeneratedRoot`.
 
@@ -153,7 +159,9 @@ interface AnalyzeJob {
 
 Старый `GET /api/admin/analyze` удаляется вместе с карточкой на этапе 5.
 
-### Этап 3. Страница и мастер из трёх шагов
+### Этап 3. Страница и мастер из трёх шагов ✅ выполнен
+
+Сделано: `app/(admin)/admin/analyze/page.tsx` (searchParams под Suspense), `_components/analyze-wizard.tsx`, `step-source.tsx`, `step-settings.tsx`, `step-run.tsx`, `log-console.tsx`, `_hooks/use-job-events.ts`, `_lib/types.ts`; на `/admin` добавлена карточка-ссылка. Отличия от плана: форма шага 1 на управляемом состоянии без react-hook-form (три поля и автопереход не оправдывают Controller); предупреждение «результат уже есть» заменено пояснением у флага fresh, точная проверка существования файла под выбранную пару модель/размер требует отдельного запроса и отложена; «Открыть JSON» открывает сырой JSON через существующий маршрут `jsons/[file]`. Проверено: типы, линтер, компиляция страницы и маршрутов в dev-сервере; ручной прогон в браузере с админской сессией не выполнялся.
 
 Файлы: `app/(admin)/admin/analyze/page.tsx` (серверный, читает `?job=` и передаёт в клиент), `app/(admin)/admin/analyze/_components/analyze-wizard.tsx` (клиент, состояние шагов), `step-source.tsx`, `step-settings.tsx`, `step-run.tsx`, `log-console.tsx`, `use-job-events.ts`.
 
@@ -186,14 +194,18 @@ interface AnalyzeJob {
 
 Хук `use-job-events.ts`: `EventSource` на `/events`, реконнект средствами браузера с `Last-Event-ID`, закрытие при `done`/`error`/`cancelled` и при размонтировании.
 
-### Этап 4. Связь анализа с публикацией
+### Этап 4. Связь анализа с публикацией ✅ выполнен
+
+Сделано: `runAnalysis` пишет `<basename>.meta.json` (pdf, модель, размер фрагмента, название, серия, время, usage) и досоздаёт его для старых результатов при первом обращении; `GET /api/admin/jsons` отдаёт модель, размер фрагмента, серию и счётчики персонажей; общий `app/(admin)/admin/_components/publish-dialog.tsx` используется и мастером, и списком JSON (серия предзаполняется из сайдкара, «без картинок» включено по умолчанию, есть dry-run); тест сайдкара. Публикация с картинками осталась синхронным запросом, перевод на реестр задач отложен, как и планировалось.
 
 - Рядом с выходным файлом писать `<basename>.meta.json`: `{ pdfPath, model, chunkTokens, title, bookSeriesId, createdAt, usage }`. Пишет `runAnalysis` при наличии этих полей в параметрах.
 - `GET /api/admin/jsons` читает meta и отдаёт `bookSeriesId`, модель и размер фрагмента; `json-list-card.tsx` показывает их и при публикации передаёт серию.
 - `POST /api/admin/publish` принимает `bookSeriesId`, `publishedDate`, `skipImages`, `dryRun` и прокидывает в `publishBook`; ответ включает `updated`, `charactersCreated`, `charactersReused`.
 - Публикация тоже может идти долго из-за генерации картинок. Первая версия делает её обычным запросом с `skipImages` по умолчанию включённым в UI; перевод публикации на тот же реестр задач вынести в отдельную задачу после запуска страницы.
 
-### Этап 5. Уборка и навигация
+### Этап 5. Уборка и навигация ✅ выполнен
+
+Сделано: удалены `upload-analyze-card.tsx` и старый `GET /api/admin/analyze`; на `/admin` осталась карточка-ссылка на мастер и список JSON; в README добавлен раздел «Анализатор книг» с переменными окружения, CLI, описанием админки и ограничением про serverless. Порядок плагинов Better Auth в `lib/auth.ts` уже был исправлен пользователем.
 
 - На `/admin` добавить карточку-ссылку «Анализ книги» на `/admin/analyze`.
 - Удалить `upload-analyze-card.tsx` и `GET /api/admin/analyze`.

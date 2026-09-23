@@ -66,7 +66,8 @@ export const ModelName = {
   CoverLike: 'CoverLike',
   CharacterImageLike: 'CharacterImageLike',
   CharacterImageComment: 'CharacterImageComment',
-  GeneratedCharacterImage: 'GeneratedCharacterImage'
+  GeneratedCharacterImage: 'GeneratedCharacterImage',
+  FeedItem: 'FeedItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -294,6 +295,22 @@ export const GeneratedCharacterImageScalarFieldEnum = {
 } as const
 
 export type GeneratedCharacterImageScalarFieldEnum = (typeof GeneratedCharacterImageScalarFieldEnum)[keyof typeof GeneratedCharacterImageScalarFieldEnum]
+
+
+export const FeedItemScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  sourceId: 'sourceId',
+  createdAt: 'createdAt',
+  score: 'score',
+  actorId: 'actorId',
+  bookId: 'bookId',
+  coverId: 'coverId',
+  characterImageId: 'characterImageId',
+  postId: 'postId'
+} as const
+
+export type FeedItemScalarFieldEnum = (typeof FeedItemScalarFieldEnum)[keyof typeof FeedItemScalarFieldEnum]
 
 
 export const SortOrder = {

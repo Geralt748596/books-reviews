@@ -412,7 +412,8 @@ export const ModelName = {
   CoverLike: 'CoverLike',
   CharacterImageLike: 'CharacterImageLike',
   CharacterImageComment: 'CharacterImageComment',
-  GeneratedCharacterImage: 'GeneratedCharacterImage'
+  GeneratedCharacterImage: 'GeneratedCharacterImage',
+  FeedItem: 'FeedItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "bookSeries" | "book" | "post" | "review" | "character" | "characterDescription" | "generatedBookCover" | "coverComment" | "coverLike" | "characterImageLike" | "characterImageComment" | "generatedCharacterImage"
+    modelProps: "user" | "session" | "account" | "verification" | "bookSeries" | "book" | "post" | "review" | "character" | "characterDescription" | "generatedBookCover" | "coverComment" | "coverLike" | "characterImageLike" | "characterImageComment" | "generatedCharacterImage" | "feedItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1616,6 +1617,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FeedItem: {
+      payload: Prisma.$FeedItemPayload<ExtArgs>
+      fields: Prisma.FeedItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FeedItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FeedItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        findFirst: {
+          args: Prisma.FeedItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FeedItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        findMany: {
+          args: Prisma.FeedItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>[]
+        }
+        create: {
+          args: Prisma.FeedItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        createMany: {
+          args: Prisma.FeedItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FeedItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>[]
+        }
+        delete: {
+          args: Prisma.FeedItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        update: {
+          args: Prisma.FeedItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.FeedItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FeedItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FeedItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.FeedItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeedItemPayload>
+        }
+        aggregate: {
+          args: Prisma.FeedItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFeedItem>
+        }
+        groupBy: {
+          args: Prisma.FeedItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeedItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FeedItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeedItemCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1866,6 +1941,22 @@ export const GeneratedCharacterImageScalarFieldEnum = {
 export type GeneratedCharacterImageScalarFieldEnum = (typeof GeneratedCharacterImageScalarFieldEnum)[keyof typeof GeneratedCharacterImageScalarFieldEnum]
 
 
+export const FeedItemScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  sourceId: 'sourceId',
+  createdAt: 'createdAt',
+  score: 'score',
+  actorId: 'actorId',
+  bookId: 'bookId',
+  coverId: 'coverId',
+  characterImageId: 'characterImageId',
+  postId: 'postId'
+} as const
+
+export type FeedItemScalarFieldEnum = (typeof FeedItemScalarFieldEnum)[keyof typeof FeedItemScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1956,6 +2047,20 @@ export type EnumCharacterTierFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'CharacterTier[]'
  */
 export type ListEnumCharacterTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CharacterTier[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FeedItemType'
+ */
+export type EnumFeedItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedItemType'>
+    
+
+
+/**
+ * Reference to a field of type 'FeedItemType[]'
+ */
+export type ListEnumFeedItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedItemType[]'>
     
 
 
@@ -2139,6 +2244,7 @@ export type GlobalOmitConfig = {
   characterImageLike?: Prisma.CharacterImageLikeOmit
   characterImageComment?: Prisma.CharacterImageCommentOmit
   generatedCharacterImage?: Prisma.GeneratedCharacterImageOmit
+  feedItem?: Prisma.FeedItemOmit
 }
 
 /* Types for Logging */

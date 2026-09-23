@@ -2,7 +2,7 @@
 
 import { getSessionOrThrow } from "@/lib/actions/session";
 import prisma from "@/lib/db";
-import type { FeedItemType } from "@/lib/feed/types";
+import type { CommentTargetType } from "@/lib/feed/types";
 
 const MAX_COMMENT_LENGTH = 500;
 const COMMENTS_PAGE_SIZE = 10;
@@ -16,7 +16,7 @@ export type PaginatedComment = {
 
 export async function getComments(
   targetId: string,
-  type: FeedItemType,
+  type: CommentTargetType,
   cursor?: string,
 ) {
   const where =
@@ -39,9 +39,9 @@ export async function getComments(
   });
 
   const hasMore = comments.length > COMMENTS_PAGE_SIZE;
-  const items: PaginatedComment[] = (hasMore ? comments.slice(0, -1) : comments).map(
-    (c) => ({ ...c, createdAt: c.createdAt.toISOString() }),
-  );
+  const items: PaginatedComment[] = (
+    hasMore ? comments.slice(0, -1) : comments
+  ).map((c) => ({ ...c, createdAt: c.createdAt.toISOString() }));
 
   return {
     items,

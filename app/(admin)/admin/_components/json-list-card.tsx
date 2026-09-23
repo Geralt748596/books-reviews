@@ -21,13 +21,20 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { BookAnalysis } from "@/lib/analyzer/types";
+import { PublishDialog } from "./publish-dialog";
 
 interface JsonItem {
   path: string;
   relativePath: string;
-  title?: string;
+  title?: string | null;
   authors?: string;
+  language?: string | null;
+  characters?: { main: number; secondary: number; minor: number };
+  events?: number;
   createdAt: string;
+  model?: string | null;
+  chunkTokens?: number | null;
+  bookSeriesId?: string | null;
 }
 
 export function JsonListCard() {
@@ -37,24 +44,28 @@ export function JsonListCard() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [fullJson, setFullJson] = useState<BookAnalysis | null>(null);
   const [jsonLoading, setJsonLoading] = useState(false);
-  const [publishingPath, setPublishingPath] = useState<string | null>(null);
-
-  const fetchItems = async () => {
-    try {
-      const res = await fetch("/api/admin/jsons");
-      if (!res.ok) throw new Error("Failed to fetch JSON list");
-      const data = await res.json();
-      setItems(data.jsons || data || []);
-    } catch (err) {
-      toast.error("Failed to load JSON files");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [publishItem, setPublishItem] = useState<JsonItem | null>(null);
 
   useEffect(() => {
-    fetchItems();
+    let cancelled = false;
+    fetch("/api/admin/jsons")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch JSON list");
+        const data = await res.json();
+        if (!cancelled)
+          setItems(Array.isArray(data) ? data : (data.jsons ?? []));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        toast.error("Failed to load JSON files");
+        console.error(err);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleItemClick = async (item: JsonItem) => {
@@ -76,33 +87,6 @@ export function JsonListCard() {
       console.error(err);
     } finally {
       setJsonLoading(false);
-    }
-  };
-
-  const handlePublish = async (item: JsonItem, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setPublishingPath(item.relativePath);
-    try {
-      const res = await fetch("/api/admin/publish", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ jsonPath: item.relativePath }),
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed to publish");
-      }
-      toast.success("Published!");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("Failed to publish");
-      }
-    } finally {
-      setPublishingPath(null);
     }
   };
 
@@ -156,22 +140,48 @@ export function JsonListCard() {
                         item.relativePath.split("/").pop() ||
                         "Untitled"}
                     </span>
-                    <div className="text-xs text-muted-foreground flex gap-2">
+                    <div className="text-xs text-muted-foreground flex flex-wrap gap-x-2 gap-y-1">
                       {item.authors && item.authors.length > 0 && (
                         <span className="truncate">{item.authors}</span>
                       )}
                       <span>•</span>
                       <span>{formatDate(item.createdAt)}</span>
+                      {item.characters && (
+                        <>
+                          <span>•</span>
+                          <span>
+                            {item.characters.main +
+                              item.characters.secondary +
+                              item.characters.minor}{" "}
+                            перс., {item.events ?? 0} соб.
+                          </span>
+                        </>
+                      )}
                     </div>
+                    {(item.model || item.bookSeriesId) && (
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {item.model && (
+                          <Badge variant="outline">{item.model}</Badge>
+                        )}
+                        {item.chunkTokens && (
+                          <Badge variant="outline">
+                            {Math.round(item.chunkTokens / 1000)}k / фрагмент
+                          </Badge>
+                        )}
+                        {item.bookSeriesId && (
+                          <Badge variant="secondary">серия задана</Badge>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <Button
                     size="sm"
-                    onClick={(e) => handlePublish(item, e)}
-                    disabled={publishingPath === item.relativePath}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPublishItem(item);
+                    }}
                   >
-                    {publishingPath === item.relativePath
-                      ? "Publishing..."
-                      : "Publish"}
+                    Publish
                   </Button>
                 </div>
               ))}
@@ -179,6 +189,18 @@ export function JsonListCard() {
           )}
         </CardContent>
       </Card>
+
+      {publishItem && (
+        <PublishDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) setPublishItem(null);
+          }}
+          jsonPath={publishItem.relativePath}
+          title={publishItem.title ?? undefined}
+          initialSeriesId={publishItem.bookSeriesId ?? null}
+        />
+      )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col">

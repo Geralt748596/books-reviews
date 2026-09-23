@@ -1,20 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const MAX_PDF_SIZE = 50 * 1024 * 1024;
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (session.user?.role !== "admin") {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const admin = await requireAdmin(request);
+  if (admin.response) return admin.response;
 
   const formData = await request.formData();
   const file = formData.get("file");
@@ -31,7 +23,14 @@ export async function POST(request: Request) {
   }
 
   const saveDir = path.join(process.cwd(), "lib/analyzer/books");
-  const savePath = path.join(saveDir, file.name);
+  const filename = path.basename(file.name);
+  if (!filename.toLowerCase().endsWith(".pdf")) {
+    return Response.json(
+      { error: "Имя файла должно оканчиваться на .pdf" },
+      { status: 400 },
+    );
+  }
+  const savePath = path.join(saveDir, filename);
 
   await fs.mkdir(saveDir, { recursive: true });
   const bytes = await file.arrayBuffer();
@@ -40,6 +39,6 @@ export async function POST(request: Request) {
   return Response.json({
     success: true,
     path: savePath,
-    filename: file.name,
+    filename,
   });
 }

@@ -1,7 +1,7 @@
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
-import { PopularBooks } from "@/components/PopularBooks";
+import { AppSidebar } from "@/components/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function MainLayout({
   children,
@@ -9,11 +9,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      {children}
+    <SidebarProvider>
+      <AppSidebar />
       <Toaster />
-      <Footer className="mt-auto w-full" />
-    </div>
+      <SidebarInset>{children}</SidebarInset>
+    </SidebarProvider>
   );
 }

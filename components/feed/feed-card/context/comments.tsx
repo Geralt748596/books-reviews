@@ -1,4 +1,4 @@
-import { FeedItem } from "@/lib/feed/types";
+import type { CommentTargetType, FeedComment } from "@/lib/feed/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createContext,
@@ -18,10 +18,18 @@ import {
   type PaginatedComment,
 } from "@/lib/actions/comments";
 
-type CommentsContextType = {
-  item: FeedItem;
+export type CommentsTarget = {
+  targetId: string;
+  targetType: CommentTargetType;
   commentsCount: number;
-  lastComment: FeedItem["lastComment"] | null;
+  lastComment: FeedComment | null;
+};
+
+type CommentsContextType = {
+  targetId: string;
+  targetType: CommentTargetType;
+  commentsCount: number;
+  lastComment: FeedComment | null;
   comments: PaginatedComment[];
   hasMore: boolean;
   isLoadingComments: boolean;
@@ -35,7 +43,8 @@ type CommentsContextType = {
 export const CommentsContext = createContext<CommentsContextType>({
   commentsCount: 0,
   lastComment: null,
-  item: {} as FeedItem,
+  targetId: "",
+  targetType: "cover",
   comments: [],
   hasMore: false,
   isLoadingComments: false,
@@ -55,10 +64,13 @@ const formSchema = z.object({
 
 export const CommentsProvider = ({
   children,
-  item,
-}: PropsWithChildren<{ item: FeedItem }>) => {
-  const [commentsCount, setCommentsCount] = useState(item.commentsCount);
-  const [lastComment, setLastComment] = useState(item.lastComment);
+  targetId,
+  targetType,
+  commentsCount: initialCount,
+  lastComment: initialLastComment,
+}: PropsWithChildren<CommentsTarget>) => {
+  const [commentsCount, setCommentsCount] = useState(initialCount);
+  const [lastComment, setLastComment] = useState(initialLastComment);
   const [isPending, startTransition] = useTransition();
 
   const [comments, setComments] = useState<PaginatedComment[]>([]);
@@ -76,7 +88,7 @@ export const CommentsProvider = ({
     if (loaded) return;
     startLoadTransition(async () => {
       try {
-        const page = await getComments(item.id, item.type);
+        const page = await getComments(targetId, targetType);
         setComments(page.items);
         setNextCursor(page.nextCursor);
         setHasMore(!!page.nextCursor);
@@ -85,13 +97,13 @@ export const CommentsProvider = ({
         toast.error("Failed to load comments.");
       }
     });
-  }, [loaded, item.id, item.type]);
+  }, [loaded, targetId, targetType]);
 
   const loadMore = useCallback(() => {
     if (!nextCursor) return;
     startLoadTransition(async () => {
       try {
-        const page = await getComments(item.id, item.type, nextCursor);
+        const page = await getComments(targetId, targetType, nextCursor);
         setComments((prev) => [...prev, ...page.items]);
         setNextCursor(page.nextCursor);
         setHasMore(!!page.nextCursor);
@@ -99,7 +111,7 @@ export const CommentsProvider = ({
         toast.error("Failed to load more comments.");
       }
     });
-  }, [nextCursor, item.id, item.type]);
+  }, [nextCursor, targetId, targetType]);
 
   const handleSubmitComment = (data: z.infer<typeof formSchema>) => {
     const { comment } = data;
@@ -109,9 +121,9 @@ export const CommentsProvider = ({
     startTransition(async () => {
       try {
         const action =
-          item.type === "cover"
-            ? addCoverComment(item.id, text)
-            : addCharacterImageComment(item.id, text);
+          targetType === "cover"
+            ? addCoverComment(targetId, text)
+            : addCharacterImageComment(targetId, text);
 
         const newComment = await action;
         setLastComment(newComment);
@@ -139,7 +151,8 @@ export const CommentsProvider = ({
   const value = {
     commentsCount,
     lastComment,
-    item,
+    targetId,
+    targetType,
     comments,
     hasMore,
     isLoadingComments,

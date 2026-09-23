@@ -2,8 +2,8 @@
 
 import { FeedCard } from "@/components/feed/feed-card";
 import { Button } from "@/components/ui/button";
-import { getHomeFeedPage } from "@/lib/actions/home-feed";
-import type { FeedCursor, FeedItem } from "@/lib/feed/types";
+import { cursorToSearchParams } from "@/lib/feed/cursor";
+import type { FeedCursor, FeedItem, FeedPage } from "@/lib/feed/types";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -22,8 +22,16 @@ export function FeedList({ initialItems, initialCursor }: Props) {
 
     startTransition(async () => {
       try {
-        const page = await getHomeFeedPage(nextCursor);
-        setItems((prev) => [...prev, ...page.items]);
+        // GET вместо server action: публичная часть страницы кэшируется по курсору
+        const res = await fetch(
+          `/api/feed?${cursorToSearchParams(nextCursor)}`,
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const page = (await res.json()) as FeedPage;
+        setItems((prev) => {
+          const seen = new Set(prev.map((i) => i.id));
+          return [...prev, ...page.items.filter((i) => !seen.has(i.id))];
+        });
         setNextCursor(page.nextCursor);
       } catch {
         toast.error("Failed to load more feed items.");
@@ -34,16 +42,16 @@ export function FeedList({ initialItems, initialCursor }: Props) {
   if (!items.length) {
     return (
       <div className="rounded-xl border border-dashed border-border/70 bg-muted/30 p-8 text-center text-muted-foreground">
-        No generated images yet.
+        Nothing here yet.
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 @2xl:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 @2xl:grid-cols-2 @4xl:grid-cols-3 gap-3">
       <div className="contents">
         {items.map((item) => (
-          <FeedCard key={`${item.type}-${item.id}`} item={item} />
+          <FeedCard key={item.id} item={item} />
         ))}
       </div>
 

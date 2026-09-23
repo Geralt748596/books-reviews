@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { createExecutor, type Executor } from "./executor";
 import { getChunkOptionsForModel, getConcurrencyForModel } from "./llm-client";
 import { looksLikeProperName } from "./names";
+import { phase, print, warn } from "./run-context";
 import {
   aliasResolutionPrompt,
   bookMetadataPrompt,
@@ -77,7 +78,7 @@ export async function analyzeBook(
 
   const language = detectLanguage(text);
   const totalTokens = estimateTokens(text);
-  console.log(
+  print(
     `\nТекст книги: ~${totalTokens.toLocaleString()} токенов, ${text.length.toLocaleString()} символов, язык: ${language}`,
   );
 
@@ -97,10 +98,10 @@ export async function analyzeBook(
   });
 
   const chunks = splitIntoChunks(text, chunkOptions);
-  console.log(
+  print(
     `Разбито на ${chunks.length} фрагмент(ов) по ~${chunkOptions.maxTokens.toLocaleString()} токенов, режим: ${executor.mode}`,
   );
-  console.log(`Промежуточные результаты: ${workDir}\n`);
+  print(`Промежуточные результаты: ${workDir}\n`);
 
   if (chunks.length === 0) {
     throw new Error("Из PDF не удалось извлечь текст");
@@ -114,7 +115,7 @@ export async function analyzeBook(
   const allCharacters = pass1.characters;
   const allEvents = pass1.events;
 
-  console.log(
+  print(
     `\nПроход 1 завершён: ${allCharacters.length} упоминаний персонажей, ${allEvents.length} событий`,
   );
 
@@ -126,12 +127,10 @@ export async function analyzeBook(
 
   // --- Объединение персонажей: строковая логика + LLM-сопоставление алиасов ---
   let merged = mergeCharacters(allCharacters, allEvents);
-  console.log(
-    `  Строковое объединение: ${merged.length} кандидатов в персонажи`,
-  );
+  print(`  Строковое объединение: ${merged.length} кандидатов в персонажи`);
 
   merged = await resolveAliases(executor, merged, allEvents, language);
-  console.log(`  Итого уникальных персонажей: ${merged.length}\n`);
+  print(`  Итого уникальных персонажей: ${merged.length}\n`);
 
   await writeFile(
     resolve(workDir, "intermediate-merged.json"),
@@ -170,7 +169,7 @@ export async function analyzeBook(
     result.characters.secondary.length +
     result.characters.minor.length;
 
-  console.log(
+  print(
     `\nИтого: ${totalChars} персонаж(ей), ${result.plotSummary.keyEvents.length} событий`,
   );
 
@@ -202,7 +201,7 @@ async function runPass1(
     ...chunks.map((c) => chunkId(c.index)),
   ];
 
-  console.log(`Проход 1: ${chunks.length} фрагмент(ов)`);
+  phase(`Проход 1: ${chunks.length} фрагмент(ов)`);
 
   const outcome = await executor.run<unknown>("pass1", ids, (id, ctx) => {
     if (id === META_ID) {
@@ -259,9 +258,9 @@ async function runPass1(
     if (meta) {
       title = meta.title ?? "";
       authors = meta.authors ?? "";
-      console.log(`  Метаданные: "${title}" by ${authors}`);
+      print(`  Метаданные: "${title}" by ${authors}`);
     } else {
-      console.log("  ⚠ Не удалось извлечь метаданные книги");
+      warn("Не удалось извлечь метаданные книги");
     }
   }
 
@@ -314,7 +313,28 @@ async function resolveAliases(
 ): Promise<MergedCharacter[]> {
   if (merged.length < 2) return merged;
 
-  const candidates: AliasCandidate[] = merged.map((m) => ({
+  // Шум не сопоставить ни с чем: одно упоминание, ни одного фрагмента, ни одного события
+  const inEvents = new Set(
+    allEvents.flatMap((ev) =>
+      ev.charactersInvolved.map((n) => n.trim().toLowerCase()),
+    ),
+  );
+  const informative = merged.filter(
+    (m) =>
+      m.mentionCount > 1 ||
+      m.descriptionFragments.length > 0 ||
+      m.appearanceFragments.length > 0 ||
+      m.personalityFragments.length > 0 ||
+      inEvents.has(m.name.toLowerCase()),
+  );
+  if (informative.length < merged.length) {
+    print(
+      `  Кандидатов на сопоставление: ${informative.length} из ${merged.length} (остальные без данных)`,
+    );
+  }
+  if (informative.length < 2) return merged;
+
+  const candidates: AliasCandidate[] = informative.map((m) => ({
     name: m.name,
     aliases: m.aliases,
     mentionCount: m.mentionCount,
@@ -328,7 +348,9 @@ async function resolveAliases(
       id,
       prompt: aliasResolutionPrompt(candidates, language),
       schema: AliasResolutionSchema,
-      reasoning: true,
+      // DeepSeek с reasoning обдумывает каждого из ~100 кандидатов и упирается в лимит
+      // вывода; без рассуждений даёт те же слияния за секунды
+      reasoning: false,
       maxOutputTokens: OUTPUT_LIMITS.aliases,
       label: `Сопоставление алиасов (${candidates.length} кандидатов)`,
     }),
@@ -336,17 +358,15 @@ async function resolveAliases(
 
   const resolution = outcome.results.get("aliases");
   if (!resolution) {
-    console.log(
-      "  ⚠ LLM-сопоставление алиасов не удалось, остаётся строковое объединение",
+    warn(
+      "LLM-сопоставление алиасов не удалось, остаётся строковое объединение",
     );
     return merged;
   }
 
   const before = merged.length;
   const result = applyAliasGroups(merged, resolution.groups, allEvents);
-  console.log(
-    `  LLM-сопоставление алиасов: ${before} → ${result.length} персонажей`,
-  );
+  print(`  LLM-сопоставление алиасов: ${before} → ${result.length} персонажей`);
   return result;
 }
 
@@ -366,7 +386,25 @@ function buildCoOccurrence(allEvents: ChunkEvent[]): Set<string> {
   return pairs;
 }
 
-function applyAliasGroups(
+/**
+ * Имена лексически связаны, если одно входит в алиасы другого или одно
+ * содержится в другом («Geralt» ⊂ «Geralt of Rivia»). Такая пара может
+ * встречаться в одном событии под двумя именами и всё равно быть одним человеком.
+ */
+function lexicallyLinked(a: MergedCharacter, b: MergedCharacter): boolean {
+  const an = a.name.toLowerCase();
+  const bn = b.name.toLowerCase();
+  const aAliases = a.aliases.map((x) => x.toLowerCase());
+  const bAliases = b.aliases.map((x) => x.toLowerCase());
+  return (
+    aAliases.includes(bn) ||
+    bAliases.includes(an) ||
+    an.split(/\s+/).includes(bn) ||
+    bn.split(/\s+/).includes(an)
+  );
+}
+
+export function applyAliasGroups(
   merged: MergedCharacter[],
   groups: AliasResolution["groups"],
   allEvents: ChunkEvent[],
@@ -382,20 +420,25 @@ function applyAliasGroups(
     if (memberKeys.length < 2) continue;
 
     if (group.confidence !== "high") {
-      console.log(
+      print(
         `  · пропуск группы [${memberKeys.join(" | ")}]: уверенность ${group.confidence}`,
       );
       continue;
     }
 
-    // Защита от ложных слияний: участники одной сцены не могут быть одним человеком
+    // Защита от ложных слияний: участники одной сцены не могут быть одним человеком,
+    // если только их имена не связаны лексически (один персонаж назван двумя именами)
     const conflict = memberKeys.find((a, i) =>
       memberKeys
         .slice(i + 1)
-        .some((b) => coOccur.has([a, b].sort().join("\u0000"))),
+        .some(
+          (b) =>
+            coOccur.has([a, b].sort().join("\u0000")) &&
+            !lexicallyLinked(byKey.get(a)!, byKey.get(b)!),
+        ),
     );
     if (conflict) {
-      console.log(
+      print(
         `  · отклонена группа [${memberKeys.join(" | ")}]: имена встречаются вместе в одном событии`,
       );
       continue;
@@ -467,7 +510,7 @@ async function runClassify(
     timeline.map((ev) => ev.summary),
     language,
   );
-  console.log(
+  phase(
     `Проход 2: классификация, ~${estimateTokens(prompt).toLocaleString()} токенов входа`,
   );
 
@@ -502,8 +545,8 @@ async function runClassify(
   );
   const dropped = merged.filter((m) => !listed.has(m.name.toLowerCase()));
   if (dropped.length > 0) {
-    console.log(
-      `  ⚠ ${dropped.length} персонаж(ей) не попали в классификацию, добавлены в minor: ${dropped
+    warn(
+      `${dropped.length} персонаж(ей) не попали в классификацию, добавлены в minor: ${dropped
         .slice(0, 5)
         .map((m) => m.name)
         .join(", ")}${dropped.length > 5 ? "…" : ""}`,
@@ -515,7 +558,7 @@ async function runClassify(
     classification.main.length +
     classification.secondary.length +
     classification.minor.length;
-  console.log(
+  print(
     `  Классификация: ${total} персонаж(ей) ` +
       `(${classification.main.length} главных, ` +
       `${classification.secondary.length} второстепенных, ` +
@@ -551,7 +594,7 @@ async function runSummaries(
           m.descriptionFragments.length > 0),
     );
 
-  console.log(`Проход 2.5: саммаризация ${targets.length} важных персонажей`);
+  phase(`Проход 2.5: саммаризация ${targets.length} важных персонажей`);
   const summaries = new Map<string, CharacterSummary>();
   if (targets.length === 0) return summaries;
 
@@ -572,7 +615,8 @@ async function runSummaries(
           language,
         ),
         schema: CharacterSummarySchema,
-        reasoning: true,
+        // объединение фрагментов без выдумок: рассуждения не нужны, а втрое дороже
+        reasoning: false,
         maxOutputTokens: OUTPUT_LIMITS.summary,
         label: `Саммаризация: ${m.name}`,
       };
@@ -590,8 +634,8 @@ async function runSummaries(
   }
 
   if (outcome.errors.size > 0) {
-    console.log(
-      `  ⚠ Не удалось саммаризировать ${outcome.errors.size} персонаж(ей), для них используются сырые фрагменты`,
+    warn(
+      `Не удалось саммаризировать ${outcome.errors.size} персонаж(ей), для них используются сырые фрагменты`,
     );
   }
 
@@ -660,7 +704,7 @@ function isRealCharacter(c: ChunkCharacter): boolean {
 // Объединение персонажей с алиас-матчингом
 // =============================================================================
 
-interface MergedCharacter {
+export interface MergedCharacter {
   name: string;
   aliases: string[];
   appearance: string;

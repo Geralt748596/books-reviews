@@ -12,6 +12,7 @@ import {
 import { TypographyP } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, PanInfo } from "framer-motion";
+import portraitPlaceholder from "@/assets/placeholders/portret.png";
 import { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,6 +45,62 @@ const RANK_BADGE_CLASSES = [
 ];
 
 export function CharacterDeck({ characterName, images, href }: Props) {
+  if (images.length === 0) {
+    return <CharacterPlaceholder characterName={characterName} href={href} />;
+  }
+
+  return (
+    <CharacterDeckStack
+      characterName={characterName}
+      images={images}
+      href={href}
+    />
+  );
+}
+
+function CharacterPlaceholder({
+  characterName,
+  href,
+}: Pick<Props, "characterName" | "href">) {
+  return (
+    <div className="flex flex-col gap-4 h-full w-full">
+      <div className="relative w-full aspect-2/3 flex items-center justify-center px-6 pt-4 pb-2">
+        <div className="absolute inset-x-6 inset-y-4 overflow-hidden rounded-lg bg-muted shadow-[0_20px_40px_-15px_rgba(0,0,0,0.7)] ring-1 ring-border/60">
+          <Image
+            src={portraitPlaceholder}
+            alt={characterName}
+            fill
+            sizes="auto, 30vw"
+            className="object-cover"
+          />
+        </div>
+      </div>
+      <Card className="flex-1 box-border">
+        <CardHeader>
+          <CardTitle>
+            <CharacterName characterName={characterName} href={href} />
+          </CardTitle>
+          <CardDescription>No generated images yet.</CardDescription>
+        </CardHeader>
+      </Card>
+    </div>
+  );
+}
+
+function CharacterName({
+  characterName,
+  href,
+}: Pick<Props, "characterName" | "href">) {
+  if (!href) return characterName;
+
+  return (
+    <Link href={href} className="transition-colors hover:text-primary">
+      {characterName}
+    </Link>
+  );
+}
+
+function CharacterDeckStack({ characterName, images, href }: Props) {
   const [cards, setCards] = useState(() =>
     images.map((image, rankIndex) => ({ ...image, rankIndex })),
   );
@@ -135,16 +192,7 @@ export function CharacterDeck({ characterName, images, href }: Props) {
       <Card className="flex-1 box-border">
         <CardHeader>
           <CardTitle>
-            {href ? (
-              <Link
-                href={href}
-                className="transition-colors hover:text-primary"
-              >
-                {characterName}
-              </Link>
-            ) : (
-              characterName
-            )}
+            <CharacterName characterName={characterName} href={href} />
           </CardTitle>
           <CardAction>
             <CharacterLike

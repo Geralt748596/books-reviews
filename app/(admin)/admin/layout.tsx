@@ -9,13 +9,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await connection();
+  // const session = await auth.api.getSession({ headers: await headers() });
 
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session || session.user.role !== "admin") {
-    redirect("/");
-  }
+  // if (!session || session.user.role !== "admin") {
+  //   redirect("/");
+  // }
 
   return (
     <div className="min-h-screen bg-background">

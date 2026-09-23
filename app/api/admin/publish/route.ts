@@ -1,43 +1,53 @@
-import path from "node:path";
-import { auth } from "@/lib/auth";
+import { badRequest, requireAdmin } from "@/lib/admin-auth";
+import {
+  publishRequestSchema,
+  resolveGeneratedJson,
+  zodMessage,
+} from "@/lib/analyzer/api-schemas";
 import { publishBook } from "@/lib/analyzer/publish";
-
-const GENERATED_ROOT = path.join(process.cwd(), "lib/analyzer/generated");
-
-function isWithinGeneratedRoot(absolutePath: string) {
-  const normalizedRoot = path.resolve(GENERATED_ROOT) + path.sep;
-  const normalizedPath = path.resolve(absolutePath);
-
-  return (
-    normalizedPath === path.resolve(GENERATED_ROOT) ||
-    normalizedPath.startsWith(normalizedRoot)
-  );
-}
+import { HOME_FEED_TAG } from "@/lib/feed/tags";
+import { revalidateTag } from "next/cache";
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
+  const admin = await requireAdmin(request);
+  if (admin.response) return admin.response;
 
-  if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const parsed = publishRequestSchema.safeParse(
+    await request.json().catch(() => null),
+  );
+  if (!parsed.success)
+    return badRequest(zodMessage(parsed.error), parsed.error.issues);
+
+  let absolutePath: string;
+  try {
+    absolutePath = resolveGeneratedJson(parsed.data.jsonPath);
+  } catch (error) {
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Forbidden" },
+      { status: 403 },
+    );
   }
 
-  if (session.user.role !== "admin") {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
+  const log: string[] = [];
+  try {
+    const result = await publishBook(absolutePath, {
+      bookSeriesId: parsed.data.bookSeriesId,
+      publishedDate: parsed.data.publishedDate,
+      model: parsed.data.model,
+      skipImages: parsed.data.skipImages,
+      dryRun: parsed.data.dryRun,
+      onProgress: (message) => log.push(message),
+    });
+    // В route handler updateTag недоступен; профиль обязателен в этой версии Next
+    if (!result.dryRun) revalidateTag(HOME_FEED_TAG, "max");
+    return Response.json({ success: true, ...result, log });
+  } catch (error) {
+    return Response.json(
+      {
+        error: error instanceof Error ? error.message : String(error),
+        log,
+      },
+      { status: 500 },
+    );
   }
-
-  const { jsonPath } = (await request.json()) as { jsonPath?: string };
-
-  if (!jsonPath) {
-    return Response.json({ error: "jsonPath is required" }, { status: 400 });
-  }
-
-  const absolutePath = path.resolve(process.cwd(), jsonPath);
-
-  if (!isWithinGeneratedRoot(absolutePath)) {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const result = await publishBook(absolutePath, { onProgress: undefined });
-
-  return Response.json({ success: true, bookId: result.bookId });
 }

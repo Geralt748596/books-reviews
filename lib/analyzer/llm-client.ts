@@ -3,6 +3,10 @@ import { jsonSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/json-schema";
 import { Ollama } from "ollama";
 import type { ZodSchema } from "zod/v3";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { getAbortSignal, log } from "./run-context";
+
+// Обратная совместимость: раньше `log` жил здесь
+export { log } from "./run-context";
 
 // =============================================================================
 // Провайдеры
@@ -16,13 +20,25 @@ export function detectProvider(model: string): LlmProvider {
 
 /** Хост Ollama: локальный/LAN сервер или https://ollama.com для прямого доступа к облаку. */
 const ollamaHost = process.env.OLLAMA_HOST ?? "http://192.168.1.138:11434";
-const isDirectOllamaCloud = /(^|\/\/)ollama\.com/i.test(ollamaHost);
+const directOllamaCloud = /(^|\/\/)ollama\.com/i.test(ollamaHost);
+
+export function getOllamaHost(): string {
+  return ollamaHost;
+}
+
+export function isDirectOllamaCloud(): boolean {
+  return directOllamaCloud;
+}
+
+export function hasOllamaApiKey(): boolean {
+  return Boolean(process.env.OLLAMA_API_KEY);
+}
 
 export function isOllamaCloud(model: string): boolean {
   // Через локальный сервер облачные модели называются `name:cloud`;
   // при прямом подключении к ollama.com облачной является любая модель.
   return (
-    isDirectOllamaCloud || model.endsWith(":cloud") || model.endsWith("-cloud")
+    directOllamaCloud || model.endsWith(":cloud") || model.endsWith("-cloud")
   );
 }
 
@@ -63,14 +79,6 @@ export function getAnthropicClient(): Anthropic {
   }
   return anthropicClient;
 }
-
-export const abortController = new AbortController();
-
-process.once("SIGINT", () => {
-  console.log("\n⛔ Прерывание — отменяю запросы к LLM...");
-  abortController.abort();
-  setTimeout(() => process.exit(130), 500);
-});
 
 // =============================================================================
 // Размер фрагмента зависит от модели
@@ -292,7 +300,7 @@ async function claudeStructuredRequest<T>(
     try {
       // Стриминг снимает HTTP-таймауты на длинных ответах.
       const message = await client.messages
-        .stream(params, { signal: abortController.signal })
+        .stream(params, { signal: getAbortSignal() })
         .finalMessage();
 
       recordUsage(model, message.usage);
@@ -334,6 +342,8 @@ async function claudeStructuredRequest<T>(
 // =============================================================================
 
 const DEFAULT_OLLAMA_MAX_OUTPUT = 32_000;
+/** num_predict в Ollama считает и токены рассуждений, поэтому даём им отдельный запас. */
+const OLLAMA_THINKING_ALLOWANCE = 16_000;
 
 export class OutputTruncatedError extends Error {
   constructor(message: string) {
@@ -354,11 +364,12 @@ async function ollamaStructuredRequest<T>(
     model,
     prompt,
     schema,
-    reasoning = false,
     maxRetries = 3,
     temperature = 0.1,
     maxOutputTokens = DEFAULT_OLLAMA_MAX_OUTPUT,
   } = options;
+  // Может быть выключен по ходу попыток, если рассуждения съели весь лимит вывода
+  let reasoning = options.reasoning ?? false;
 
   const isCloud = isOllamaCloud(model);
   const jsonSchema = stripSchemaMeta(zodToJsonSchema(schema));
@@ -388,9 +399,11 @@ async function ollamaStructuredRequest<T>(
           temperature,
           top_p: 0.9,
           top_k: 40,
-          num_predict: maxOutputTokens,
+          num_predict: reasoning
+            ? maxOutputTokens + OLLAMA_THINKING_ALLOWANCE
+            : maxOutputTokens,
         },
-        signal: abortController.signal,
+        signal: getAbortSignal(),
       } as Parameters<typeof ollama.chat>[0] & {
         stream: true;
         signal: AbortSignal;
@@ -429,7 +442,9 @@ async function ollamaStructuredRequest<T>(
 
       if (doneReason === "length") {
         throw new OutputTruncatedError(
-          `Ответ обрезан по лимиту вывода (${outputTokens ?? "?"} токенов, num_predict=${maxOutputTokens}). ` +
+          `Ответ обрезан по лимиту вывода (${outputTokens ?? "?"} токенов, ` +
+            `num_predict=${reasoning ? maxOutputTokens + OLLAMA_THINKING_ALLOWANCE : maxOutputTokens}` +
+            `${reasoning ? ", включая рассуждения" : ""}). ` +
             "Уменьшите объём запрашиваемого вывода или размер фрагмента.",
         );
       }
@@ -464,7 +479,13 @@ async function ollamaStructuredRequest<T>(
       log(`Ошибка (${errorName}) через ${elapsed}с: ${errorMsg}`);
 
       if (error instanceof OutputTruncatedError) {
-        throw error; // повтор даст тот же обрезанный ответ
+        if (reasoning && state.attempt < maxRetries) {
+          // Рассуждения съели лимит: повторяем без них, ответ всё равно лучше отказа
+          reasoning = false;
+          log("Повтор без reasoning: рассуждения исчерпали лимит вывода");
+          continue;
+        }
+        throw error; // без рассуждений повтор даст тот же обрезанный ответ
       }
       if (state.attempt >= maxRetries) {
         throw new Error(
@@ -504,7 +525,7 @@ export async function searchPublishedDate(
           messages: [{ role: "user", content: question }],
           output_config: { effort: "low" },
         },
-        { signal: abortController.signal },
+        { signal: getAbortSignal() },
       );
       recordUsage(model, message.usage);
       content = extractClaudeText(message).trim();
@@ -514,7 +535,7 @@ export async function searchPublishedDate(
         messages: [{ role: "user", content: question }],
         think: false,
         options: { temperature: 0.1 },
-        signal: abortController.signal,
+        signal: getAbortSignal(),
       } as Parameters<typeof ollama.chat>[0] & { signal: AbortSignal });
       content = response.message.content.trim();
     }
@@ -626,11 +647,6 @@ function coerceArraysToStrings(obj: unknown): unknown {
     return result;
   }
   return obj;
-}
-
-export function log(message: string): void {
-  const time = new Date().toLocaleTimeString("ru-RU", { hour12: false });
-  console.log(`  [${time}] ${message}`);
 }
 
 export function sleep(ms: number): Promise<void> {

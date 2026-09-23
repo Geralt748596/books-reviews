@@ -1,86 +1,37 @@
 "use server";
 
 import { headers } from "next/headers";
+import { updateTag } from "next/cache";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import {
-  buildCharacterImagePrompt,
-  buildCoverPrompt,
-  generateImage,
-} from "@/lib/openai";
 import { uploadImageToBlob } from "@/lib/blob-storage";
+import { prisma } from "@/lib/db";
+import { HOME_FEED_TAG } from "@/lib/feed/tags";
+import {
+  createBookCover,
+  createCharacterImage,
+  saveCharacterImage,
+} from "@/lib/images/service";
 import {
   GeneratedBookCover,
   GeneratedCharacterImage,
 } from "@/prisma/generated/client";
 
+async function resolveUserId(explicit?: string): Promise<string | null> {
+  if (explicit) return explicit;
+  const session = await auth.api.getSession({ headers: await headers() });
+  return session?.user.id ?? null;
+}
+
 export async function generateBookCover(
   bookId: string,
   options: { userPrompt?: string; userId?: string } = {},
 ): Promise<{ image: GeneratedBookCover } | { error: string }> {
-  let userId = options.userId;
+  const userId = await resolveUserId(options.userId);
+  if (!userId) return { error: "Unauthorized" };
 
-  if (!userId) {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) return { error: "Unauthorized" };
-    userId = session.user.id;
-  }
-
-  // const today = new Date();
-  // today.setHours(0, 0, 0, 0);
-  // const count = await prisma.generatedImage.count({
-  //   where: { userId, createdAt: { gte: today } },
-  // });
-  // if (count >= 10) return { error: "Daily limit reached (10 images per day)" };
-  const book = await prisma.book.findUnique({ where: { id: bookId } });
-  if (!book) return { error: "Book not found" };
-
-  // let character: { name: string } | null = null;
-  // if (options.characterId) {
-  //   character = await prisma.character.findUnique({
-  //     where: { id: options.characterId },
-  //     select: { name: true },
-  //   });
-  // }
-
-  const prompt = buildCoverPrompt(
-    book.title,
-    book.description,
-    options.userPrompt,
-  );
-
-  try {
-    const imageResult = await generateImage(prompt);
-
-    if ("error" in imageResult) {
-      return { error: imageResult.error };
-    }
-
-    const { base64, revisedPrompt } = imageResult;
-
-    // const filename = options.characterId
-    //   ? `books/${bookId}/char-${options.characterId}-${Date.now()}.png`
-    //   : `books/${bookId}/${Date.now()}.png`;
-
-    const blobUrl = await uploadImageToBlob(
-      base64,
-      `books/${bookId}/${Date.now()}.png`,
-    );
-
-    const cover = await prisma.generatedBookCover.create({
-      data: {
-        blobUrl,
-        bookId,
-        userId,
-        prompt: revisedPrompt || prompt,
-      },
-    });
-
-    return { image: cover };
-  } catch (err) {
-    console.error(err);
-    return { error: "Failed to generate image. Please try again." };
-  }
+  const result = await createBookCover(bookId, userId, options.userPrompt);
+  if ("image" in result) updateTag(HOME_FEED_TAG);
+  return result;
 }
 
 export async function generateCharacterImage(
@@ -88,70 +39,17 @@ export async function generateCharacterImage(
   characterId: string,
   options: { userPrompt?: string; userId?: string } = {},
 ): Promise<{ image: GeneratedCharacterImage } | { error: string }> {
-  try {
-    let userId = options.userId;
+  const userId = await resolveUserId(options.userId);
+  if (!userId) return { error: "Unauthorized" };
 
-    if (!userId) {
-      const session = await auth.api.getSession({ headers: await headers() });
-      if (!session) return { error: "Unauthorized" };
-      userId = session.user.id;
-    }
-
-    // const today = new Date();
-    // today.setHours(0, 0, 0, 0);
-    // const count = await prisma.generatedImage.count({
-    //   where: { userId, createdAt: { gte: today } },
-    // });
-    // if (count >= 10) return { error: "Daily limit reached (10 images per day)" };
-
-    const description = await prisma.characterDescription.findUnique({
-      where: {
-        bookId_characterId: {
-          bookId,
-          characterId,
-        },
-      },
-      include: { character: { select: { name: true } } },
-    });
-
-    if (!description) return { error: "Character description not found" };
-
-    const prompt = buildCharacterImagePrompt(
-      {
-        name: description.character.name,
-        appearance: description.appearance,
-        description: description.description,
-      },
-      options.userPrompt,
-    );
-
-    const imageResult = await generateImage(prompt);
-
-    if ("error" in imageResult) {
-      return { error: imageResult.error };
-    }
-
-    const { base64, revisedPrompt } = imageResult;
-
-    const filename = `books/${bookId}/char-${characterId}-${Date.now()}.png`;
-
-    const blobUrl = await uploadImageToBlob(base64, filename);
-
-    const characterImage = await prisma.generatedCharacterImage.create({
-      data: {
-        blobUrl,
-        userId,
-        characterId,
-        prompt: revisedPrompt || prompt,
-        bookId,
-      },
-    });
-
-    return { image: characterImage };
-  } catch (err) {
-    console.error(err);
-    return { error: "Failed to generate image. Please try again." };
-  }
+  const result = await createCharacterImage(
+    bookId,
+    characterId,
+    userId,
+    options.userPrompt,
+  );
+  if ("image" in result) updateTag(HOME_FEED_TAG);
+  return result;
 }
 
 const MAX_UPLOAD_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -186,33 +84,29 @@ export async function uploadCharacterImage(
       return { error: "Only PNG, JPEG or WebP images are allowed" };
     }
 
-    const userId = session.user.id;
-
     const character = await prisma.character.findUnique({
       where: { id: characterId },
       select: { id: true },
     });
     if (!character) return { error: "Character not found" };
 
-    const arrayBuffer = await file.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
-
+    const base64 = Buffer.from(await file.arrayBuffer()).toString("base64");
     const extFromType = file.type.split("/")[1] ?? "png";
-    const filename = `books/${bookId}/char-${characterId}-${Date.now()}.${extFromType}`;
+    const blobUrl = await uploadImageToBlob(
+      base64,
+      `books/${bookId}/char-${characterId}-${Date.now()}.${extFromType}`,
+      file.type,
+    );
 
-    const blobUrl = await uploadImageToBlob(base64, filename, file.type);
-
-    const characterImage = await prisma.generatedCharacterImage.create({
-      data: {
-        blobUrl,
-        userId,
-        characterId,
-        prompt: "User uploaded image",
-        bookId,
-      },
+    const image = await saveCharacterImage({
+      blobUrl,
+      userId: session.user.id,
+      characterId,
+      bookId,
+      prompt: "User uploaded image",
     });
-
-    return { image: characterImage };
+    updateTag(HOME_FEED_TAG);
+    return { image };
   } catch (err) {
     console.error(err);
     return { error: "Failed to upload image. Please try again." };

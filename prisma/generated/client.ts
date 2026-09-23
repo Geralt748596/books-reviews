@@ -121,3 +121,8 @@ export type CharacterImageComment = Prisma.CharacterImageCommentModel
  * 
  */
 export type GeneratedCharacterImage = Prisma.GeneratedCharacterImageModel
+/**
+ * Model FeedItem
+ * 
+ */
+export type FeedItem = Prisma.FeedItemModel

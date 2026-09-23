@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const GENERATED_ROOT = path.join(process.cwd(), "lib/analyzer/generated");
 
@@ -18,15 +18,8 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ file: string }> },
 ) {
-  const session = await auth.api.getSession({ headers: request.headers });
-
-  if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (session.user.role !== "admin") {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const admin = await requireAdmin(request);
+  if (admin.response) return admin.response;
 
   const { file } = await params;
   const absolutePath = Buffer.from(file, "base64url").toString();

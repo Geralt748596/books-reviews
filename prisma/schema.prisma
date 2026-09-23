@@ -30,6 +30,7 @@ model User {
   characterImageLikes    CharacterImageLike[]
   coverComments          CoverComment[]
   characterImageComments CharacterImageComment[]
+  feedItems              FeedItem[]
 
   banned     Boolean?  @default(false)
   banReason  String?
@@ -120,6 +121,7 @@ model Book {
 
   generatedBookCover       GeneratedBookCover[]
   generatedCharacterImages GeneratedCharacterImage[]
+  feedItems                FeedItem[]
 
   @@index([title])
 }
@@ -136,6 +138,7 @@ model Post {
   book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
   characterId String?
   character   Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  feedItem    FeedItem?
 
   @@index([userId])
   @@index([createdAt])
@@ -214,6 +217,7 @@ model GeneratedBookCover {
 
   likes    CoverLike[]
   comments CoverComment[]
+  feedItem FeedItem?
 
   @@index([bookId])
 }
@@ -288,9 +292,46 @@ model GeneratedCharacterImage {
   comments    CharacterImageComment[]
   bookId      String
   book        Book                    @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  feedItem    FeedItem?
 
   @@unique([bookId, characterId])
   @@index([userId])
   @@index([characterId])
   @@index([bookId])
+}
+
+// =============================================================================
+// Лента главной: материализованные события (fan-out-on-write)
+// =============================================================================
+
+enum FeedItemType {
+  COVER
+  CHARACTER_IMAGE
+  BOOK_ADDED
+  POST
+}
+
+model FeedItem {
+  id        String       @id @default(cuid())
+  type      FeedItemType
+  sourceId  String // id источника; вместе с type даёт идемпотентность записи
+  createdAt DateTime     @default(now()) // копия createdAt источника
+  score     Float        @default(0) // задел под ранжирование, пока не используется
+
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  bookId  String
+  book    Book    @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  coverId          String?                  @unique
+  cover            GeneratedBookCover?      @relation(fields: [coverId], references: [id], onDelete: Cascade)
+  characterImageId String?                  @unique
+  characterImage   GeneratedCharacterImage? @relation(fields: [characterImageId], references: [id], onDelete: Cascade)
+  postId           String?                  @unique
+  post             Post?                    @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([type, sourceId])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
+  @@index([bookId])
+  @@map("feed_item")
 }

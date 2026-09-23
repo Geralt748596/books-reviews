@@ -242,8 +242,10 @@ RULES
    Two people sharing only a title or profession ("captain", "priest") are DIFFERENT.
 3. Strong evidence for merging: one record's name appears in another's aliases;
    samples describe the same occupation, relations or scene.
-4. Every input name must appear in exactly one group. Records that match nobody form a
-   group of one.
+4. "members" are the "name" values of TWO OR MORE different input records that refer
+   to one person. A record's own aliases are NOT members: do not output a group just
+   because a record has aliases. If no other record refers to the same person, output
+   nothing for it. An empty "groups" array is a valid and common answer.
 5. "canonicalName" must be one of the group's member names — pick the most complete
    form (full name over nickname), and among equally complete forms the most
    frequently mentioned. Write it in ${langName} exactly as it appears in the input.
@@ -263,7 +265,7 @@ ${JSON.stringify(candidates, null, 2)}
 
 Return ONLY a JSON object, no prose, no markdown:
 { "groups": [ { "canonicalName": "...", "members": ["...", "..."], "confidence": "high", "evidence": "..." } ] }
-Groups of one member may omit "confidence" and "evidence".`;
+Keep it short: only merges, one line of evidence each.`;
 }
 
 // =============================================================================

@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   },
   typedRoutes: true,
   cacheComponents: true,
+  cacheLife: {
+    // Лента главной: попадает в prerender (expire ≥ 5 мин, stale ≥ 30 с),
+    // при отсутствии изменений пересчитывается не чаще раза в минуту на курсор
+    feed: { stale: 30, revalidate: 60, expire: 3600 },
+  },
   partialPrefetching: true,
   images: {
     remotePatterns: [

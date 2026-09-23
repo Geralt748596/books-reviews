@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { CharacterTier, type Prisma } from "@/prisma/generated/client";
+import { recordBookAdded } from "@/lib/feed/write";
 import { looksLikeProperName, nonEmptyText } from "./names";
 import type { BookAnalysis, Character } from "./types";
 
@@ -146,6 +147,9 @@ async function persistWithin(
             data: bookData,
           })
         : await tx.book.create({ data: bookData });
+
+      // Событие ленты только для новой книги; при dry-run откатится с транзакцией
+      if (!existingBook) await recordBookAdded(tx, book);
 
       // --- Пул персонажей, с которыми можно сопоставлять: уже привязанные к книге
       //     и, если задана серия, все персонажи серии ---

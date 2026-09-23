@@ -16,3 +16,13 @@ export const CharacterTier = {
 } as const
 
 export type CharacterTier = (typeof CharacterTier)[keyof typeof CharacterTier]
+
+
+export const FeedItemType = {
+  COVER: 'COVER',
+  CHARACTER_IMAGE: 'CHARACTER_IMAGE',
+  BOOK_ADDED: 'BOOK_ADDED',
+  POST: 'POST'
+} as const
+
+export type FeedItemType = (typeof FeedItemType)[keyof typeof FeedItemType]
